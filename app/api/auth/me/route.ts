@@ -30,7 +30,7 @@ export async function GET(request: NextRequest) {
       };
 
       return NextResponse.json({ user }, { status: 200 });
-    } catch (decodeError) {
+    } catch {
       return NextResponse.json({ message: "Invalid token" }, { status: 401 });
     }
   } catch (error) {

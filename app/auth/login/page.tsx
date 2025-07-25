@@ -1,41 +1,41 @@
-'use client';
+"use client";
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import Link from 'next/link';
-import Image from 'next/image';
+import { useState } from "react";
+import { useRouter } from "next/navigation";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function LoginPage() {
-  const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
   const [isLoading, setIsLoading] = useState(false);
-  const [error, setError] = useState('');
+  const [error, setError] = useState("");
   const router = useRouter();
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
-    setError('');
+    setError("");
 
     try {
       // TODO: Replace with actual authentication API call
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
+      const response = await fetch("/api/auth/login", {
+        method: "POST",
         headers: {
-          'Content-Type': 'application/json',
+          "Content-Type": "application/json",
         },
         body: JSON.stringify({ email, password }),
       });
 
       if (response.ok) {
         // TODO: Handle successful login (store token, etc.)
-        router.push('/dashboard');
+        router.push("/dashboard");
       } else {
         const data = await response.json();
-        setError(data.message || 'Login failed');
+        setError(data.message || "Login failed");
       }
-    } catch (err) {
-      setError('An error occurred. Please try again.');
+    } catch {
+      setError("An error occurred. Please try again.");
     } finally {
       setIsLoading(false);
     }
@@ -48,9 +48,11 @@ export default function LoginPage() {
           <div className="mx-auto h-25 w-auto flex justify-center items-center">
             {/* Livato Logo */}
             <div className="w-32 h-32 relative">
-              <img 
-                src="/Livato Logo.png" 
-                alt="Livato Solutions Logo" 
+              <Image
+                src="/Livato Logo.png"
+                alt="Livato Solutions Logo"
+                width={128}
+                height={128}
                 className="w-full h-full object-contain"
               />
             </div>
@@ -59,7 +61,7 @@ export default function LoginPage() {
             Sign in to CRM
           </h2>
           <p className="mt-2 text-center text-sm text-gray-600 font-inter">
-            Or{' '}
+            Or{" "}
             <Link
               href="/auth/register"
               className="font-medium text-blue-600 hover:text-blue-500"
@@ -71,9 +73,7 @@ export default function LoginPage() {
         <form className="mt-8 space-y-6" onSubmit={handleSubmit}>
           {error && (
             <div className="rounded-md bg-red-50 p-4 border border-red-200">
-              <div className="text-sm text-red-700">
-                {error}
-              </div>
+              <div className="text-sm text-red-700">{error}</div>
             </div>
           )}
           <div className="rounded-md shadow-sm space-y-4">
@@ -119,7 +119,10 @@ export default function LoginPage() {
                 type="checkbox"
                 className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
               />
-              <label htmlFor="remember-me" className="ml-2 block text-sm text-black font-inter">
+              <label
+                htmlFor="remember-me"
+                className="ml-2 block text-sm text-black font-inter"
+              >
                 Remember me
               </label>
             </div>
@@ -140,7 +143,7 @@ export default function LoginPage() {
               disabled={isLoading}
               className="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed transition-colors font-inter"
             >
-              {isLoading ? 'Signing in...' : 'Sign in'}
+              {isLoading ? "Signing in..." : "Sign in"}
             </button>
           </div>
         </form>

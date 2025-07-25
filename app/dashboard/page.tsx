@@ -3,6 +3,7 @@
 import { useAuth } from '../lib/auth-context';
 import { useRouter } from 'next/navigation';
 import { useEffect } from 'react';
+import Image from 'next/image';
 
 export default function DashboardPage() {
   const { user, logout, isLoading, isAuthenticated } = useAuth();
@@ -34,10 +35,12 @@ export default function DashboardPage() {
           <div className="flex justify-between items-center py-4">
             <div className="flex items-center gap-3">
               {/* Livato Logo */}
-              <div className="w-12 h-12 relative">
-                <img 
+              <div className="w-16 h-16 relative">
+                <Image 
                   src="/LivatoSolutionCRM.png" 
                   alt="Livato Solutions Logo" 
+                  width={64}
+                  height={64}
                   className="w-full h-full object-contain"
                 />
               </div>
