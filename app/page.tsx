@@ -6,8 +6,129 @@ import ImageCarousel from './components/ImageCarousel';
 import LabelConfigurator from './components/LabelConfigurator';
 
 export default function Home() {
+  // Structured Data for SEO (JSON-LD)
+  const structuredData = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Organization",
+        "@id": "https://livatosolutions.com/#organization",
+        "name": "Livato Solutions LLP",
+        "url": "https://livatosolutions.com",
+        "logo": {
+          "@type": "ImageObject",
+          "url": "https://livatosolutions.com/Livato Logo.png",
+          "width": 500,
+          "height": 500
+        },
+        "image": "https://livatosolutions.com/Livato Logo.png",
+        "description": "Leading provider of custom labeling solutions in India. Specialized in pharmaceutical labels, barcode printers, thermal ribbons, and complete labeling systems.",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "HNO 17-50/13, Vishnupuri Colony, Peerzadiguda, Medipally",
+          "addressLocality": "Hyderabad",
+          "addressRegion": "Telangana",
+          "postalCode": "500098",
+          "addressCountry": "IN"
+        },
+        "contactPoint": [
+          {
+            "@type": "ContactPoint",
+            "telephone": "+91-8008413800",
+            "contactType": "sales",
+            "areaServed": "IN",
+            "availableLanguage": ["en", "hi"]
+          },
+          {
+            "@type": "ContactPoint",
+            "telephone": "+91-9959300355",
+            "contactType": "customer service",
+            "areaServed": "IN",
+            "availableLanguage": ["en", "hi"]
+          }
+        ],
+        "email": "info@livatosolutions.com",
+        "foundingDate": "2019",
+        "sameAs": [
+          "https://www.linkedin.com/company/livato-solutions",
+          "https://www.facebook.com/livatosolutions"
+        ]
+      },
+      {
+        "@type": "WebSite",
+        "@id": "https://livatosolutions.com/#website",
+        "url": "https://livatosolutions.com",
+        "name": "Livato Solutions",
+        "description": "Custom Labels, Barcode Printers & Thermal Ribbons",
+        "publisher": {
+          "@id": "https://livatosolutions.com/#organization"
+        },
+        "potentialAction": {
+          "@type": "SearchAction",
+          "target": "https://livatosolutions.com/products?search={search_term_string}",
+          "query-input": "required name=search_term_string"
+        }
+      },
+      {
+        "@type": "LocalBusiness",
+        "@id": "https://livatosolutions.com/#localbusiness",
+        "name": "Livato Solutions LLP",
+        "image": "https://livatosolutions.com/Livato Logo.png",
+        "priceRange": "$$",
+        "telephone": "+91-8008413800",
+        "email": "info@livatosolutions.com",
+        "address": {
+          "@type": "PostalAddress",
+          "streetAddress": "HNO 17-50/13, Vishnupuri Colony, Peerzadiguda, Medipally",
+          "addressLocality": "Hyderabad",
+          "addressRegion": "Telangana",
+          "postalCode": "500098",
+          "addressCountry": "IN"
+        },
+        "geo": {
+          "@type": "GeoCoordinates",
+          "latitude": 17.4947,
+          "longitude": 78.5832
+        },
+        "openingHoursSpecification": [
+          {
+            "@type": "OpeningHoursSpecification",
+            "dayOfWeek": ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday"],
+            "opens": "09:00",
+            "closes": "18:00"
+          }
+        ],
+        "servesCuisine": null,
+        "areaServed": {
+          "@type": "Country",
+          "name": "India"
+        }
+      },
+      {
+        "@type": "Product",
+        "name": "Custom Label Solutions",
+        "description": "Complete labeling solutions including custom labels, barcode printers, and thermal ribbons for pharmaceutical, healthcare, logistics, retail, and manufacturing industries",
+        "brand": {
+          "@type": "Brand",
+          "name": "Livato Solutions"
+        },
+        "offers": {
+          "@type": "AggregateOffer",
+          "priceCurrency": "INR",
+          "availability": "https://schema.org/InStock"
+        }
+      }
+    ]
+  };
+
   return (
     <>
+      <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        />
+      </head>
       <Header />
 
       <main className="relative overflow-hidden">
