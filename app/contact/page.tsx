@@ -1,11 +1,12 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { Suspense, useState, useEffect } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 
-export default function Contact() {
+// Separate component that uses useSearchParams
+function ContactFormContent() {
   const searchParams = useSearchParams();
   const [formData, setFormData] = useState({
     name: '',
@@ -103,8 +104,6 @@ Please provide pricing and availability information.`;
 
   return (
     <>
-      <Header />
-
       <main className="relative overflow-hidden">
         <div className="cmyk-wave cmyk-wave-cyan animate-float" style={{ width: '400px', height: '400px', top: '5%', right: '0%', animationDelay: '0s' }}></div>
         <div className="cmyk-wave cmyk-wave-magenta animate-float" style={{ width: '350px', height: '350px', top: '60%', left: '0%', animationDelay: '3s' }}></div>
@@ -363,7 +362,25 @@ Please provide pricing and availability information.`;
           </div>
         </section>
       </main>
+    </>
+  );
+}
 
+// Main component with Suspense boundary
+export default function Contact() {
+  return (
+    <>
+      <Header />
+      <Suspense fallback={
+        <main className="relative overflow-hidden min-h-screen flex items-center justify-center">
+          <div className="text-center">
+            <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
+            <p className="text-gray-600 font-inter">Loading contact form...</p>
+          </div>
+        </main>
+      }>
+        <ContactFormContent />
+      </Suspense>
       <Footer />
     </>
   );
