@@ -22,6 +22,11 @@ export const metadata: Metadata = {
     default: 'Livato Solutions - Custom Labels, Barcode Printers & Thermal Ribbons',
     template: '%s | Livato Solutions'
   },
+  icons: {
+    icon: '/Livato Logo.png',
+    shortcut: '/Livato Logo.png',
+    apple: '/Livato Logo.png',
+  },
   description: 'Leading provider of custom labeling solutions in India. Specialized in pharmaceutical labels, barcode printers, thermal ribbons, and complete labeling systems for healthcare, logistics, retail, and manufacturing industries.',
   keywords: [
     'custom labels India',
