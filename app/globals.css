@@ -5,6 +5,15 @@
 :root {
   --background: #ffffff;
   --foreground: #171717;
+
+  /* CMYK Colors */
+  --color-cyan: #00B8D4;
+  --color-magenta: #E91E63;
+  --color-yellow: #FFC107;
+  --color-key: #1E293B;
+
+  /* Livato Primary Blue */
+  --livato-primary: #427AFF;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -24,8 +33,127 @@ body {
   .font-open-sans {
     font-family: var(--font-open-sans), 'Open Sans', sans-serif;
   }
-  
+
   .font-inter {
     font-family: var(--font-inter), 'Inter', sans-serif;
+  }
+}
+
+@layer components {
+  /* CMYK Wave Background Elements */
+  .cmyk-wave {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(60px);
+    opacity: 0.15;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .cmyk-wave-cyan {
+    background: var(--color-cyan);
+  }
+
+  .cmyk-wave-magenta {
+    background: var(--color-magenta);
+  }
+
+  .cmyk-wave-yellow {
+    background: var(--color-yellow);
+  }
+
+  /* Brand Logo Gradient */
+  .brand-gradient {
+    background: linear-gradient(135deg, var(--color-cyan) 0%, var(--color-magenta) 50%, var(--color-yellow) 100%);
+  }
+
+  /* Header Styles */
+  .header-container {
+    background: rgba(255, 255, 255, 0.95);
+    border-bottom: 1px solid #E2E8F0;
+    position: sticky;
+    top: 0;
+    z-index: 50;
+    backdrop-filter: blur(8px);
+  }
+
+  .nav-link {
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--foreground);
+    transition: color 0.2s ease;
+  }
+
+  .nav-link:hover {
+    color: var(--livato-primary);
+  }
+
+  /* Footer Styles */
+  .footer-container {
+    background: #ffffff;
+    border-top: 1px solid #E2E8F0;
+  }
+
+  .footer-link {
+    color: #64748B;
+    font-size: 0.875rem;
+    transition: color 0.2s ease;
+  }
+
+  .footer-link:hover {
+    color: var(--livato-primary);
+  }
+
+  .footer-heading {
+    color: var(--text-primary);
+    font-weight: 600;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+  }
+}
+
+@layer utilities {
+  /* Floating Animation for Background Waves */
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0px) translateX(0px);
+    }
+    33% {
+      transform: translateY(-20px) translateX(10px);
+    }
+    66% {
+      transform: translateY(10px) translateX(-10px);
+    }
+  }
+
+  .animate-float {
+    animation: float 15s ease-in-out infinite;
+  }
+
+  /* Fade In Up Animation */
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(30px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-fade-in-up {
+    animation: fadeInUp 0.8s ease-out forwards;
+    opacity: 0;
+  }
+
+  /* Scale on Hover for Cards */
+  .hover-scale {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+
+  .hover-scale:hover {
+    transform: scale(1.02);
   }
 }
