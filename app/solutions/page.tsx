@@ -1,6 +1,7 @@
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -58,6 +59,17 @@ export default function SolutionsPage() {
         { name: 'Safety Labels', slug: 'safety-labels', icon: '⚠️', description: 'Warning and hazard labels' },
         { name: 'Quality Control Labels', slug: 'quality-control-labels', icon: '✓', description: 'Inspection and QC tags' },
       ]
+    },
+    {
+      category: 'Electronics & Technology',
+      description: 'Precision labels for electronics manufacturing, PCB identification, and component tracking',
+      image: '/electronicindustry.png',
+      solutions: [
+        { name: 'PCB Labels', slug: 'pcb-labels', icon: '🔌', description: 'Circuit board identification labels' },
+        { name: 'Component Labels', slug: 'component-labels', icon: '💻', description: 'Electronic component tracking' },
+        { name: 'Serial Number Labels', slug: 'serial-number-labels', icon: '🔢', description: 'Unique device identification' },
+        { name: 'ESD Labels', slug: 'esd-labels', icon: '⚡', description: 'Electrostatic discharge warning labels' },
+      ]
     }
   ];
 
@@ -89,14 +101,36 @@ export default function SolutionsPage() {
             <div className="space-y-16">
               {solutions.map((category, idx) => (
                 <div key={idx} className="space-y-6">
-                  <div className="border-l-4 border-blue-600 pl-6">
-                    <h2 className="text-3xl font-bold mb-2 font-open-sans text-gray-900">
-                      {category.category}
-                    </h2>
-                    <p className="text-gray-600 font-inter">
-                      {category.description}
-                    </p>
-                  </div>
+                  {/* Category Header with Optional Image */}
+                  {category.image ? (
+                    <div className="grid lg:grid-cols-2 gap-8 items-center mb-8">
+                      <div className="border-l-4 border-blue-600 pl-6">
+                        <h2 className="text-3xl font-bold mb-2 font-open-sans text-gray-900">
+                          {category.category}
+                        </h2>
+                        <p className="text-gray-600 font-inter">
+                          {category.description}
+                        </p>
+                      </div>
+                      <div className="relative h-64 rounded-xl overflow-hidden shadow-lg">
+                        <Image
+                          src={category.image}
+                          alt={`${category.category} labeling solutions`}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="border-l-4 border-blue-600 pl-6">
+                      <h2 className="text-3xl font-bold mb-2 font-open-sans text-gray-900">
+                        {category.category}
+                      </h2>
+                      <p className="text-gray-600 font-inter">
+                        {category.description}
+                      </p>
+                    </div>
+                  )}
 
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                     {category.solutions.map((solution, sIdx) => (

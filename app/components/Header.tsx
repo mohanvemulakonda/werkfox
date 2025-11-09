@@ -11,12 +11,32 @@ export default function Header() {
     { name: 'HOME', href: '/' },
     { name: 'SERVICES', href: '/services' },
     { name: 'PRODUCTS', href: '/products' },
+    { name: 'LABEL DESIGNER', href: '/label-designer' },
+    { name: 'DOWNLOADS', href: '/downloads' },
     { name: 'ABOUT', href: '/about' },
     { name: 'CONTACT', href: '/contact' },
   ];
 
   return (
     <header className="header-container">
+      {/* Announcement Bar */}
+      <div className="bg-blue-600 text-white py-2 px-4">
+        <div className="mx-auto max-w-7xl flex items-center justify-between text-sm font-inter">
+          <a href="tel:+918008413800" className="flex items-center gap-2 hover:text-blue-100 transition-colors">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+            </svg>
+            <span className="font-semibold">+91-8008413800</span>
+          </a>
+          <a href="mailto:info@livatosolutions.com" className="flex items-center gap-2 hover:text-blue-100 transition-colors">
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+            </svg>
+            <span>info@livatosolutions.com</span>
+          </a>
+        </div>
+      </div>
+
       <nav className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex items-center justify-between h-20">
           <Link href="/" className="flex items-center gap-3">
@@ -32,7 +52,7 @@ export default function Header() {
                 LIVATO SOLUTIONS
               </span>
               <span className="text-xs font-semibold text-gray-600 tracking-wide font-inter">
-                Inspire. Innovate
+                Innovate. Inspire. Transform.
               </span>
             </div>
           </Link>
@@ -48,7 +68,7 @@ export default function Header() {
               </Link>
             ))}
             <Link href="/contact" className="px-6 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-colors font-inter shadow-lg shadow-blue-600/30">
-              GET STARTED
+              GET IN TOUCH
             </Link>
           </div>
 
@@ -88,7 +108,7 @@ export default function Header() {
                 className="px-6 py-2 rounded-lg bg-blue-600 text-white font-semibold text-sm hover:bg-blue-700 transition-colors font-inter shadow-lg shadow-blue-600/30 mt-2 text-center"
                 onClick={() => setMobileMenuOpen(false)}
               >
-                GET STARTED
+                GET IN TOUCH
               </Link>
             </div>
           </div>

@@ -22,28 +22,28 @@ export default function Labels() {
     {
       title: "Food & Beverage Labels",
       description: "Food-safe labels for packaging, nutritional information, and branding",
-      image: "/label-rolls-clean.png",
+      image: "/Food and Beverage.png",
       href: "/products/labels/food-beverage",
       highlights: ["Food-Safe Materials", "Moisture Resistant", "FDA Approved"]
     },
     {
       title: "Logistics & Shipping Labels",
       description: "High-performance labels for warehouse and shipping operations",
-      image: "/label-rolls-clean.png",
+      image: "/ShippingLabel.png",
       href: "/products/labels/logistics",
       highlights: ["All-Weather", "High-Speed Printing", "Scannable Barcodes"]
     },
     {
       title: "Retail Labels",
       description: "Eye-catching labels for retail products, pricing, and promotions",
-      image: "/label-rolls-clean.png",
+      image: "/biodegradable product.png",
       href: "/products/labels/retail",
       highlights: ["Vibrant Colors", "Custom Shapes", "Premium Finish"]
     },
     {
       title: "Industrial Labels",
       description: "Heavy-duty labels for equipment, asset tracking, and manufacturing",
-      image: "/label-rolls-clean.png",
+      image: "/Manufacturing Labels.png",
       href: "/products/labels/industrial",
       highlights: ["Extreme Durability", "High Temperature", "Chemical Resistant"]
     }

@@ -1,6 +1,7 @@
 import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Link from 'next/link';
+import Image from 'next/image';
 import { Metadata } from 'next';
 
 export const metadata: Metadata = {
@@ -98,11 +99,17 @@ export default function ShippingLabelsPage() {
                   </Link>
                 </div>
               </div>
-              <div className="bg-gradient-to-br from-blue-100 to-blue-50 rounded-2xl p-12 text-center">
-                <div className="text-8xl mb-4">📦</div>
-                <div className="text-gray-700 font-inter">
-                  <p className="text-3xl font-bold mb-2">100+</p>
-                  <p>Shipping companies trust our labels</p>
+              <div className="relative h-[400px] rounded-2xl overflow-hidden shadow-2xl">
+                <Image
+                  src="/ShippingLabel.png"
+                  alt="Professional shipping label with barcode on package"
+                  fill
+                  className="object-cover"
+                  priority
+                />
+                <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
+                  <p className="text-2xl font-bold mb-2 font-open-sans">Professional Shipping Labels</p>
+                  <p className="text-sm text-gray-200 font-inter">Trusted by 100+ logistics companies</p>
                 </div>
               </div>
             </div>

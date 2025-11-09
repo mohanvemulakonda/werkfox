@@ -10,6 +10,8 @@ export default function Footer() {
       { name: 'Label Finder', href: '/#label-finder' },
     ],
     resources: [
+      { name: 'Label Designer', href: '/label-designer' },
+      { name: 'Downloads', href: '/downloads' },
       { name: 'Blog', href: '/blog' },
       { name: 'FAQ', href: '/faq' },
       { name: 'Contact Support', href: '/contact' },
@@ -39,7 +41,7 @@ export default function Footer() {
                   LIVATO SOLUTIONS
                 </span>
                 <span className="text-xs font-semibold text-gray-600 tracking-wide font-inter">
-                  Inspire. Innovate
+                  Innovate. Inspire. Transform.
                 </span>
               </div>
             </Link>

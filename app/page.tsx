@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import ImageCarousel from './components/ImageCarousel';
 import LabelConfigurator from './components/LabelConfigurator';
+import Script from 'next/script';
 
 export default function Home() {
   // Structured Data for SEO (JSON-LD)
@@ -123,12 +124,12 @@ export default function Home() {
 
   return (
     <>
-      <head>
-        <script
-          type="application/ld+json"
-          dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
-        />
-      </head>
+      <Script
+        id="structured-data"
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(structuredData) }}
+        strategy="beforeInteractive"
+      />
       <Header />
 
       <main className="relative overflow-hidden">
@@ -342,118 +343,118 @@ export default function Home() {
             </div>
 
             <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-              <div className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white">
+              <Link href="/solutions/medical-device-labels" className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white cursor-pointer">
                 <div className="aspect-square bg-white flex items-center justify-center p-6">
                   <Image
-                    src="/thermal-printer.png"
-                    alt="Healthcare"
-                    width={150}
-                    height={150}
-                    className="w-full h-auto object-contain"
+                    src="/bloodbaglabel.png"
+                    alt="Healthcare - Blood bag labels and medical device labels"
+                    width={400}
+                    height={1000}
+                    className="w-auto h-full object-cover scale-125"
                   />
                 </div>
                 <div className="p-4 text-center border-t border-gray-100">
-                  <h3 className="font-semibold text-sm font-open-sans">HEALTHCARE</h3>
+                  <h3 className="font-semibold text-sm font-open-sans group-hover:text-blue-600 transition-colors">HEALTHCARE</h3>
                 </div>
-              </div>
-              <div className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white">
+              </Link>
+              <Link href="/solutions/shipping-labels" className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white cursor-pointer">
                 <div className="aspect-square bg-white flex items-center justify-center p-6">
                   <Image
-                    src="/black-thermal-printer.png"
-                    alt="Logistics"
-                    width={150}
-                    height={150}
-                    className="w-full h-auto object-contain"
+                    src="/ShippingLabel.png"
+                    alt="Logistics - Shipping and warehouse labels"
+                    width={400}
+                    height={1000}
+                    className="w-auto h-full object-cover scale-125"
                   />
                 </div>
                 <div className="p-4 text-center border-t border-gray-100">
-                  <h3 className="font-semibold text-sm font-open-sans">LOGISTICS</h3>
+                  <h3 className="font-semibold text-sm font-open-sans group-hover:text-blue-600 transition-colors">LOGISTICS</h3>
                 </div>
-              </div>
-              <div className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white">
+              </Link>
+              <Link href="/products/labels/industrial" className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white cursor-pointer">
                 <div className="aspect-square bg-white flex items-center justify-center p-6">
                   <Image
                     src="/Manufacturing Labels.png"
-                    alt="Manufacturing"
+                    alt="Manufacturing - Asset tags and quality control labels"
                     width={400}
                     height={1000}
                     className="w-auto h-full object-cover scale-125"
                   />
                 </div>
                 <div className="p-4 text-center border-t border-gray-100">
-                  <h3 className="font-semibold text-sm font-open-sans">MANUFACTURING</h3>
+                  <h3 className="font-semibold text-sm font-open-sans group-hover:text-blue-600 transition-colors">MANUFACTURING</h3>
                 </div>
-              </div>
-              <div className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white">
+              </Link>
+              <Link href="/products/labels/retail" className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white cursor-pointer">
                 <div className="aspect-square bg-white flex items-center justify-center p-6">
                   <Image
-                    src="/thermal-printer.png"
-                    alt="Retail"
-                    width={150}
-                    height={150}
-                    className="w-full h-auto object-contain"
+                    src="/biodegradable product.png"
+                    alt="Retail - Price tags and product labels"
+                    width={400}
+                    height={1000}
+                    className="w-auto h-full object-cover scale-125"
                   />
                 </div>
                 <div className="p-4 text-center border-t border-gray-100">
-                  <h3 className="font-semibold text-sm font-open-sans">RETAIL</h3>
+                  <h3 className="font-semibold text-sm font-open-sans group-hover:text-blue-600 transition-colors">RETAIL</h3>
                 </div>
-              </div>
-              <div className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white">
+              </Link>
+              <Link href="/products/labels/food-beverage" className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white cursor-pointer">
                 <div className="aspect-square bg-white flex items-center justify-center p-6">
                   <Image
-                    src="/black-thermal-printer.png"
-                    alt="Food & Beverage"
-                    width={150}
-                    height={150}
-                    className="w-full h-auto object-contain"
+                    src="/Food and Beverage.png"
+                    alt="Food & Beverage - Product and nutrition labels"
+                    width={400}
+                    height={1000}
+                    className="w-auto h-full object-cover scale-125"
                   />
                 </div>
                 <div className="p-4 text-center border-t border-gray-100">
-                  <h3 className="font-semibold text-sm font-open-sans">FOOD & BEVERAGE</h3>
+                  <h3 className="font-semibold text-sm font-open-sans group-hover:text-blue-600 transition-colors">FOOD & BEVERAGE</h3>
                 </div>
-              </div>
-              <div className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white">
+              </Link>
+              <Link href="/products/labels/pharmaceutical" className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white cursor-pointer">
                 <div className="aspect-square bg-white flex items-center justify-center p-6">
                   <Image
                     src="/pharma label.png"
-                    alt="Pharmaceutical"
+                    alt="Pharmaceutical - Vial and prescription labels"
                     width={400}
                     height={1000}
                     className="w-auto h-full object-cover scale-125"
                   />
                 </div>
                 <div className="p-4 text-center border-t border-gray-100">
-                  <h3 className="font-semibold text-sm font-open-sans">PHARMACEUTICAL</h3>
+                  <h3 className="font-semibold text-sm font-open-sans group-hover:text-blue-600 transition-colors">PHARMACEUTICAL</h3>
                 </div>
-              </div>
-              <div className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white">
+              </Link>
+              <Link href="/solutions" className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white cursor-pointer">
                 <div className="aspect-square bg-white flex items-center justify-center p-6">
                   <Image
-                    src="/thermal-printer.png"
-                    alt="Electronics"
-                    width={150}
-                    height={150}
-                    className="w-full h-auto object-contain"
+                    src="/electronicindustry.png"
+                    alt="Electronics - PCB and component labels"
+                    width={400}
+                    height={1000}
+                    className="w-auto h-full object-cover scale-125"
                   />
                 </div>
                 <div className="p-4 text-center border-t border-gray-100">
-                  <h3 className="font-semibold text-sm font-open-sans">ELECTRONICS</h3>
+                  <h3 className="font-semibold text-sm font-open-sans group-hover:text-blue-600 transition-colors">ELECTRONICS</h3>
                 </div>
-              </div>
-              <div className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white">
+              </Link>
+              <Link href="/products/labels/automotive" className="rounded-xl border border-gray-200 hover:border-blue-500 hover:shadow-lg transition-all overflow-hidden group hover-scale bg-white cursor-pointer">
                 <div className="aspect-square bg-white flex items-center justify-center p-6">
                   <Image
                     src="/Tyre Label Automobile.png"
-                    alt="Automotive"
+                    alt="Automotive - Tire and parts labels"
                     width={400}
                     height={1000}
                     className="w-auto h-full object-cover scale-125"
                   />
                 </div>
                 <div className="p-4 text-center border-t border-gray-100">
-                  <h3 className="font-semibold text-sm font-open-sans">AUTOMOTIVE</h3>
+                  <h3 className="font-semibold text-sm font-open-sans group-hover:text-blue-600 transition-colors">AUTOMOTIVE</h3>
                 </div>
-              </div>
+              </Link>
             </div>
           </div>
         </section>
