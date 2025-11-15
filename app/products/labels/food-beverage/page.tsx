@@ -22,14 +22,14 @@ export default function FoodBeverageLabelsPage() {
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <Link href="/products/labels" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 font-inter font-semibold">
+                <Link href="/products/labels" className="inline-flex items-center gap-2 text-gray-900 hover:text-blue-700 mb-4 font-inter font-semibold">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                   </svg>
                   Back to Labels
                 </Link>
                 <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6 font-open-sans">
-                  FOOD & BEVERAGE <span className="text-blue-600">LABELS</span>
+                  FOOD & BEVERAGE <span className="text-gray-900">LABELS</span>
                 </h1>
                 <p className="text-lg lg:text-xl text-gray-600 mb-8 font-inter leading-relaxed">
                   FDA compliant labels for food packaging, nutrition facts, ingredients, and beverage bottles. Moisture-resistant and freezer-safe options available.
@@ -84,7 +84,7 @@ export default function FoodBeverageLabelsPage() {
                 <div key={i} className="bg-white rounded-xl p-6 shadow-lg text-center">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                     <svg className="w-8 h-8 text-green-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <h3 className="text-lg font-bold mb-2 font-open-sans">{item.title}</h3>
@@ -106,8 +106,8 @@ export default function FoodBeverageLabelsPage() {
                 { name: 'Vinyl Labels', href: '/resources/materials/vinyl' },
               ].map((product, i) => (
                 <Link key={i} href={product.href} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow border border-gray-200 hover:border-blue-500 text-center group">
-                  <h3 className="font-bold text-lg mb-2 font-open-sans group-hover:text-blue-600">{product.name}</h3>
-                  <div className="flex items-center justify-center gap-2 text-blue-600 text-sm font-semibold">
+                  <h3 className="font-bold text-lg mb-2 font-open-sans group-hover:text-gray-900">{product.name}</h3>
+                  <div className="flex items-center justify-center gap-2 text-gray-900 text-sm font-semibold">
                     Learn More →
                   </div>
                 </Link>
@@ -120,7 +120,7 @@ export default function FoodBeverageLabelsPage() {
           <div className="mx-auto max-w-4xl px-6 text-center">
             <h2 className="text-4xl font-bold mb-6 font-open-sans">Need FDA Compliant Food Labels?</h2>
             <p className="text-xl text-blue-100 mb-8 font-inter">Contact us for food-safe labeling solutions</p>
-            <Link href="/contact?solution=food-labels" className="px-8 py-4 bg-white text-blue-600 rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-lg inline-block">
+            <Link href="/contact?solution=food-labels" className="px-8 py-4 bg-white text-gray-900 rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-lg inline-block">
               Request Consultation
             </Link>
           </div>

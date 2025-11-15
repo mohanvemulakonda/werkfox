@@ -13,7 +13,7 @@ export default function TermsOfService() {
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center">
               <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6 font-open-sans">
-                TERMS OF <span className="text-blue-600">SERVICE</span>
+                TERMS OF <span className="text-gray-900">SERVICE</span>
               </h1>
               <p className="text-lg text-gray-600 max-w-2xl mx-auto font-inter">
                 Last Updated: January 2025

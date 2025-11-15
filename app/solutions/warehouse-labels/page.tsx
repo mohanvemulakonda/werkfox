@@ -21,16 +21,16 @@ export default function WarehouseLabelsPage() {
         <section className="relative py-20 bg-gradient-to-br from-blue-50 to-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center max-w-3xl mx-auto">
-              <div className="inline-block px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold mb-4">
+              <div className="inline-block px-4 py-2 inline-flex items-center gap-2 mb-4">
                 Warehouse Solution
               </div>
-              <h1 className="text-5xl font-extrabold mb-6 font-open-sans">
-                WAREHOUSE <span className="text-blue-600">LABELS</span>
+              <h1 className="text-5xl font-light mb-6 font-open-sans">
+                WAREHOUSE <span className="text-gray-900">LABELS</span>
               </h1>
               <p className="text-xl text-gray-600 mb-8 font-inter">
                 Optimize your warehouse operations with durable rack labels, bin labels, and location markers. Scannable barcodes for accurate inventory tracking.
               </p>
-              <Link href="/contact?solution=warehouse-labels" className="px-8 py-4 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 inline-block">
+              <Link href="/contact?solution=warehouse-labels" className="px-8 py-4 bg-gray-900 text-white rounded-lg font-semibold hover:bg-[#2563EB] inline-block">
                 Get Custom Solution
               </Link>
             </div>
@@ -40,7 +40,7 @@ export default function WarehouseLabelsPage() {
         {/* Label Types */}
         <section className="py-24 bg-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <h2 className="text-3xl font-bold mb-12 text-center font-open-sans">Warehouse Label Types</h2>
+            <h2 className="text-3xl font-semibold mb-12 text-center font-open-sans">Warehouse Label Types</h2>
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 { name: 'Rack Labels', icon: '📚', desc: 'Large format labels for warehouse racking systems' },
@@ -52,7 +52,7 @@ export default function WarehouseLabelsPage() {
               ].map((type, i) => (
                 <div key={i} className="bg-gray-50 rounded-xl p-6 border">
                   <div className="text-5xl mb-4">{type.icon}</div>
-                  <h3 className="text-xl font-bold mb-2">{type.name}</h3>
+                  <h3 className="text-xl font-semibold mb-2">{type.name}</h3>
                   <p className="text-gray-600 text-sm">{type.desc}</p>
                 </div>
               ))}
@@ -63,7 +63,7 @@ export default function WarehouseLabelsPage() {
         {/* Materials */}
         <section className="py-24 bg-gray-50">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <h2 className="text-3xl font-bold mb-12 text-center font-open-sans">Recommended Materials</h2>
+            <h2 className="text-3xl font-semibold mb-12 text-center font-open-sans">Recommended Materials</h2>
             <div className="grid md:grid-cols-3 gap-8">
               {[
                 { name: 'Polyester', features: ['Tear resistant', 'Long-lasting', 'Indoor/outdoor'] },
@@ -71,7 +71,7 @@ export default function WarehouseLabelsPage() {
                 { name: 'Polypropylene', features: ['Moisture resistant', 'Cost-effective', 'Indoor use'] },
               ].map((mat, i) => (
                 <div key={i} className="bg-white rounded-xl p-8 shadow-lg">
-                  <h3 className="text-2xl font-bold mb-4 text-blue-600">{mat.name}</h3>
+                  <h3 className="text-2xl font-semibold mb-4 text-gray-900">{mat.name}</h3>
                   <ul className="space-y-2">
                     {mat.features.map((f, j) => (
                       <li key={j} className="flex items-center text-sm">
@@ -89,11 +89,11 @@ export default function WarehouseLabelsPage() {
         </section>
 
         {/* CTA */}
-        <section className="py-20 bg-blue-600 text-white text-center">
+        <section className="py-20 bg-gray-900 text-white text-center">
           <div className="mx-auto max-w-3xl px-6">
-            <h2 className="text-4xl font-bold mb-6">Optimize Your Warehouse Operations</h2>
+            <h2 className="text-4xl font-semibold mb-6">Optimize Your Warehouse Operations</h2>
             <p className="text-xl mb-8 text-blue-100">Get a custom labeling solution for your warehouse</p>
-            <Link href="/contact?solution=warehouse-labels" className="px-8 py-4 bg-white text-blue-600 rounded-lg font-bold hover:bg-gray-100 inline-block">
+            <Link href="/contact?solution=warehouse-labels" className="px-8 py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 inline-block">
               Request Quote
             </Link>
           </div>

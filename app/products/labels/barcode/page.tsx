@@ -22,14 +22,14 @@ export default function BarcodeLabelsPage() {
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <Link href="/products/labels" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 font-inter font-semibold">
+                <Link href="/products/labels" className="inline-flex items-center gap-2 text-gray-900 hover:text-blue-700 mb-4 font-inter font-semibold">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                   </svg>
                   Back to Labels
                 </Link>
                 <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6 font-open-sans">
-                  BARCODE <span className="text-blue-600">LABELS</span>
+                  BARCODE <span className="text-gray-900">LABELS</span>
                 </h1>
                 <p className="text-lg lg:text-xl text-gray-600 mb-8 font-inter leading-relaxed">
                   High-quality, scannable barcode labels for inventory management, shipping, asset tracking, and product identification. Supports all barcode types including QR codes, Code 128, Code 39, UPC, EAN, and more.
@@ -38,7 +38,7 @@ export default function BarcodeLabelsPage() {
                   <Link href="/contact?solution=barcode-labels" className="px-8 py-4 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-lg font-inter text-center">
                     Order Barcode Labels
                   </Link>
-                  <Link href="/products/printers" className="px-8 py-4 bg-white border-2 border-blue-600 text-blue-600 rounded-lg font-bold hover:bg-blue-50 transition-colors font-inter text-center">
+                  <Link href="/products/printers" className="px-8 py-4 bg-white border-2 border-blue-600 text-gray-900 rounded-lg font-bold hover:bg-blue-50 transition-colors font-inter text-center">
                     View Printers
                   </Link>
                 </div>
@@ -79,34 +79,34 @@ export default function BarcodeLabelsPage() {
             <h2 className="text-3xl font-bold mb-12 text-center font-open-sans">Printing Methods</h2>
             <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               <div className="bg-white rounded-xl p-8 shadow-lg">
-                <h3 className="text-2xl font-bold mb-4 text-blue-600 font-open-sans">Thermal Transfer</h3>
+                <h3 className="text-2xl font-bold mb-4 text-gray-900 font-open-sans">Thermal Transfer</h3>
                 <ul className="space-y-2 mb-6">
                   {['Long-lasting print quality', 'Resistant to smudging', 'Ideal for harsh environments', 'Works with wax, wax-resin, resin ribbons'].map((f, j) => (
                     <li key={j} className="flex items-center text-sm text-gray-700">
                       <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                       </svg>
                       {f}
                     </li>
                   ))}
                 </ul>
-                <Link href="/products/printers" className="text-blue-600 font-semibold hover:text-blue-700">
+                <Link href="/products/printers" className="text-gray-900 font-semibold hover:text-blue-700">
                   View Thermal Transfer Printers →
                 </Link>
               </div>
               <div className="bg-white rounded-xl p-8 shadow-lg">
-                <h3 className="text-2xl font-bold mb-4 text-blue-600 font-open-sans">Direct Thermal</h3>
+                <h3 className="text-2xl font-bold mb-4 text-gray-900 font-open-sans">Direct Thermal</h3>
                 <ul className="space-y-2 mb-6">
                   {['No ribbon required', 'Cost-effective solution', 'Quick and easy printing', 'Perfect for short-term use'].map((f, j) => (
                     <li key={j} className="flex items-center text-sm text-gray-700">
                       <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                       </svg>
                       {f}
                     </li>
                   ))}
                 </ul>
-                <Link href="/resources/materials/thermal-paper" className="text-blue-600 font-semibold hover:text-blue-700">
+                <Link href="/resources/materials/thermal-paper" className="text-gray-900 font-semibold hover:text-blue-700">
                   Learn About Thermal Paper →
                 </Link>
               </div>
@@ -124,18 +124,18 @@ export default function BarcodeLabelsPage() {
                 { name: 'Polypropylene Labels', features: ['Durable', 'Water resistant', 'Outdoor use'], href: '/resources/materials/polypropylene' },
               ].map((mat, i) => (
                 <div key={i} className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-6 border-2 border-blue-200">
-                  <h3 className="text-xl font-bold mb-4 text-blue-600 font-open-sans">{mat.name}</h3>
+                  <h3 className="text-xl font-bold mb-4 text-gray-900 font-open-sans">{mat.name}</h3>
                   <ul className="space-y-2 mb-6">
                     {mat.features.map((f, j) => (
                       <li key={j} className="flex items-center text-sm text-gray-700">
                         <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                         </svg>
                         {f}
                       </li>
                     ))}
                   </ul>
-                  <Link href={mat.href} className="text-blue-600 font-semibold hover:text-blue-700 text-sm">
+                  <Link href={mat.href} className="text-gray-900 font-semibold hover:text-blue-700 text-sm">
                     View Material Details →
                   </Link>
                 </div>
@@ -155,8 +155,8 @@ export default function BarcodeLabelsPage() {
                 { name: 'Shipping Labels', href: '/solutions/shipping-labels' },
               ].map((product, i) => (
                 <Link key={i} href={product.href} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow border border-gray-200 hover:border-blue-500 text-center group">
-                  <h3 className="font-bold text-lg mb-2 font-open-sans group-hover:text-blue-600">{product.name}</h3>
-                  <div className="text-blue-600 text-sm font-semibold">Learn More →</div>
+                  <h3 className="font-bold text-lg mb-2 font-open-sans group-hover:text-gray-900">{product.name}</h3>
+                  <div className="text-gray-900 text-sm font-semibold">Learn More →</div>
                 </Link>
               ))}
             </div>
@@ -168,10 +168,10 @@ export default function BarcodeLabelsPage() {
             <h2 className="text-4xl font-bold mb-6 font-open-sans">Need Custom Barcode Labels?</h2>
             <p className="text-xl text-blue-100 mb-8 font-inter">Get high-quality, scannable barcode labels for your business</p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/contact?solution=barcode-labels" className="px-8 py-4 bg-white text-blue-600 rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-lg">
+              <Link href="/contact?solution=barcode-labels" className="px-8 py-4 bg-white text-gray-900 rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-lg">
                 Request Quote
               </Link>
-              <Link href="/products/printers" className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-bold hover:bg-white hover:text-blue-600 transition-colors">
+              <Link href="/products/printers" className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-bold hover:bg-white hover:text-gray-900 transition-colors">
                 View Barcode Printers
               </Link>
             </div>

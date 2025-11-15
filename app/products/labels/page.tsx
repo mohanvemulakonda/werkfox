@@ -60,14 +60,14 @@ export default function Labels() {
         <section className="relative py-20 bg-gradient-to-br from-blue-50 to-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center">
-              <Link href="/products" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6 font-inter font-semibold">
+              <Link href="/products" className="inline-flex items-center gap-2 text-gray-900 hover:text-blue-700 mb-6 font-inter font-semibold">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                 </svg>
                 Back to Products
               </Link>
               <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6 font-open-sans">
-                INDUSTRY-SPECIFIC <span className="text-blue-600">LABELS</span>
+                INDUSTRY-SPECIFIC <span className="text-gray-900">LABELS</span>
               </h1>
               <p className="text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto font-inter leading-relaxed">
                 Custom-manufactured labels designed for your specific industry requirements
@@ -95,7 +95,7 @@ export default function Labels() {
                     />
                   </div>
                   <div className="p-6">
-                    <h2 className="text-xl font-bold mb-3 font-open-sans group-hover:text-blue-600 transition-colors">
+                    <h2 className="text-xl font-bold mb-3 font-open-sans group-hover:text-gray-900 transition-colors">
                       {industry.title}
                     </h2>
                     <p className="text-gray-600 mb-4 font-inter text-sm">
@@ -111,10 +111,10 @@ export default function Labels() {
                         </span>
                       ))}
                     </div>
-                    <div className="flex items-center gap-2 text-blue-600 font-semibold group-hover:gap-4 transition-all font-inter text-sm">
+                    <div className="flex items-center gap-2 text-gray-900 font-semibold group-hover:gap-4 transition-all font-inter text-sm">
                       LEARN MORE
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                       </svg>
                     </div>
                   </div>
@@ -137,9 +137,9 @@ export default function Labels() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-12">
               <div className="bg-white p-8 rounded-xl shadow-sm text-center">
-                <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mb-4 mx-auto">
-                  <svg className="w-7 h-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
+                <div className="w-14 h-14 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center mb-4 mx-auto">
+                  <svg className="w-7 h-7 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M7 21a4 4 0 01-4-4V5a2 2 0 012-2h4a2 2 0 012 2v12a4 4 0 01-4 4zm0 0h12a2 2 0 002-2v-4a2 2 0 00-2-2h-2.343M11 7.343l1.657-1.657a2 2 0 012.828 0l2.829 2.829a2 2 0 010 2.828l-8.486 8.485M7 17h.01" />
                   </svg>
                 </div>
                 <h3 className="font-bold text-xl mb-3 font-open-sans">CUSTOM DESIGNS</h3>
@@ -149,9 +149,9 @@ export default function Labels() {
               </div>
 
               <div className="bg-white p-8 rounded-xl shadow-sm text-center">
-                <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mb-4 mx-auto">
-                  <svg className="w-7 h-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                <div className="w-14 h-14 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center mb-4 mx-auto">
+                  <svg className="w-7 h-7 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 </div>
                 <h3 className="font-bold text-xl mb-3 font-open-sans">MATERIAL OPTIONS</h3>
@@ -161,9 +161,9 @@ export default function Labels() {
               </div>
 
               <div className="bg-white p-8 rounded-xl shadow-sm text-center">
-                <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mb-4 mx-auto">
-                  <svg className="w-7 h-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                <div className="w-14 h-14 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center mb-4 mx-auto">
+                  <svg className="w-7 h-7 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
                 <h3 className="font-bold text-xl mb-3 font-open-sans">FAST TURNAROUND</h3>
@@ -184,10 +184,10 @@ export default function Labels() {
               <p className="text-lg text-blue-100 max-w-2xl mx-auto mb-8 font-inter">
                 Contact us to discuss your specific labeling requirements
               </p>
-              <Link href="/contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-white text-blue-600 font-semibold hover:bg-gray-100 transition-colors shadow-lg font-inter">
+              <Link href="/contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-white text-gray-900 font-semibold hover:bg-gray-100 transition-colors shadow-lg font-inter">
                 CONTACT US
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
             </div>

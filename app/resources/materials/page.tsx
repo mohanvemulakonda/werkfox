@@ -42,7 +42,7 @@ export default function MaterialsLibraryPage() {
         <section className="relative py-20 bg-gradient-to-br from-blue-50 to-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8 text-center">
             <h1 className="text-5xl font-extrabold mb-6 font-open-sans">
-              LABEL MATERIALS <span className="text-blue-600">LIBRARY</span>
+              LABEL MATERIALS <span className="text-gray-900">LIBRARY</span>
             </h1>
             <p className="text-xl text-gray-600 max-w-3xl mx-auto font-inter">
               Technical datasheets and specifications for all label materials. Download PDFs and find the perfect substrate for your application.
@@ -65,13 +65,13 @@ export default function MaterialsLibraryPage() {
                   href={`/resources/materials/${mat.slug}`}
                   className="group bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-blue-500 hover:shadow-xl transition-all"
                 >
-                  <h3 className="text-lg font-bold mb-2 group-hover:text-blue-600 transition-colors">{mat.name}</h3>
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-gray-900 transition-colors">{mat.name}</h3>
                   <p className="text-sm text-gray-600 mb-4">{mat.desc}</p>
                   <div className="space-y-1 text-xs text-gray-500 mb-4">
                     <div>Temp: {mat.temp}</div>
                     <div>Lifespan: {mat.life}</div>
                   </div>
-                  <div className="flex items-center text-blue-600 font-semibold text-sm">
+                  <div className="flex items-center text-gray-900 font-semibold text-sm">
                     View Datasheet
                     <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -98,13 +98,13 @@ export default function MaterialsLibraryPage() {
                   href={`/resources/materials/${mat.slug}`}
                   className="group bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-blue-500 hover:shadow-xl transition-all"
                 >
-                  <h3 className="text-lg font-bold mb-2 group-hover:text-blue-600 transition-colors">{mat.name}</h3>
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-gray-900 transition-colors">{mat.name}</h3>
                   <p className="text-sm text-gray-600 mb-4">{mat.desc}</p>
                   <div className="space-y-1 text-xs text-gray-500 mb-4">
                     <div>Temp: {mat.temp}</div>
                     <div>Lifespan: {mat.life}</div>
                   </div>
-                  <div className="flex items-center text-blue-600 font-semibold text-sm">
+                  <div className="flex items-center text-gray-900 font-semibold text-sm">
                     View Datasheet
                     <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -131,13 +131,13 @@ export default function MaterialsLibraryPage() {
                   href={`/resources/materials/${mat.slug}`}
                   className="group bg-white border-2 border-gray-200 rounded-xl p-6 hover:border-blue-500 hover:shadow-xl transition-all"
                 >
-                  <h3 className="text-lg font-bold mb-2 group-hover:text-blue-600 transition-colors">{mat.name}</h3>
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-gray-900 transition-colors">{mat.name}</h3>
                   <p className="text-sm text-gray-600 mb-4">{mat.desc}</p>
                   <div className="space-y-1 text-xs text-gray-500 mb-4">
                     <div>Temp: {mat.temp}</div>
                     <div>Lifespan: {mat.life}</div>
                   </div>
-                  <div className="flex items-center text-blue-600 font-semibold text-sm">
+                  <div className="flex items-center text-gray-900 font-semibold text-sm">
                     View Datasheet
                     <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -157,10 +157,10 @@ export default function MaterialsLibraryPage() {
               Use our Label Finder to get material recommendations based on your application
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/#label-finder" className="px-8 py-4 bg-white text-blue-600 rounded-lg font-bold hover:bg-gray-100">
+              <Link href="/#label-finder" className="px-8 py-4 bg-white text-gray-900 rounded-lg font-bold hover:bg-gray-100">
                 Use Label Finder
               </Link>
-              <Link href="/contact" className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-bold hover:bg-white hover:text-blue-600">
+              <Link href="/contact" className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-bold hover:bg-white hover:text-gray-900">
                 Contact Expert
               </Link>
             </div>

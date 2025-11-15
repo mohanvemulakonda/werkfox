@@ -29,6 +29,7 @@ body {
   background: var(--background);
   font-family: Arial, Helvetica, sans-serif;
   font-size: 15px; /* Slightly smaller base font size */
+  font-weight: 300; /* Light weight as default for refined design */
 }
 
 @layer base {
@@ -80,10 +81,12 @@ body {
   }
 
   .nav-link {
-    font-size: 0.875rem;
+    font-size: 0.75rem;
     font-weight: 500;
     color: var(--foreground);
     transition: color 0.2s ease;
+    letter-spacing: 0.05em;
+    white-space: nowrap;
   }
 
   .nav-link:hover {
@@ -112,6 +115,70 @@ body {
     font-size: 0.875rem;
     letter-spacing: 0.05em;
     text-transform: uppercase;
+  }
+
+  /* Refined Typography System */
+  .section-label {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    letter-spacing: 0.3em;
+    color: #6B7280;
+    font-weight: 500;
+  }
+
+  .section-heading {
+    font-size: 2.25rem;
+    font-weight: 300;
+    line-height: 1.1;
+    color: #111827;
+  }
+
+  @media (min-width: 1024px) {
+    .section-heading {
+      font-size: 3rem;
+    }
+  }
+
+  .section-heading-emphasis {
+    font-weight: 600;
+  }
+
+  .body-text-light {
+    font-weight: 300;
+    line-height: 1.75;
+  }
+
+  /* Refined CTA Button */
+  .cta-button {
+    position: relative;
+    display: inline-flex;
+    padding: 1rem 2rem;
+    background: #111827;
+    color: #ffffff;
+    overflow: hidden;
+    transition: all 0.3s ease;
+  }
+
+  .cta-button-text {
+    position: relative;
+    z-index: 10;
+    font-size: 0.875rem;
+    letter-spacing: 0.05em;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .cta-button-bg {
+    position: absolute;
+    inset: 0;
+    background: #2563EB;
+    transform: translateY(100%);
+    transition: transform 0.3s ease;
+  }
+
+  .cta-button:hover .cta-button-bg {
+    transform: translateY(0);
   }
 }
 

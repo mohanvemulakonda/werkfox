@@ -15,8 +15,8 @@ export default function LabelConfigurator() {
       id: 'pharmaceutical',
       name: 'Pharmaceutical',
       icon: (
-        <svg className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+        <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
         </svg>
       )
     },
@@ -24,8 +24,11 @@ export default function LabelConfigurator() {
       id: 'automotive',
       name: 'Automotive',
       icon: (
-        <svg className="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M18.92 6.01C18.72 5.42 18.16 5 17.5 5h-11c-.66 0-1.21.42-1.42 1.01L3 12v8c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-1h12v1c0 .55.45 1 1 1h1c.55 0 1-.45 1-1v-8l-2.08-5.99zM6.5 16c-.83 0-1.5-.67-1.5-1.5S5.67 13 6.5 13s1.5.67 1.5 1.5S7.33 16 6.5 16zm11 0c-.83 0-1.5-.67-1.5-1.5s.67-1.5 1.5-1.5 1.5.67 1.5 1.5-.67 1.5-1.5 1.5zM5 11l1.5-4.5h11L19 11H5z"/>
+        <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M5 12h14M5 12a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v4a2 2 0 01-2 2M5 12v7h14v-7"/>
+          <circle cx="8.5" cy="16" r="1.5" strokeWidth={1}/>
+          <circle cx="15.5" cy="16" r="1.5" strokeWidth={1}/>
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M7 8h10"/>
         </svg>
       )
     },
@@ -33,17 +36,17 @@ export default function LabelConfigurator() {
       id: 'food-beverage',
       name: 'Food & Beverage',
       icon: (
-        <svg className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+        <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 3h6M10 3v1a1 1 0 001 1h2a1 1 0 001-1V3m-5 18h4m-6-3h8l1-11H8l1 11z"/>
         </svg>
       )
     },
     {
       id: 'logistics',
-      name: 'Logistics & Shipping',
+      name: 'Logistics',
       icon: (
-        <svg className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
+        <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
         </svg>
       )
     },
@@ -51,8 +54,8 @@ export default function LabelConfigurator() {
       id: 'retail',
       name: 'Retail',
       icon: (
-        <svg className="w-16 h-16" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
+        <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
       )
     },
@@ -60,11 +63,35 @@ export default function LabelConfigurator() {
       id: 'industrial',
       name: 'Industrial',
       icon: (
-        <svg className="w-16 h-16" viewBox="0 0 24 24" fill="currentColor">
-          <path d="M22 21V10l-6 4.5V7l-6 4.5V3H2v18h20zM4 5h4v14H4V5zm6 2.5l4-3v12l4-3v8H10v-14z"/>
-          <rect x="5" y="7" width="2" height="2"/>
-          <rect x="5" y="10" width="2" height="2"/>
-          <rect x="5" y="13" width="2" height="2"/>
+        <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19 21V10l-6 4.5V7L7 11.5V3H3v18h16zM7 9h2M7 13h2M7 17h2"/>
+        </svg>
+      )
+    },
+    {
+      id: 'electronics',
+      name: 'Electronics',
+      icon: (
+        <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M9 3v2m6-2v2M9 19v2m6-2v2M5 9H3m2 6H3m18-6h-2m2 6h-2M7 19h10a2 2 0 002-2V7a2 2 0 00-2-2H7a2 2 0 00-2 2v10a2 2 0 002 2zM9 9h6v6H9V9z" />
+        </svg>
+      )
+    },
+    {
+      id: 'healthcare',
+      name: 'Healthcare',
+      icon: (
+        <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z" />
+        </svg>
+      )
+    },
+    {
+      id: 'chemical',
+      name: 'Chemical',
+      icon: (
+        <svg className="w-7 h-7" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1} d="M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z" />
         </svg>
       )
     }
@@ -317,6 +344,129 @@ export default function LabelConfigurator() {
         printerSuggestion: 'Desktop or Industrial Printer',
         ribbonDetails: 'Wax-Resin for traceability and scanning'
       }
+    ],
+    electronics: [
+      {
+        id: 'pcb-labels',
+        name: 'PCB & Circuit Board Labels',
+        material: 'Polyester / Polyimide',
+        ribbon: 'Premium Resin',
+        hasBarcode: true,
+        barcodeType: '1D/2D Barcodes, QR Codes',
+        printerSuggestion: 'Industrial High-Resolution Printer',
+        ribbonDetails: 'Premium Resin for heat resistance during soldering'
+      },
+      {
+        id: 'component-labels',
+        name: 'Component Identification',
+        material: 'Polyester',
+        ribbon: 'Resin',
+        hasBarcode: true,
+        barcodeType: '2D Barcodes, Serial Numbers',
+        printerSuggestion: 'Industrial Printer',
+        ribbonDetails: 'Resin for small format, high-resolution printing'
+      },
+      {
+        id: 'warranty-seal',
+        name: 'Warranty & Tamper-Proof Seals',
+        material: 'Destructible Vinyl',
+        ribbon: 'Resin',
+        hasBarcode: true,
+        barcodeType: '1D/2D Barcodes',
+        printerSuggestion: 'Desktop Printer',
+        ribbonDetails: 'Resin for permanent adhesion and tamper evidence'
+      },
+      {
+        id: 'cable-labels',
+        name: 'Cable & Wire Labels',
+        material: 'Polyester / Vinyl',
+        ribbon: 'Resin',
+        hasBarcode: false,
+        printerSuggestion: 'Industrial Printer',
+        ribbonDetails: 'Resin for flexibility and durability'
+      }
+    ],
+    healthcare: [
+      {
+        id: 'patient-wristbands',
+        name: 'Patient Wristbands',
+        material: 'Synthetic (Polypropylene)',
+        ribbon: 'Wax-Resin',
+        hasBarcode: true,
+        barcodeType: '1D/2D Barcodes',
+        printerSuggestion: 'Desktop Wristband Printer',
+        ribbonDetails: 'Wax-Resin for water resistance and comfort'
+      },
+      {
+        id: 'specimen-labels',
+        name: 'Specimen & Lab Labels',
+        material: 'Coated Paper / Polyester',
+        ribbon: 'Wax-Resin',
+        hasBarcode: true,
+        barcodeType: '1D/2D Barcodes',
+        printerSuggestion: 'Desktop Printer',
+        ribbonDetails: 'Wax-Resin for chemical and moisture resistance'
+      },
+      {
+        id: 'blood-bag',
+        name: 'Blood Bag Labels',
+        material: 'Synthetic (Polyester)',
+        ribbon: 'Premium Resin',
+        hasBarcode: true,
+        barcodeType: '1D/2D Barcodes',
+        printerSuggestion: 'Industrial Printer',
+        ribbonDetails: 'Premium Resin for cold storage and regulatory compliance'
+      },
+      {
+        id: 'asset-tracking',
+        name: 'Medical Asset Tracking',
+        material: 'Polyester',
+        ribbon: 'Resin',
+        hasBarcode: true,
+        barcodeType: '1D/2D Barcodes, RFID',
+        printerSuggestion: 'Industrial Printer with RFID',
+        ribbonDetails: 'Resin for sterilization and long-term durability'
+      }
+    ],
+    chemical: [
+      {
+        id: 'ghs-labels',
+        name: 'GHS Chemical Labels',
+        material: 'Polyester / Vinyl',
+        ribbon: 'Premium Resin',
+        hasBarcode: false,
+        printerSuggestion: 'Industrial Printer',
+        ribbonDetails: 'Premium Resin for chemical and solvent resistance'
+      },
+      {
+        id: 'drum-labels',
+        name: 'Drum & Container Labels',
+        material: 'Polyester',
+        ribbon: 'Resin',
+        hasBarcode: true,
+        barcodeType: '1D/2D Barcodes',
+        printerSuggestion: 'Industrial Wide Format Printer',
+        ribbonDetails: 'Resin for outdoor durability and chemical exposure'
+      },
+      {
+        id: 'hazmat',
+        name: 'Hazmat Warning Labels',
+        material: 'Polyester / Vinyl',
+        ribbon: 'Premium Resin',
+        hasBarcode: false,
+        printerSuggestion: 'Industrial Printer',
+        ribbonDetails: 'Premium Resin for extreme conditions and compliance'
+      },
+      {
+        id: 'batch-tracking',
+        name: 'Batch & Lot Tracking',
+        material: 'Paper / Polyester',
+        ribbon: 'Wax-Resin',
+        hasBarcode: true,
+        barcodeType: '1D/2D Barcodes',
+        printerSuggestion: 'Desktop or Industrial Printer',
+        ribbonDetails: 'Wax-Resin for traceability and chemical resistance'
+      }
     ]
   };
 
@@ -345,7 +495,6 @@ export default function LabelConfigurator() {
   };
 
   const handleRequestQuote = () => {
-    // Store the recommendation in localStorage so contact form can pre-fill
     const quoteData = {
       industry: industries.find(ind => ind.id === selectedIndustry)?.name,
       application: recommendation.name,
@@ -364,86 +513,61 @@ export default function LabelConfigurator() {
   };
 
   return (
-    <div className="bg-white rounded-2xl shadow-2xl p-6 lg:p-8 border-t-4 border-blue-600">
-      <div className="text-center mb-6">
-        <div className="inline-flex items-center gap-2 mb-3">
-          <div className="w-10 h-10 rounded-full bg-gradient-to-br from-blue-600 to-blue-700 flex items-center justify-center shadow-lg">
-            <svg className="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-6 9l2 2 4-4" />
-            </svg>
-          </div>
-          <div className="text-left">
-            <h2 className="text-2xl lg:text-3xl font-extrabold font-open-sans bg-gradient-to-r from-blue-600 to-blue-800 bg-clip-text text-transparent">
-              Label Finder
-            </h2>
-            <p className="text-xs text-gray-500 font-inter font-semibold">Powered by LIVATO Solutions</p>
-          </div>
+    <div className="bg-white">
+      {/* Header */}
+      <div className="text-center mb-16">
+        <div className="inline-flex items-center gap-2 mb-6">
+          <div className="w-1 h-10 bg-[#2563EB]"></div>
+          <div className="text-xs uppercase tracking-[0.3em] text-gray-600 font-medium">Label Finder</div>
         </div>
-        <p className="text-gray-600 font-inter text-sm max-w-2xl mx-auto">
-          Get instant expert recommendations for labels, materials, ribbons, and printers tailored to your industry
+        <h2 className="text-4xl lg:text-5xl font-light mb-6 font-open-sans text-gray-900">
+          Find Your Perfect <span className="font-semibold">Label Solution</span>
+        </h2>
+        <p className="text-lg text-gray-600 max-w-2xl mx-auto font-light">
+          Expert recommendations for labels, materials, ribbons, and printers tailored to your industry
         </p>
       </div>
 
-      {/* Progress Steps */}
-      <div className="flex items-center justify-center mb-6">
-        <div className="flex items-center gap-2">
-          <div className={`flex items-center gap-1.5 transition-all ${step >= 1 ? 'text-blue-600' : 'text-gray-400'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all shadow-sm ${step >= 1 ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white' : 'bg-gray-200'}`}>
-              {step > 1 ? (
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
-              ) : '1'}
+      {/* Progress Steps - Minimal */}
+      <div className="flex items-center justify-center mb-16">
+        <div className="flex items-center gap-3">
+          {[1, 2, 3].map((num) => (
+            <div key={num} className="flex items-center gap-3">
+              <div className={`flex flex-col items-center gap-2 transition-all ${step >= num ? 'opacity-100' : 'opacity-30'}`}>
+                <div className={`w-10 h-10 rounded-full flex items-center justify-center font-medium text-sm transition-all ${step >= num ? 'bg-[#2563EB] text-white' : 'bg-gray-200 text-gray-500'}`}>
+                  {step > num ? (
+                    <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M5 13l4 4L19 7" />
+                    </svg>
+                  ) : num}
+                </div>
+                <span className="text-xs font-medium text-gray-600">{['Industry', 'Application', 'Results'][num - 1]}</span>
+              </div>
+              {num < 3 && <div className={`w-16 h-[2px] transition-all ${step > num ? 'bg-[#2563EB]' : 'bg-gray-200'}`}></div>}
             </div>
-            <span className="font-semibold text-xs font-inter hidden sm:inline">Industry</span>
-          </div>
-          <div className={`w-12 h-0.5 rounded-full transition-all ${step >= 2 ? 'bg-gradient-to-r from-blue-600 to-blue-700' : 'bg-gray-300'}`}></div>
-          <div className={`flex items-center gap-1.5 transition-all ${step >= 2 ? 'text-blue-600' : 'text-gray-400'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all shadow-sm ${step >= 2 ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white' : 'bg-gray-200'}`}>
-              {step > 2 ? (
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
-              ) : '2'}
-            </div>
-            <span className="font-semibold text-xs font-inter hidden sm:inline">Application</span>
-          </div>
-          <div className={`w-12 h-0.5 rounded-full transition-all ${step >= 3 ? 'bg-gradient-to-r from-blue-600 to-blue-700' : 'bg-gray-300'}`}></div>
-          <div className={`flex items-center gap-1.5 transition-all ${step >= 3 ? 'text-blue-600' : 'text-gray-400'}`}>
-            <div className={`w-8 h-8 rounded-full flex items-center justify-center font-bold text-xs transition-all shadow-sm ${step >= 3 ? 'bg-gradient-to-br from-blue-600 to-blue-700 text-white' : 'bg-gray-200'}`}>
-              {step > 3 ? (
-                <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                </svg>
-              ) : '3'}
-            </div>
-            <span className="font-semibold text-xs font-inter hidden sm:inline">Results</span>
-          </div>
+          ))}
         </div>
       </div>
 
       {/* Step 1: Select Industry */}
       {step === 1 && (
         <div className="animate-fade-in">
-          <div className="text-center mb-8">
-            <h3 className="text-2xl font-bold mb-2 font-open-sans text-gray-800">Step 1: Select Your Industry</h3>
-            <p className="text-gray-500 font-inter text-sm">Choose the industry that best matches your needs</p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-5">
+          <div className="grid grid-cols-3 gap-3 max-w-4xl mx-auto">
             {industries.map((industry) => (
               <button
                 key={industry.id}
                 onClick={() => handleIndustrySelect(industry.id)}
-                className="p-6 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:shadow-xl bg-white transition-all text-center group relative overflow-hidden"
+                className="group p-6 border border-gray-200 hover:border-[#2563EB] bg-white hover:bg-gray-50 transition-all"
               >
-                <div className="absolute inset-0 bg-gradient-to-br from-blue-50 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
-                <div className="relative">
-                  <div className="h-24 mb-4 flex items-center justify-center text-blue-600 group-hover:text-blue-700 transition-colors group-hover:scale-110 transition-transform duration-300">
-                    {industry.icon}
+                <div className="flex flex-col items-center gap-3">
+                  <div className="w-14 h-14 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center group-hover:border-[#2563EB] transition-all">
+                    <div className="text-gray-900 group-hover:text-[#2563EB] transition-colors">
+                      {industry.icon}
+                    </div>
                   </div>
-                  <div className="font-bold text-gray-800 group-hover:text-blue-600 font-inter text-sm transition-colors">
+                  <h3 className="font-medium text-xs text-gray-900 group-hover:text-[#2563EB] transition-colors text-center">
                     {industry.name}
-                  </div>
+                  </h3>
                 </div>
               </button>
             ))}
@@ -453,30 +577,27 @@ export default function LabelConfigurator() {
 
       {/* Step 2: Select Application */}
       {step === 2 && selectedIndustry && (
-        <div className="animate-fade-in">
+        <div className="animate-fade-in max-w-4xl mx-auto">
           <button
             onClick={() => setStep(1)}
-            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6 font-inter font-semibold"
+            className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#2563EB] mb-8 font-light transition-colors"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
             </svg>
-            Back
+            Back to Industries
           </button>
-          <h3 className="text-xl font-bold mb-6 text-center font-open-sans">Select Your Application</h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             {applicationsByIndustry[selectedIndustry]?.map((app: any) => (
               <button
                 key={app.id}
                 onClick={() => handleApplicationSelect(app)}
-                className="p-6 rounded-xl border-2 border-gray-200 hover:border-blue-500 hover:bg-blue-50 transition-all text-left group"
+                className="group p-6 border border-gray-200 hover:border-[#2563EB] bg-white hover:bg-gray-50 transition-all text-left"
               >
-                <div className="font-semibold text-gray-800 group-hover:text-blue-600 font-inter mb-2">
+                <h3 className="font-medium text-gray-900 group-hover:text-[#2563EB] transition-colors mb-1">
                   {app.name}
-                </div>
-                <div className="text-xs text-gray-500 font-inter">
-                  Click to see recommendation
-                </div>
+                </h3>
+                <p className="text-xs text-gray-500 font-light">Click to see recommendation</p>
               </button>
             ))}
           </div>
@@ -485,135 +606,95 @@ export default function LabelConfigurator() {
 
       {/* Step 3: Recommendation */}
       {step === 3 && recommendation && (
-        <div className="animate-fade-in">
+        <div className="animate-fade-in max-w-4xl mx-auto">
           <button
             onClick={() => setStep(2)}
-            className="flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6 font-inter font-semibold"
+            className="flex items-center gap-2 text-sm text-gray-600 hover:text-[#2563EB] mb-8 font-light transition-colors"
           >
-            <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+            <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
             </svg>
-            Back
+            Back to Applications
           </button>
 
-          <div className="bg-gradient-to-br from-blue-50 to-green-50 rounded-xl p-8 mb-6">
-            <div className="flex items-center gap-3 mb-6">
-              <div className="w-12 h-12 rounded-full bg-green-500 flex items-center justify-center">
+          <div className="bg-gray-50 p-8 mb-8">
+            <div className="flex items-start gap-4 mb-8">
+              <div className="w-12 h-12 rounded-full bg-[#2563EB] flex items-center justify-center flex-shrink-0">
                 <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                 </svg>
               </div>
               <div>
-                <h3 className="text-2xl font-bold text-gray-800 font-open-sans">Perfect Match Found!</h3>
-                <p className="text-gray-600 font-inter text-sm">Here's our expert recommendation</p>
+                <h3 className="text-2xl font-light text-gray-900 mb-2">
+                  <span className="font-semibold">{recommendation.name}</span>
+                </h3>
+                <p className="text-sm text-gray-600 font-light">Expert recommendation for your industry</p>
               </div>
             </div>
 
-            <div className="bg-white rounded-lg p-6 mb-4">
-              <h4 className="font-bold text-lg mb-2 font-open-sans">Application:</h4>
-              <p className="text-gray-800 font-inter mb-6">{recommendation.name}</p>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+              <div className="bg-white p-6 border border-gray-200">
+                <div className="text-xs uppercase tracking-wider text-gray-500 mb-3 font-medium">Material</div>
+                <p className="text-gray-900 font-medium">{recommendation.material}</p>
+              </div>
+              <div className="bg-white p-6 border border-gray-200">
+                <div className="text-xs uppercase tracking-wider text-gray-500 mb-3 font-medium">Ribbon</div>
+                <p className="text-gray-900 font-medium">{recommendation.ribbon}</p>
+              </div>
+            </div>
 
+            {recommendation.ribbonDetails && (
+              <div className="bg-white p-6 border-l-2 border-[#2563EB] mb-6">
+                <div className="text-xs uppercase tracking-wider text-gray-500 mb-2 font-medium">Why This Ribbon?</div>
+                <p className="text-gray-700 font-light text-sm">{recommendation.ribbonDetails}</p>
+              </div>
+            )}
+
+            {recommendation.hasBarcode && (
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
-                <div>
-                  <h4 className="font-bold text-sm mb-2 font-open-sans text-blue-600">RECOMMENDED MATERIAL:</h4>
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <p className="font-semibold text-gray-800 font-inter">{recommendation.material}</p>
-                  </div>
+                <div className="bg-white p-6 border border-gray-200">
+                  <div className="text-xs uppercase tracking-wider text-gray-500 mb-3 font-medium">Barcode Type</div>
+                  <p className="text-gray-900 font-medium text-sm">{recommendation.barcodeType}</p>
                 </div>
-
-                <div>
-                  <h4 className="font-bold text-sm mb-2 font-open-sans text-blue-600">RECOMMENDED RIBBON:</h4>
-                  <div className="bg-blue-50 rounded-lg p-4">
-                    <p className="font-semibold text-gray-800 font-inter">{recommendation.ribbon}</p>
-                  </div>
+                <div className="bg-white p-6 border border-gray-200">
+                  <div className="text-xs uppercase tracking-wider text-gray-500 mb-3 font-medium">Printer</div>
+                  <p className="text-gray-900 font-medium text-sm">{recommendation.printerSuggestion}</p>
                 </div>
               </div>
+            )}
 
-              {/* Ribbon Details */}
-              {recommendation.ribbonDetails && (
-                <div className="mb-6">
-                  <h4 className="font-bold text-sm mb-2 font-open-sans text-gray-700">WHY THIS RIBBON?</h4>
-                  <div className="bg-gray-50 rounded-lg p-4 border-l-4 border-blue-600">
-                    <p className="text-gray-700 font-inter text-sm">{recommendation.ribbonDetails}</p>
-                  </div>
-                </div>
-              )}
+            {!recommendation.hasBarcode && recommendation.printerSuggestion && (
+              <div className="bg-white p-6 border border-gray-200 mb-6">
+                <div className="text-xs uppercase tracking-wider text-gray-500 mb-3 font-medium">Recommended Printer</div>
+                <p className="text-gray-900 font-medium">{recommendation.printerSuggestion}</p>
+              </div>
+            )}
 
-              {/* Barcode Information */}
-              {recommendation.hasBarcode && (
-                <div className="mb-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <svg className="w-5 h-5 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 4v1m6 11h2m-6 0h-2v4m0-11v3m0 0h.01M12 12h4.01M16 20h4M4 12h4m12 0h.01M5 8h2a1 1 0 001-1V5a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1zm12 0h2a1 1 0 001-1V5a1 1 0 00-1-1h-2a1 1 0 00-1 1v2a1 1 0 001 1zM5 20h2a1 1 0 001-1v-2a1 1 0 00-1-1H5a1 1 0 00-1 1v2a1 1 0 001 1z" />
-                    </svg>
-                    <h4 className="font-bold text-sm font-open-sans text-gray-700">BARCODE PRINTING REQUIRED</h4>
-                  </div>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-4">
-                      <p className="text-xs text-gray-600 font-inter mb-1">Barcode Type:</p>
-                      <p className="font-semibold text-gray-800 font-inter text-sm">{recommendation.barcodeType}</p>
-                    </div>
-                    <div className="bg-gradient-to-br from-purple-50 to-blue-50 rounded-lg p-4">
-                      <p className="text-xs text-gray-600 font-inter mb-1">Recommended Equipment:</p>
-                      <p className="font-semibold text-gray-800 font-inter text-sm">
-                        {recommendation.printerSuggestion}
-                        {recommendation.printerSuggestion.includes('2D') && ' + 2D Scanner'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              )}
-
-              {/* Printer Suggestion */}
-              {!recommendation.hasBarcode && recommendation.printerSuggestion && (
-                <div className="mb-6">
-                  <h4 className="font-bold text-sm mb-2 font-open-sans text-gray-700">RECOMMENDED PRINTER:</h4>
-                  <div className="bg-gray-50 rounded-lg p-4">
-                    <p className="font-semibold text-gray-800 font-inter">{recommendation.printerSuggestion}</p>
-                  </div>
-                </div>
-              )}
-            </div>
-
-            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
-              <div className="flex gap-2">
-                <svg className="w-5 h-5 text-yellow-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+            <div className="bg-white p-4 border border-yellow-200">
+              <div className="flex gap-3">
+                <svg className="w-5 h-5 text-yellow-600 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-                <p className="text-sm text-gray-700 font-inter">
+                <p className="text-sm text-gray-700 font-light">
                   This recommendation is based on industry best practices. Contact us for customized solutions.
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+          <div className="flex flex-col sm:flex-row gap-4">
             <button
               onClick={handleRequestQuote}
-              className="md:col-span-2 px-6 py-4 rounded-lg bg-gradient-to-r from-green-600 to-green-700 text-white font-bold hover:from-green-700 hover:to-green-800 transition-all shadow-lg hover:shadow-xl font-inter flex items-center justify-center gap-2"
+              className="group relative flex-1 inline-flex px-8 py-4 bg-gray-900 text-white overflow-hidden justify-center"
             >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-              </svg>
-              REQUEST QUOTE WITH THESE SPECS
+              <span className="relative z-10 text-sm tracking-wide">Request Quote</span>
+              <div className="absolute inset-0 bg-[#2563EB] transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             </button>
             <button
               onClick={handleReset}
-              className="px-6 py-4 rounded-lg border-2 border-gray-300 font-semibold hover:border-blue-500 hover:text-blue-600 hover:bg-blue-50 transition-all font-inter"
+              className="px-8 py-4 border border-gray-300 text-gray-900 hover:border-[#2563EB] hover:text-[#2563EB] transition-all text-sm tracking-wide"
             >
-              START OVER
-            </button>
-          </div>
-
-          <div className="mt-4">
-            <button
-              onClick={handleViewDetails}
-              className="w-full px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors shadow-md font-inter flex items-center justify-center gap-2"
-            >
-              <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-              </svg>
-              LEARN MORE ABOUT {industries.find(ind => ind.id === selectedIndustry)?.name.toUpperCase()} LABELS
+              Start Over
             </button>
           </div>
         </div>

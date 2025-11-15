@@ -22,7 +22,7 @@ export default function BlogPost() {
         {/* Hero Section */}
         <section className="relative py-16 bg-gradient-to-br from-blue-50 to-white">
           <div className="mx-auto max-w-4xl px-6 lg:px-8">
-            <Link href="/blog" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6 font-inter font-semibold">
+            <Link href="/blog" className="inline-flex items-center gap-2 text-gray-900 hover:text-blue-700 mb-6 font-inter font-semibold">
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
               </svg>
@@ -129,13 +129,13 @@ export default function BlogPost() {
                   Use our Label Finder tool or contact our experts for personalized recommendations
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                  <Link href="/#label-finder" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-white text-blue-600 font-semibold hover:bg-gray-100 transition-colors font-inter">
+                  <Link href="/#label-finder" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-white text-gray-900 font-semibold hover:bg-gray-100 transition-colors font-inter">
                     TRY LABEL FINDER
                     <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
                     </svg>
                   </Link>
-                  <Link href="/contact" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-transparent border-2 border-white text-white font-semibold hover:bg-white hover:text-blue-600 transition-colors font-inter">
+                  <Link href="/contact" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-transparent border-2 border-white text-white font-semibold hover:bg-white hover:text-gray-900 transition-colors font-inter">
                     CONTACT US
                   </Link>
                 </div>
@@ -173,10 +173,10 @@ export default function BlogPost() {
                   href={`/blog/${relatedPost.slug}`}
                   className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 hover:shadow-lg transition-shadow"
                 >
-                  <span className="px-3 py-1 rounded-full bg-blue-100 text-blue-600 text-xs font-bold font-inter">
+                  <span className="px-3 py-1 rounded-lg bg-gray-50 border border-gray-200 text-gray-900 text-xs font-bold font-inter">
                     {relatedPost.category}
                   </span>
-                  <h3 className="text-lg font-bold mt-4 font-open-sans text-gray-800 hover:text-blue-600 transition-colors">
+                  <h3 className="text-lg font-bold mt-4 font-open-sans text-gray-800 hover:text-gray-900 transition-colors">
                     {relatedPost.title}
                   </h3>
                 </Link>

@@ -58,17 +58,17 @@ export default function AutomotiveLabelsPage() {
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <Link href="/products/labels" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 font-inter font-semibold">
+                <Link href="/products/labels" className="inline-flex items-center gap-2 text-gray-900 hover:text-blue-700 mb-4 font-inter font-semibold">
                   <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                   </svg>
                   Back to Labels
                 </Link>
-                <div className="inline-block px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold mb-4">
+                <div className="inline-block px-4 py-2 bg-blue-100 text-gray-900 rounded-full text-sm font-semibold mb-4">
                   Automotive Industry
                 </div>
                 <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6 font-open-sans">
-                  AUTOMOTIVE <span className="text-blue-600">LABELS</span>
+                  AUTOMOTIVE <span className="text-gray-900">LABELS</span>
                 </h1>
                 <p className="text-lg lg:text-xl text-gray-600 mb-8 font-inter leading-relaxed">
                   Durable, heat-resistant labels for tires, parts tracking, VIN identification, and automotive components. Designed to withstand harsh automotive environments.
@@ -82,7 +82,7 @@ export default function AutomotiveLabelsPage() {
                   </Link>
                   <Link
                     href="/#label-finder"
-                    className="px-8 py-4 bg-white border-2 border-blue-600 text-blue-600 rounded-lg font-bold hover:bg-blue-50 transition-colors font-inter text-center"
+                    className="px-8 py-4 bg-white border-2 border-blue-600 text-gray-900 rounded-lg font-bold hover:bg-blue-50 transition-colors font-inter text-center"
                   >
                     Use Label Finder
                   </Link>
@@ -132,9 +132,9 @@ export default function AutomotiveLabelsPage() {
                 { title: 'DOT Compliant', desc: 'Meets automotive industry standards' },
               ].map((item, i) => (
                 <div key={i} className="bg-white rounded-xl p-6 shadow-lg text-center">
-                  <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <svg className="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                  <div className="w-14 h-14 bg-gray-50 border border-gray-200 rounded-lg flex items-center justify-center mx-auto mb-4">
+                    <svg className="w-8 h-8 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                     </svg>
                   </div>
                   <h3 className="text-lg font-bold mb-2 font-open-sans">{item.title}</h3>
@@ -152,21 +152,21 @@ export default function AutomotiveLabelsPage() {
             <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
               {materials.map((mat, i) => (
                 <div key={i} className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-8 border-2 border-blue-200">
-                  <h3 className="text-2xl font-bold mb-4 text-blue-600 font-open-sans">{mat.name}</h3>
+                  <h3 className="text-2xl font-bold mb-4 text-gray-900 font-open-sans">{mat.name}</h3>
                   <ul className="space-y-2 mb-6">
                     {mat.features.map((f, j) => (
                       <li key={j} className="flex items-center text-sm text-gray-700">
                         <svg className="w-5 h-5 text-green-500 mr-2 flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                         </svg>
                         {f}
                       </li>
                     ))}
                   </ul>
-                  <Link href={mat.link} className="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700">
+                  <Link href={mat.link} className="inline-flex items-center text-gray-900 font-semibold hover:text-blue-700">
                     View Material Details
                     <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                     </svg>
                   </Link>
                 </div>
@@ -186,13 +186,13 @@ export default function AutomotiveLabelsPage() {
                   href={product.href}
                   className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow border border-gray-200 hover:border-blue-500 text-center group"
                 >
-                  <h3 className="font-bold text-lg mb-2 font-open-sans group-hover:text-blue-600 transition-colors">
+                  <h3 className="font-bold text-lg mb-2 font-open-sans group-hover:text-gray-900 transition-colors">
                     {product.name}
                   </h3>
-                  <div className="flex items-center justify-center gap-2 text-blue-600 font-semibold text-sm">
+                  <div className="flex items-center justify-center gap-2 text-gray-900 font-semibold text-sm">
                     Learn More
                     <svg className="w-4 h-4 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                     </svg>
                   </div>
                 </Link>
@@ -209,10 +209,10 @@ export default function AutomotiveLabelsPage() {
               Get expert consultation and high-performance labeling solutions for your automotive applications
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/contact?solution=automotive-labels" className="px-8 py-4 bg-white text-blue-600 rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-lg">
+              <Link href="/contact?solution=automotive-labels" className="px-8 py-4 bg-white text-gray-900 rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-lg">
                 Request Consultation
               </Link>
-              <Link href="/products/labels" className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-bold hover:bg-white hover:text-blue-600 transition-colors">
+              <Link href="/products/labels" className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-bold hover:bg-white hover:text-gray-900 transition-colors">
                 Browse All Labels
               </Link>
             </div>

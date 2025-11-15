@@ -3,6 +3,7 @@
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Link from 'next/link';
+import Image from 'next/image';
 
 export default function Services() {
   const services = [
@@ -135,14 +136,26 @@ export default function Services() {
         <div className="cmyk-wave cmyk-wave-cyan animate-float" style={{ width: '400px', height: '400px', top: '5%', right: '0%', animationDelay: '0s' }}></div>
         <div className="cmyk-wave cmyk-wave-magenta animate-float" style={{ width: '350px', height: '350px', top: '50%', left: '0%', animationDelay: '3s' }}></div>
 
+        {/* Logo Watermarks */}
+        <div className="absolute top-[15%] right-[10%] w-64 h-64 opacity-[0.05] pointer-events-none animate-float" style={{ animationDelay: '2s' }}>
+          <Image src="/Livato Logo.png" alt="" width={256} height={256} className="w-full h-full object-contain" />
+        </div>
+        <div className="absolute top-[60%] left-[5%] w-56 h-56 opacity-[0.05] pointer-events-none animate-float" style={{ animationDelay: '4s' }}>
+          <Image src="/Livato Logo.png" alt="" width={224} height={224} className="w-full h-full object-contain" />
+        </div>
+
         {/* Hero Section */}
         <section className="relative py-20 bg-gradient-to-br from-blue-50 to-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center">
-              <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6 font-open-sans">
-                OUR <span className="text-blue-600">SERVICES</span>
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="w-1 h-10 bg-[#2563EB]"></div>
+                <span className="text-xs uppercase tracking-[0.3em] text-gray-600 font-medium">Services</span>
+              </div>
+              <h1 className="text-4xl lg:text-5xl font-light tracking-tight mb-6">
+                Our <span className="font-semibold">Services</span>
               </h1>
-              <p className="text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto font-inter leading-relaxed">
+              <p className="text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto font-light leading-relaxed">
                 Comprehensive labeling solutions and support services designed to optimize your operations and ensure compliance
               </p>
             </div>
@@ -153,10 +166,14 @@ export default function Services() {
         <section className="relative py-24 bg-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4 font-open-sans">
-                COMPLETE SERVICE PORTFOLIO
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="w-1 h-10 bg-[#2563EB]"></div>
+                <span className="text-xs uppercase tracking-[0.3em] text-gray-600 font-medium">Our Offerings</span>
+              </div>
+              <h2 className="text-4xl lg:text-5xl font-light mb-4">
+                Complete Service <span className="font-semibold">Portfolio</span>
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto font-inter">
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto font-light">
                 From design and implementation to ongoing support and compliance
               </p>
             </div>
@@ -167,24 +184,24 @@ export default function Services() {
                   key={service.title}
                   className="bg-white rounded-xl shadow-lg border border-gray-100 p-8 hover:shadow-xl transition-shadow"
                 >
-                  <div className="w-16 h-16 rounded-full bg-blue-100 flex items-center justify-center mb-6">
-                    <svg className="w-8 h-8 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={service.iconPath} />
+                  <div className="w-16 h-16 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center mb-6">
+                    <svg className="w-8 h-8 text-[#2563EB]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={service.iconPath} />
                     </svg>
                   </div>
-                  <h3 className="text-2xl font-bold mb-4 font-open-sans text-gray-800">
+                  <h3 className="text-2xl font-semibold mb-4 text-gray-800">
                     {service.title}
                   </h3>
-                  <p className="text-gray-600 mb-6 font-inter">
+                  <p className="text-gray-600 mb-6 font-light">
                     {service.description}
                   </p>
                   <ul className="space-y-3">
                     {service.features.map((feature) => (
                       <li key={feature} className="flex items-start gap-3">
-                        <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        <svg className="w-5 h-5 text-[#2563EB] flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                         </svg>
-                        <span className="text-sm text-gray-700 font-inter">{feature}</span>
+                        <span className="text-sm text-gray-700 font-light">{feature}</span>
                       </li>
                     ))}
                   </ul>
@@ -198,10 +215,14 @@ export default function Services() {
         <section className="relative py-24 bg-gray-50">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4 font-open-sans">
-                OUR SERVICE PROCESS
+              <div className="flex items-center justify-center gap-3 mb-6">
+                <div className="w-1 h-10 bg-[#2563EB]"></div>
+                <span className="text-xs uppercase tracking-[0.3em] text-gray-600 font-medium">Our Process</span>
+              </div>
+              <h2 className="text-4xl lg:text-5xl font-light mb-4">
+                Our Service <span className="font-semibold">Process</span>
               </h2>
-              <p className="text-lg text-gray-600 max-w-2xl mx-auto font-inter">
+              <p className="text-lg text-gray-600 max-w-2xl mx-auto font-light">
                 A proven methodology for delivering successful labeling solutions
               </p>
             </div>
@@ -210,20 +231,20 @@ export default function Services() {
               {processSteps.map((step, index) => (
                 <div key={step.number} className="relative">
                   <div className="bg-white rounded-xl p-8 shadow-sm h-full">
-                    <div className="text-5xl font-bold text-blue-600 mb-4 font-open-sans opacity-20">
+                    <div className="text-5xl font-semibold text-[#2563EB] mb-4 opacity-20">
                       {step.number}
                     </div>
-                    <h3 className="text-xl font-bold mb-3 font-open-sans text-gray-800">
+                    <h3 className="text-xl font-semibold mb-3 text-gray-800">
                       {step.title}
                     </h3>
-                    <p className="text-gray-600 font-inter text-sm">
+                    <p className="text-gray-600 font-light text-sm">
                       {step.description}
                     </p>
                   </div>
                   {index < processSteps.length - 1 && (
                     <div className="hidden lg:block absolute top-1/2 -right-4 transform -translate-y-1/2">
                       <svg className="w-8 h-8 text-blue-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                       </svg>
                     </div>
                   )}
@@ -238,78 +259,82 @@ export default function Services() {
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <h2 className="text-3xl lg:text-4xl font-bold mb-6 font-open-sans">
-                  24/7 TECHNICAL SUPPORT
+                <div className="flex items-center gap-3 mb-6">
+                  <div className="w-1 h-10 bg-[#2563EB]"></div>
+                  <span className="text-xs uppercase tracking-[0.3em] text-gray-600 font-medium">Support</span>
+                </div>
+                <h2 className="text-4xl lg:text-5xl font-light mb-6">
+                  24/7 Technical <span className="font-semibold">Support</span>
                 </h2>
-                <p className="text-lg text-gray-600 mb-8 font-inter">
+                <p className="text-lg text-gray-600 mb-8 font-light">
                   Our dedicated support team is available around the clock to ensure your labeling operations run smoothly without interruption.
                 </p>
                 <div className="space-y-6">
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+                    <div className="w-14 h-14 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-7 h-7 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-bold text-lg mb-1 font-open-sans">Phone Support</h3>
-                      <p className="text-gray-600 font-inter text-sm">Immediate assistance for urgent issues</p>
-                      <p className="text-blue-600 font-inter font-semibold mt-1">+91-8008413800</p>
+                      <h3 className="font-semibold text-lg mb-1">Phone Support</h3>
+                      <p className="text-gray-600 font-light text-sm">Immediate assistance for urgent issues</p>
+                      <p className="text-[#2563EB] font-semibold mt-1">+91-8008413800</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+                    <div className="w-14 h-14 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-7 h-7 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-bold text-lg mb-1 font-open-sans">Email Support</h3>
-                      <p className="text-gray-600 font-inter text-sm">Detailed technical queries and documentation</p>
-                      <p className="text-blue-600 font-inter font-semibold mt-1">info@livatosolutions.com</p>
+                      <h3 className="font-semibold text-lg mb-1">Email Support</h3>
+                      <p className="text-gray-600 font-light text-sm">Detailed technical queries and documentation</p>
+                      <p className="text-[#2563EB] font-semibold mt-1">info@livatosolutions.com</p>
                     </div>
                   </div>
 
                   <div className="flex items-start gap-4">
-                    <div className="w-12 h-12 rounded-lg bg-blue-100 flex items-center justify-center flex-shrink-0">
-                      <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                    <div className="w-14 h-14 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center flex-shrink-0">
+                      <svg className="w-7 h-7 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                       </svg>
                     </div>
                     <div>
-                      <h3 className="font-bold text-lg mb-1 font-open-sans">On-Site Service</h3>
-                      <p className="text-gray-600 font-inter text-sm">Field technicians available for critical issues</p>
+                      <h3 className="font-semibold text-lg mb-1">On-Site Service</h3>
+                      <p className="text-gray-600 font-light text-sm">Field technicians available for critical issues</p>
                     </div>
                   </div>
                 </div>
               </div>
 
               <div className="bg-gradient-to-br from-blue-50 to-white p-8 rounded-2xl shadow-lg">
-                <h3 className="text-2xl font-bold mb-6 font-open-sans text-gray-800">SERVICE LEVEL AGREEMENTS</h3>
+                <h3 className="text-2xl font-light mb-6 text-gray-800">Service Level <span className="font-semibold">Agreements</span></h3>
                 <div className="space-y-6">
                   <div className="bg-white p-6 rounded-xl border border-blue-100">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-bold font-open-sans text-gray-800">Response Time</h4>
-                      <span className="text-blue-600 font-bold text-lg">&lt; 2 Hours</span>
+                      <h4 className="font-semibold text-gray-800">Response Time</h4>
+                      <span className="text-[#2563EB] font-semibold text-lg">&lt; 2 Hours</span>
                     </div>
-                    <p className="text-gray-600 font-inter text-sm">Initial response to critical issues</p>
+                    <p className="text-gray-600 font-light text-sm">Initial response to critical issues</p>
                   </div>
 
                   <div className="bg-white p-6 rounded-xl border border-blue-100">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-bold font-open-sans text-gray-800">Resolution Time</h4>
-                      <span className="text-blue-600 font-bold text-lg">&lt; 24 Hours</span>
+                      <h4 className="font-semibold text-gray-800">Resolution Time</h4>
+                      <span className="text-[#2563EB] font-semibold text-lg">&lt; 24 Hours</span>
                     </div>
-                    <p className="text-gray-600 font-inter text-sm">Target resolution for priority issues</p>
+                    <p className="text-gray-600 font-light text-sm">Target resolution for priority issues</p>
                   </div>
 
                   <div className="bg-white p-6 rounded-xl border border-blue-100">
                     <div className="flex items-center justify-between mb-2">
-                      <h4 className="font-bold font-open-sans text-gray-800">Uptime Guarantee</h4>
-                      <span className="text-blue-600 font-bold text-lg">99.5%</span>
+                      <h4 className="font-semibold text-gray-800">Uptime Guarantee</h4>
+                      <span className="text-[#2563EB] font-semibold text-lg">99.5%</span>
                     </div>
-                    <p className="text-gray-600 font-inter text-sm">Operational availability with managed services</p>
+                    <p className="text-gray-600 font-light text-sm">Operational availability with managed services</p>
                   </div>
                 </div>
               </div>
@@ -318,20 +343,18 @@ export default function Services() {
         </section>
 
         {/* CTA */}
-        <section className="relative py-24 bg-blue-600">
+        <section className="relative py-24 bg-gray-900">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center">
-              <h2 className="text-3xl lg:text-4xl font-bold mb-4 text-white font-open-sans">
-                READY TO GET STARTED?
+              <h2 className="text-4xl lg:text-5xl font-light mb-4 text-white">
+                Ready to Get <span className="font-semibold">Started?</span>
               </h2>
-              <p className="text-lg text-blue-100 max-w-2xl mx-auto mb-8 font-inter">
+              <p className="text-lg text-gray-300 max-w-2xl mx-auto mb-8 font-light">
                 Contact us to discuss how our services can optimize your labeling operations
               </p>
-              <Link href="/contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-white text-blue-600 font-semibold hover:bg-gray-100 transition-colors shadow-lg font-inter">
-                CONTACT US
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
-                </svg>
+              <Link href="/contact" className="group relative inline-flex px-8 py-4 bg-gray-900 text-white overflow-hidden">
+                <span className="relative z-10 text-sm tracking-wide">CONTACT US</span>
+                <div className="absolute inset-0 bg-[#2563EB] transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
               </Link>
             </div>
           </div>

@@ -76,7 +76,7 @@ export default function Blog() {
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center">
               <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6 font-open-sans">
-                LIVATO <span className="text-blue-600">BLOG</span>
+                LIVATO <span className="text-gray-900">BLOG</span>
               </h1>
               <p className="text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto font-inter leading-relaxed">
                 Insights, guides, and industry expertise on labeling solutions, compliance, and technology
@@ -121,7 +121,7 @@ export default function Blog() {
                       </svg>
                     </div>
                     <div className="absolute top-4 left-4">
-                      <span className="px-3 py-1 rounded-full bg-white text-blue-600 text-xs font-bold font-inter">
+                      <span className="px-3 py-1 rounded-full bg-white text-gray-900 text-xs font-bold font-inter">
                         {post.category}
                       </span>
                     </div>
@@ -132,7 +132,7 @@ export default function Blog() {
                       <span>•</span>
                       <span>{post.readTime}</span>
                     </div>
-                    <h3 className="text-xl font-bold mb-3 font-open-sans text-gray-800 group-hover:text-blue-600 transition-colors">
+                    <h3 className="text-xl font-bold mb-3 font-open-sans text-gray-800 group-hover:text-gray-900 transition-colors">
                       <Link href={`/blog/${post.slug}`}>
                         {post.title}
                       </Link>
@@ -142,7 +142,7 @@ export default function Blog() {
                     </p>
                     <Link
                       href={`/blog/${post.slug}`}
-                      className="inline-flex items-center gap-2 text-blue-600 font-semibold hover:text-blue-700 transition-colors font-inter text-sm"
+                      className="inline-flex items-center gap-2 text-gray-900 font-semibold hover:text-blue-700 transition-colors font-inter text-sm"
                     >
                       READ MORE
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -193,7 +193,7 @@ export default function Blog() {
                 />
                 <button
                   type="submit"
-                  className="px-8 py-4 rounded-lg bg-white text-blue-600 font-semibold hover:bg-gray-100 transition-colors font-inter whitespace-nowrap"
+                  className="px-8 py-4 rounded-lg bg-white text-gray-900 font-semibold hover:bg-gray-100 transition-colors font-inter whitespace-nowrap"
                 >
                   SUBSCRIBE
                 </button>

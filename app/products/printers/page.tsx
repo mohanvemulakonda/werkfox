@@ -72,14 +72,14 @@ export default function Printers() {
         <section className="relative py-20 bg-gradient-to-br from-blue-50 to-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center">
-              <Link href="/products" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-6 font-inter font-semibold">
+              <Link href="/products" className="inline-flex items-center gap-2 text-gray-900 hover:text-blue-700 mb-6 font-inter font-semibold">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                 </svg>
                 Back to Products
               </Link>
               <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6 font-open-sans">
-                PRINTING & SCANNING <span className="text-blue-600">SOLUTIONS</span>
+                PRINTING & SCANNING <span className="text-gray-900">SOLUTIONS</span>
               </h1>
               <p className="text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto font-inter leading-relaxed">
                 Authorized reseller of premium brands - from POS printers to industrial solutions, barcode scanners, and RFID systems
@@ -131,7 +131,7 @@ export default function Printers() {
                     </p>
 
                     <div className="mb-4">
-                      <p className="text-sm font-semibold text-blue-600 font-inter">{category.specs}</p>
+                      <p className="text-sm font-semibold text-gray-900 font-inter">{category.specs}</p>
                     </div>
 
                     <div className="mb-6">
@@ -139,8 +139,8 @@ export default function Printers() {
                       <div className="grid grid-cols-2 gap-2">
                         {category.applications.map((app) => (
                           <div key={app} className="flex items-start gap-2">
-                            <svg className="w-4 h-4 text-blue-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                            <svg className="w-4 h-4 text-gray-900 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                             </svg>
                             <span className="text-sm text-gray-700 font-inter">{app}</span>
                           </div>
@@ -168,7 +168,7 @@ export default function Printers() {
                     >
                       REQUEST QUOTE
                       <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                       </svg>
                     </Link>
                   </div>
@@ -192,9 +192,9 @@ export default function Printers() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               <div className="bg-white p-8 rounded-xl shadow-sm text-center">
-                <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mb-4 mx-auto">
-                  <svg className="w-7 h-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <div className="w-14 h-14 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center mb-4 mx-auto">
+                  <svg className="w-7 h-7 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <h3 className="font-bold text-xl mb-3 font-open-sans">AUTHORIZED DEALER</h3>
@@ -204,9 +204,9 @@ export default function Printers() {
               </div>
 
               <div className="bg-white p-8 rounded-xl shadow-sm text-center">
-                <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mb-4 mx-auto">
-                  <svg className="w-7 h-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                <div className="w-14 h-14 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center mb-4 mx-auto">
+                  <svg className="w-7 h-7 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                   </svg>
                 </div>
                 <h3 className="font-bold text-xl mb-3 font-open-sans">EXPERT CONSULTATION</h3>
@@ -216,9 +216,9 @@ export default function Printers() {
               </div>
 
               <div className="bg-white p-8 rounded-xl shadow-sm text-center">
-                <div className="w-14 h-14 rounded-full bg-blue-100 flex items-center justify-center mb-4 mx-auto">
-                  <svg className="w-7 h-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 10V3L4 14h7v7l9-11h-7z" />
+                <div className="w-14 h-14 rounded-lg bg-gray-50 border border-gray-200 flex items-center justify-center mb-4 mx-auto">
+                  <svg className="w-7 h-7 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
                 <h3 className="font-bold text-xl mb-3 font-open-sans">COMPLETE ECOSYSTEM</h3>
@@ -240,10 +240,10 @@ export default function Printers() {
               <p className="text-lg text-blue-100 max-w-2xl mx-auto mb-8 font-inter">
                 Contact us for expert advice on choosing the perfect printing solution
               </p>
-              <Link href="/contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-white text-blue-600 font-semibold hover:bg-gray-100 transition-colors shadow-lg font-inter">
+              <Link href="/contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-white text-gray-900 font-semibold hover:bg-gray-100 transition-colors shadow-lg font-inter">
                 CONTACT US
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
                 </svg>
               </Link>
             </div>

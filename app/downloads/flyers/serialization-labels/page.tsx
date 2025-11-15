@@ -24,7 +24,7 @@ export default function SerializationFlyerPage() {
                 </div>
               </div>
               <div className="text-right">
-                <Link href="/downloads" className="text-blue-600 hover:text-blue-700 text-sm font-semibold flex items-center gap-2">
+                <Link href="/downloads" className="text-gray-900 hover:text-blue-700 text-sm font-semibold flex items-center gap-2">
                   <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
                   </svg>
@@ -123,7 +123,7 @@ export default function SerializationFlyerPage() {
                         { title: 'Human Readable', desc: 'Text backup of data' },
                       ].map((item, i) => (
                         <div key={i} className="flex items-start gap-3">
-                          <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                          <svg className="w-5 h-5 text-gray-900 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                           </svg>
                           <div>
@@ -141,19 +141,19 @@ export default function SerializationFlyerPage() {
                   <h3 className="text-xl font-bold mb-4 font-open-sans">Technical Specifications</h3>
                   <div className="grid md:grid-cols-4 gap-6 text-sm">
                     <div>
-                      <div className="font-bold text-blue-600 mb-1">Materials</div>
+                      <div className="font-bold text-gray-900 mb-1">Materials</div>
                       <div className="text-gray-700">Polyester, Polypropylene, Thermal Paper</div>
                     </div>
                     <div>
-                      <div className="font-bold text-blue-600 mb-1">Barcode Type</div>
+                      <div className="font-bold text-gray-900 mb-1">Barcode Type</div>
                       <div className="text-gray-700">GS1 DataMatrix, QR Code, Linear</div>
                     </div>
                     <div>
-                      <div className="font-bold text-blue-600 mb-1">Print Method</div>
+                      <div className="font-bold text-gray-900 mb-1">Print Method</div>
                       <div className="text-gray-700">Thermal Transfer, Direct Thermal</div>
                     </div>
                     <div>
-                      <div className="font-bold text-blue-600 mb-1">Compliance</div>
+                      <div className="font-bold text-gray-900 mb-1">Compliance</div>
                       <div className="text-gray-700">DSCSA, FDA 21 CFR Part 11</div>
                     </div>
                   </div>
@@ -164,7 +164,7 @@ export default function SerializationFlyerPage() {
                   <h3 className="text-xl font-bold mb-4 font-open-sans">Available Sizes & Pricing Tiers</h3>
                   <div className="grid md:grid-cols-3 gap-4">
                     <div className="bg-white p-4 rounded-lg border-2 border-blue-200">
-                      <div className="font-bold text-blue-600 mb-2">Small Volume</div>
+                      <div className="font-bold text-gray-900 mb-2">Small Volume</div>
                       <div className="text-2xl font-bold mb-1">₹X.XX</div>
                       <div className="text-xs text-gray-600 mb-3">per label</div>
                       <div className="text-sm text-gray-700">
@@ -177,7 +177,7 @@ export default function SerializationFlyerPage() {
                       <div className="absolute -top-3 right-4 bg-blue-600 text-white px-3 py-1 rounded-full text-xs font-bold">
                         POPULAR
                       </div>
-                      <div className="font-bold text-blue-600 mb-2">Medium Volume</div>
+                      <div className="font-bold text-gray-900 mb-2">Medium Volume</div>
                       <div className="text-2xl font-bold mb-1">₹X.XX</div>
                       <div className="text-xs text-gray-600 mb-3">per label</div>
                       <div className="text-sm text-gray-700">
@@ -187,7 +187,7 @@ export default function SerializationFlyerPage() {
                       </div>
                     </div>
                     <div className="bg-white p-4 rounded-lg border-2 border-blue-200">
-                      <div className="font-bold text-blue-600 mb-2">Large Volume</div>
+                      <div className="font-bold text-gray-900 mb-2">Large Volume</div>
                       <div className="text-2xl font-bold mb-1">₹X.XX</div>
                       <div className="text-xs text-gray-600 mb-3">per label</div>
                       <div className="text-sm text-gray-700">
@@ -207,10 +207,10 @@ export default function SerializationFlyerPage() {
                   Contact us for free samples and a custom quote
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-                  <Link href="/contact?solution=serialization-labels" className="px-8 py-3 bg-white text-blue-600 rounded-lg font-bold hover:bg-gray-100 transition-colors">
+                  <Link href="/contact?solution=serialization-labels" className="px-8 py-3 bg-white text-gray-900 rounded-lg font-bold hover:bg-gray-100 transition-colors">
                     Request Free Sample
                   </Link>
-                  <Link href="/label-designer" className="px-8 py-3 bg-transparent border-2 border-white text-white rounded-lg font-bold hover:bg-white hover:text-blue-600 transition-colors">
+                  <Link href="/label-designer" className="px-8 py-3 bg-transparent border-2 border-white text-white rounded-lg font-bold hover:bg-white hover:text-gray-900 transition-colors">
                     Design Your Label
                   </Link>
                 </div>

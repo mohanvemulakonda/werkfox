@@ -21,7 +21,7 @@ export default function PolyesterLabelsPage() {
         <section className="relative py-20 bg-gradient-to-br from-blue-50 to-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center max-w-4xl mx-auto">
-              <Link href="/products/labels" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 font-inter font-semibold">
+              <Link href="/products/labels" className="inline-flex items-center gap-2 text-gray-900 hover:text-blue-700 mb-4 font-inter font-semibold">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
                 </svg>
@@ -31,7 +31,7 @@ export default function PolyesterLabelsPage() {
                 Premium Material
               </div>
               <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6 font-open-sans">
-                POLYESTER <span className="text-blue-600">LABELS</span>
+                POLYESTER <span className="text-gray-900">LABELS</span>
               </h1>
               <p className="text-lg lg:text-xl text-gray-600 mb-8 font-inter leading-relaxed">
                 Premium polyester (PET) labels engineered for extreme durability. Chemical-resistant, heat-resistant, waterproof, and tear-proof labels designed for the harshest environments.
@@ -40,7 +40,7 @@ export default function PolyesterLabelsPage() {
                 <Link href="/contact?solution=polyester-labels" className="px-8 py-4 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-lg font-inter text-center">
                   Request Polyester Labels
                 </Link>
-                <Link href="/downloads" className="px-8 py-4 bg-white border-2 border-blue-600 text-blue-600 rounded-lg font-bold hover:bg-blue-50 transition-colors font-inter text-center">
+                <Link href="/downloads" className="px-8 py-4 bg-white border-2 border-blue-600 text-gray-900 rounded-lg font-bold hover:bg-blue-50 transition-colors font-inter text-center">
                   Download Datasheet
                 </Link>
               </div>

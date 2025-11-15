@@ -21,9 +21,9 @@ export default function LogisticsLabelsPage() {
         <section className="relative py-20 bg-gradient-to-br from-orange-50 to-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center max-w-4xl mx-auto">
-              <Link href="/products/labels" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 font-inter font-semibold">
+              <Link href="/products/labels" className="inline-flex items-center gap-2 text-gray-900 hover:text-blue-700 mb-4 font-inter font-semibold">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                 </svg>
                 Back to Labels
               </Link>
@@ -31,7 +31,7 @@ export default function LogisticsLabelsPage() {
                 Supply Chain Solution
               </div>
               <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6 font-open-sans">
-                LOGISTICS & <span className="text-blue-600">SHIPPING LABELS</span>
+                LOGISTICS & <span className="text-gray-900">SHIPPING LABELS</span>
               </h1>
               <p className="text-lg lg:text-xl text-gray-600 mb-8 font-inter leading-relaxed">
                 Complete labeling solutions for warehouses, distribution centers, and logistics operations. Barcode labels, shipping labels, pallet tags, and tracking solutions for seamless supply chain management.
@@ -80,7 +80,7 @@ export default function LogisticsLabelsPage() {
                 { standard: 'QR Codes', desc: '2D barcodes for tracking & tracing' },
               ].map((item, i) => (
                 <div key={i} className="bg-white rounded-xl p-6 shadow-lg text-center">
-                  <h3 className="text-xl font-bold mb-2 text-blue-600 font-open-sans">{item.standard}</h3>
+                  <h3 className="text-xl font-bold mb-2 text-gray-900 font-open-sans">{item.standard}</h3>
                   <p className="text-gray-600 font-inter text-sm">{item.desc}</p>
                 </div>
               ))}
@@ -98,7 +98,7 @@ export default function LogisticsLabelsPage() {
                   {['High-speed thermal printing', 'Superior barcode scanability', 'Adhesive for corrugated surfaces', 'Resistant to handling and transit'].map((f, j) => (
                     <li key={j} className="flex items-start gap-3">
                       <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                       </svg>
                       <span className="text-gray-700 font-inter text-sm">{f}</span>
                     </li>
@@ -111,7 +111,7 @@ export default function LogisticsLabelsPage() {
                   {['Compatible with WMS systems', 'EDI and API integration', 'Variable data printing', 'Multi-carrier compliance'].map((f, j) => (
                     <li key={j} className="flex items-start gap-3">
                       <svg className="w-5 h-5 text-green-500 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M5 13l4 4L19 7" />
                       </svg>
                       <span className="text-gray-700 font-inter text-sm">{f}</span>
                     </li>
@@ -174,7 +174,7 @@ export default function LogisticsLabelsPage() {
                 </div>
                 <h3 className="text-xl font-bold mb-2 font-open-sans">Industrial Printers</h3>
                 <p className="text-gray-600 font-inter text-sm mb-4">High-volume label printing for logistics</p>
-                <Link href="/products/printers" className="text-blue-600 font-semibold text-sm hover:text-blue-700">View Printers →</Link>
+                <Link href="/products/printers" className="text-gray-900 font-semibold text-sm hover:text-blue-700">View Printers →</Link>
               </div>
               <div className="bg-white rounded-xl p-8 border-2 border-orange-200 text-center">
                 <div className="relative h-40 mb-4 rounded-lg overflow-hidden">
@@ -182,7 +182,7 @@ export default function LogisticsLabelsPage() {
                 </div>
                 <h3 className="text-xl font-bold mb-2 font-open-sans">Warehouse Scanners</h3>
                 <p className="text-gray-600 font-inter text-sm mb-4">Rugged scanners for warehouse operations</p>
-                <Link href="/products/scanners" className="text-blue-600 font-semibold text-sm hover:text-blue-700">View Scanners →</Link>
+                <Link href="/products/scanners" className="text-gray-900 font-semibold text-sm hover:text-blue-700">View Scanners →</Link>
               </div>
               <div className="bg-white rounded-xl p-8 border-2 border-orange-200 text-center">
                 <div className="relative h-40 mb-4 rounded-lg overflow-hidden">
@@ -190,7 +190,7 @@ export default function LogisticsLabelsPage() {
                 </div>
                 <h3 className="text-xl font-bold mb-2 font-open-sans">Label Software</h3>
                 <p className="text-gray-600 font-inter text-sm mb-4">WMS integration and label design tools</p>
-                <Link href="/services" className="text-blue-600 font-semibold text-sm hover:text-blue-700">Learn More →</Link>
+                <Link href="/services" className="text-gray-900 font-semibold text-sm hover:text-blue-700">Learn More →</Link>
               </div>
             </div>
           </div>
@@ -207,8 +207,8 @@ export default function LogisticsLabelsPage() {
                 { name: 'Custom Size Labels', href: '/products/labels/custom-shape' },
               ].map((product, i) => (
                 <Link key={i} href={product.href} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow border border-gray-200 hover:border-blue-500 text-center group">
-                  <h3 className="font-bold text-lg mb-2 font-open-sans group-hover:text-blue-600">{product.name}</h3>
-                  <div className="text-blue-600 text-sm font-semibold">Learn More →</div>
+                  <h3 className="font-bold text-lg mb-2 font-open-sans group-hover:text-gray-900">{product.name}</h3>
+                  <div className="text-gray-900 text-sm font-semibold">Learn More →</div>
                 </Link>
               ))}
             </div>

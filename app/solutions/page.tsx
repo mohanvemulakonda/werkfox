@@ -85,8 +85,8 @@ export default function SolutionsPage() {
         <section className="relative py-20 bg-gradient-to-br from-blue-50 to-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center">
-              <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6 font-open-sans">
-                LABEL <span className="text-blue-600">SOLUTIONS</span>
+              <h1 className="text-4xl lg:text-6xl font-light tracking-tight mb-6 font-open-sans">
+                LABEL <span className="text-gray-900">SOLUTIONS</span>
               </h1>
               <p className="text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto font-inter leading-relaxed">
                 Complete labeling systems tailored to your industry. Each solution includes recommended materials, ribbons, and printers.
@@ -105,7 +105,7 @@ export default function SolutionsPage() {
                   {category.image ? (
                     <div className="grid lg:grid-cols-2 gap-8 items-center mb-8">
                       <div className="border-l-4 border-blue-600 pl-6">
-                        <h2 className="text-3xl font-bold mb-2 font-open-sans text-gray-900">
+                        <h2 className="text-3xl font-semibold mb-2 font-open-sans text-gray-900">
                           {category.category}
                         </h2>
                         <p className="text-gray-600 font-inter">
@@ -123,7 +123,7 @@ export default function SolutionsPage() {
                     </div>
                   ) : (
                     <div className="border-l-4 border-blue-600 pl-6">
-                      <h2 className="text-3xl font-bold mb-2 font-open-sans text-gray-900">
+                      <h2 className="text-3xl font-semibold mb-2 font-open-sans text-gray-900">
                         {category.category}
                       </h2>
                       <p className="text-gray-600 font-inter">
@@ -140,13 +140,13 @@ export default function SolutionsPage() {
                         className="group bg-white border border-gray-200 rounded-xl p-6 hover:shadow-xl hover:border-blue-500 transition-all duration-300"
                       >
                         <div className="text-5xl mb-4">{solution.icon}</div>
-                        <h3 className="text-xl font-bold mb-2 font-open-sans text-gray-900 group-hover:text-blue-600 transition-colors">
+                        <h3 className="text-xl font-semibold mb-2 font-open-sans text-gray-900 group-hover:text-gray-900 transition-colors">
                           {solution.name}
                         </h3>
                         <p className="text-gray-600 font-inter text-sm mb-4">
                           {solution.description}
                         </p>
-                        <div className="flex items-center text-blue-600 font-semibold text-sm">
+                        <div className="flex items-center text-gray-900 font-semibold text-sm">
                           View Solution
                           <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -164,7 +164,7 @@ export default function SolutionsPage() {
         {/* CTA Section */}
         <section className="relative py-20 bg-gradient-to-br from-blue-600 to-blue-800">
           <div className="mx-auto max-w-7xl px-6 lg:px-8 text-center">
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6 font-open-sans">
+            <h2 className="text-3xl lg:text-4xl font-semibold text-white mb-6 font-open-sans">
               Not Sure Which Solution You Need?
             </h2>
             <p className="text-xl text-blue-100 mb-8 font-inter max-w-2xl mx-auto">
@@ -173,13 +173,13 @@ export default function SolutionsPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/#label-finder"
-                className="px-8 py-4 bg-white text-blue-600 rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-lg font-inter"
+                className="px-8 py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg font-inter"
               >
                 Try Label Finder
               </Link>
               <Link
                 href="/contact"
-                className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-bold hover:bg-white hover:text-blue-600 transition-colors font-inter"
+                className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-gray-900 transition-colors font-inter"
               >
                 Contact Expert
               </Link>

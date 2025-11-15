@@ -14,7 +14,7 @@ export default function PharmaceuticalBrochurePage() {
         {/* Page 1: Cover */}
         <section className="min-h-screen flex items-center justify-center bg-white page-break relative border-8 border-blue-600">
           <div className="absolute top-8 right-8">
-            <Link href="/downloads" className="text-blue-600 hover:text-blue-700 text-sm font-inter flex items-center gap-2">
+            <Link href="/downloads" className="text-gray-900 hover:text-blue-700 text-sm font-inter flex items-center gap-2">
               <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 19l-7-7m0 0l7-7m-7 7h18" />
               </svg>
@@ -35,7 +35,7 @@ export default function PharmaceuticalBrochurePage() {
               <span className="text-sm font-bold">PRODUCT CATALOG 2024</span>
             </div>
             <h1 className="text-5xl lg:text-7xl font-extrabold mb-6 font-open-sans text-gray-900">
-              PHARMACEUTICAL<br/><span className="text-blue-600">LABELING SOLUTIONS</span>
+              PHARMACEUTICAL<br/><span className="text-gray-900">LABELING SOLUTIONS</span>
             </h1>
             <p className="text-xl lg:text-2xl text-gray-600 mb-8 font-inter">
               Complete Labeling Solutions for Healthcare & Pharma
@@ -54,7 +54,7 @@ export default function PharmaceuticalBrochurePage() {
                   alert('To save as PDF:\n\n1. Press Ctrl+P (Windows) or Cmd+P (Mac)\n2. Select "Save as PDF" as printer\n3. Set size to "Letter (8.5 x 11)"\n4. Enable "Background graphics"\n5. Click Save\n\nOpening print dialog now...');
                   setTimeout(() => window.print(), 500);
                 }}
-                className="px-8 py-4 bg-white border-2 border-blue-600 text-blue-600 rounded-lg font-bold hover:bg-blue-50 transition-colors"
+                className="px-8 py-4 bg-white border-2 border-blue-600 text-gray-900 rounded-lg font-bold hover:bg-blue-50 transition-colors"
               >
                 Download as PDF
               </button>
@@ -67,7 +67,7 @@ export default function PharmaceuticalBrochurePage() {
           <div className="mx-auto max-w-7xl px-8">
             <div className="grid md:grid-cols-2 gap-12 items-center mb-16">
               <div>
-                <div className="text-sm font-bold text-blue-600 mb-2 uppercase tracking-wide">Industry Challenges</div>
+                <div className="text-sm font-bold text-gray-900 mb-2 uppercase tracking-wide">Industry Challenges</div>
                 <h2 className="text-4xl font-bold mb-6 font-open-sans">
                   Meeting Pharmaceutical Labeling Standards
                 </h2>
@@ -84,7 +84,7 @@ export default function PharmaceuticalBrochurePage() {
                     'Extreme storage condition durability',
                   ].map((challenge, i) => (
                     <li key={i} className="flex items-start gap-3">
-                      <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-5 h-5 text-gray-900 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span className="text-gray-700 font-inter text-sm">{challenge}</span>
@@ -115,7 +115,7 @@ export default function PharmaceuticalBrochurePage() {
                   { title: 'Compliance Labels', desc: 'Warning labels, dosage information, regulatory text' },
                 ].map((solution, i) => (
                   <div key={i} className="bg-white p-4 rounded-lg border border-blue-100">
-                    <h4 className="font-bold text-blue-600 mb-2 font-open-sans">{solution.title}</h4>
+                    <h4 className="font-bold text-gray-900 mb-2 font-open-sans">{solution.title}</h4>
                     <p className="text-sm text-gray-600 font-inter">{solution.desc}</p>
                   </div>
                 ))}
@@ -131,7 +131,7 @@ export default function PharmaceuticalBrochurePage() {
 
             <div className="grid md:grid-cols-2 gap-8 mb-12">
               <div className="bg-white rounded-xl p-8 shadow-lg">
-                <h3 className="text-2xl font-bold mb-6 text-blue-600 font-open-sans">Thermal Transfer Materials</h3>
+                <h3 className="text-2xl font-bold mb-6 text-gray-900 font-open-sans">Thermal Transfer Materials</h3>
                 <div className="space-y-6">
                   <div className="border-b border-gray-200 pb-4">
                     <h4 className="font-bold mb-2">Polyester (PET)</h4>
@@ -164,7 +164,7 @@ export default function PharmaceuticalBrochurePage() {
               </div>
 
               <div className="bg-white rounded-xl p-8 shadow-lg">
-                <h3 className="text-2xl font-bold mb-6 text-blue-600 font-open-sans">Adhesive Options</h3>
+                <h3 className="text-2xl font-bold mb-6 text-gray-900 font-open-sans">Adhesive Options</h3>
                 <div className="space-y-6">
                   <div className="border-b border-gray-200 pb-4">
                     <h4 className="font-bold mb-2">Permanent Acrylic</h4>
@@ -266,7 +266,7 @@ export default function PharmaceuticalBrochurePage() {
                   </div>
                   <div className="p-6">
                     <h3 className="text-xl font-bold mb-2 font-open-sans">{app.name}</h3>
-                    <div className="text-sm text-blue-600 font-semibold mb-3">{app.material}</div>
+                    <div className="text-sm text-gray-900 font-semibold mb-3">{app.material}</div>
                     <ul className="space-y-2">
                       {app.features.map((feature, j) => (
                         <li key={j} className="flex items-center gap-2 text-sm text-gray-600">
@@ -353,7 +353,7 @@ export default function PharmaceuticalBrochurePage() {
                     'Database-driven Variable Printing',
                   ].map((feature, i) => (
                     <li key={i} className="flex items-start gap-3">
-                      <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-5 h-5 text-gray-900 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span className="text-gray-700 font-inter text-sm">{feature}</span>
@@ -374,7 +374,7 @@ export default function PharmaceuticalBrochurePage() {
                     'Laser Marking Compatible',
                   ].map((method, i) => (
                     <li key={i} className="flex items-start gap-3">
-                      <svg className="w-5 h-5 text-blue-600 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <svg className="w-5 h-5 text-gray-900 flex-shrink-0 mt-0.5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                       </svg>
                       <span className="text-gray-700 font-inter text-sm">{method}</span>
@@ -406,7 +406,7 @@ export default function PharmaceuticalBrochurePage() {
                   <li>• Variable data printing</li>
                   <li>• High-speed production</li>
                 </ul>
-                <Link href="/products/printers" className="text-blue-600 font-semibold hover:text-blue-700">
+                <Link href="/products/printers" className="text-gray-900 font-semibold hover:text-blue-700">
                   View Printers →
                 </Link>
               </div>
@@ -425,7 +425,7 @@ export default function PharmaceuticalBrochurePage() {
                   <li>• All major widths available</li>
                   <li>• Compatible with all printers</li>
                 </ul>
-                <Link href="/products/ribbons" className="text-blue-600 font-semibold hover:text-blue-700">
+                <Link href="/products/ribbons" className="text-gray-900 font-semibold hover:text-blue-700">
                   View Ribbons →
                 </Link>
               </div>
@@ -444,7 +444,7 @@ export default function PharmaceuticalBrochurePage() {
                   <li>• GMP compliance features</li>
                   <li>• Audit trail capabilities</li>
                 </ul>
-                <Link href="/label-designer" className="text-blue-600 font-semibold hover:text-blue-700">
+                <Link href="/label-designer" className="text-gray-900 font-semibold hover:text-blue-700">
                   Design Labels →
                 </Link>
               </div>
@@ -507,7 +507,7 @@ export default function PharmaceuticalBrochurePage() {
                 <h3 className="text-xl font-bold mb-4 font-open-sans">Contact Information</h3>
                 <div className="space-y-4 text-gray-700">
                   <div className="flex items-center gap-3">
-                    <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-6 h-6 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                     </svg>
                     <div>
@@ -516,7 +516,7 @@ export default function PharmaceuticalBrochurePage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-6 h-6 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                     </svg>
                     <div>
@@ -525,7 +525,7 @@ export default function PharmaceuticalBrochurePage() {
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <svg className="w-6 h-6 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <svg className="w-6 h-6 text-gray-900" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
                     </svg>
                     <div>
@@ -567,7 +567,7 @@ export default function PharmaceuticalBrochurePage() {
               <Link href="/contact?solution=pharmaceutical-labels" className="px-8 py-4 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-lg">
                 Request Quote
               </Link>
-              <Link href="/label-designer" className="px-8 py-4 bg-white border-2 border-blue-600 text-blue-600 rounded-lg font-bold hover:bg-blue-50 transition-colors">
+              <Link href="/label-designer" className="px-8 py-4 bg-white border-2 border-blue-600 text-gray-900 rounded-lg font-bold hover:bg-blue-50 transition-colors">
                 Design Your Label
               </Link>
               <Link href="/downloads" className="px-8 py-4 bg-gray-100 text-gray-700 rounded-lg font-bold hover:bg-gray-200 transition-colors">

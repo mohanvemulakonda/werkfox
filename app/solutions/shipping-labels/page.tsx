@@ -70,16 +70,25 @@ export default function ShippingLabelsPage() {
         <div className="cmyk-wave cmyk-wave-cyan animate-float" style={{ width: '400px', height: '400px', top: '5%', right: '0%', animationDelay: '0s' }}></div>
         <div className="cmyk-wave cmyk-wave-magenta animate-float" style={{ width: '350px', height: '350px', top: '60%', left: '0%', animationDelay: '3s' }}></div>
 
+        {/* Logo Watermarks */}
+        <div className="absolute top-[20%] left-[8%] w-64 h-64 opacity-[0.05] pointer-events-none animate-float" style={{ animationDelay: '2s' }}>
+          <Image src="/Livato Logo.png" alt="" width={256} height={256} className="w-full h-full object-contain" />
+        </div>
+        <div className="absolute top-[60%] right-[10%] w-56 h-56 opacity-[0.05] pointer-events-none animate-float" style={{ animationDelay: '5s' }}>
+          <Image src="/Livato Logo.png" alt="" width={224} height={224} className="w-full h-full object-contain" />
+        </div>
+
         {/* Hero Section */}
         <section className="relative py-20 bg-gradient-to-br from-blue-50 to-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
               <div>
-                <div className="inline-block px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold mb-4">
-                  Logistics Solution
+                <div className="inline-flex items-center gap-2 mb-4">
+                  <div className="w-1 h-8 bg-[#2563EB]"></div>
+                  <span className="text-xs uppercase tracking-[0.3em] text-gray-600 font-medium">Logistics Solution</span>
                 </div>
-                <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6 font-open-sans">
-                  SHIPPING <span className="text-blue-600">LABELS</span>
+                <h1 className="text-4xl lg:text-6xl font-light tracking-tight mb-6 font-open-sans">
+                  SHIPPING <span className="text-gray-900">LABELS</span>
                 </h1>
                 <p className="text-lg lg:text-xl text-gray-600 mb-8 font-inter leading-relaxed">
                   Professional shipping label solutions for logistics, e-commerce, and courier operations. Get the right combination of materials, ribbons, and printers for your volume and requirements.
@@ -87,13 +96,13 @@ export default function ShippingLabelsPage() {
                 <div className="flex flex-col sm:flex-row gap-4">
                   <Link
                     href="/contact?solution=shipping-labels"
-                    className="px-8 py-4 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-lg font-inter text-center"
+                    className="px-8 py-4 bg-gray-900 text-white rounded-lg font-semibold hover:bg-[#2563EB] transition-colors shadow-lg font-inter text-center"
                   >
                     Get Quote
                   </Link>
                   <Link
                     href="#download-guide"
-                    className="px-8 py-4 bg-white border-2 border-blue-600 text-blue-600 rounded-lg font-bold hover:bg-blue-50 transition-colors font-inter text-center"
+                    className="px-8 py-4 bg-white border-2 border-gray-900 text-gray-900 rounded-lg font-semibold hover:bg-blue-50 transition-colors font-inter text-center"
                   >
                     Download Guide (PDF)
                   </Link>
@@ -108,7 +117,7 @@ export default function ShippingLabelsPage() {
                   priority
                 />
                 <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 to-transparent p-6 text-white">
-                  <p className="text-2xl font-bold mb-2 font-open-sans">Professional Shipping Labels</p>
+                  <p className="text-2xl font-semibold mb-2 font-open-sans">Professional Shipping Labels</p>
                   <p className="text-sm text-gray-200 font-inter">Trusted by 100+ logistics companies</p>
                 </div>
               </div>
@@ -119,7 +128,7 @@ export default function ShippingLabelsPage() {
         {/* Common Challenges */}
         <section className="relative py-24 bg-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <h2 className="text-3xl font-bold mb-12 font-open-sans text-center">
+            <h2 className="text-3xl font-semibold mb-12 font-open-sans text-center">
               Common Shipping Label Challenges
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
@@ -133,7 +142,7 @@ export default function ShippingLabelsPage() {
               ].map((challenge, idx) => (
                 <div key={idx} className="bg-gray-50 rounded-xl p-6 border border-gray-200">
                   <div className="text-4xl mb-4">{challenge.icon}</div>
-                  <h3 className="text-xl font-bold mb-2 font-open-sans">{challenge.title}</h3>
+                  <h3 className="text-xl font-semibold mb-2 font-open-sans">{challenge.title}</h3>
                   <p className="text-gray-600 font-inter text-sm">{challenge.description}</p>
                 </div>
               ))}
@@ -144,7 +153,7 @@ export default function ShippingLabelsPage() {
         {/* Recommended Materials */}
         <section className="relative py-24 bg-gray-50">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <h2 className="text-3xl font-bold mb-4 font-open-sans text-center">
+            <h2 className="text-3xl font-semibold mb-4 font-open-sans text-center">
               Recommended Label Materials
             </h2>
             <p className="text-gray-600 font-inter text-center mb-12 max-w-3xl mx-auto">
@@ -154,7 +163,7 @@ export default function ShippingLabelsPage() {
             <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
               {recommendedMaterials.map((material, idx) => (
                 <div key={idx} className="bg-white rounded-xl p-8 shadow-lg border border-gray-200 hover:shadow-xl transition-shadow">
-                  <h3 className="text-2xl font-bold mb-2 font-open-sans text-blue-600">
+                  <h3 className="text-2xl font-semibold mb-2 font-open-sans text-gray-900">
                     {material.name}
                   </h3>
                   <p className="text-gray-600 font-inter mb-4">{material.description}</p>
@@ -170,7 +179,7 @@ export default function ShippingLabelsPage() {
                   </ul>
                   <Link
                     href={material.link}
-                    className="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700"
+                    className="inline-flex items-center text-gray-900 font-semibold hover:text-blue-700"
                   >
                     View Datasheet
                     <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -186,14 +195,14 @@ export default function ShippingLabelsPage() {
         {/* Recommended Ribbons */}
         <section className="relative py-24 bg-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <h2 className="text-3xl font-bold mb-12 font-open-sans text-center">
+            <h2 className="text-3xl font-semibold mb-12 font-open-sans text-center">
               Recommended Thermal Ribbons
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {recommendedRibbons.map((ribbon, idx) => (
                 <div key={idx} className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-8 border border-blue-200">
-                  <h3 className="text-2xl font-bold mb-2 font-open-sans text-gray-900">
+                  <h3 className="text-2xl font-semibold mb-2 font-open-sans text-gray-900">
                     {ribbon.name}
                   </h3>
                   <p className="text-gray-600 font-inter mb-4">{ribbon.description}</p>
@@ -209,7 +218,7 @@ export default function ShippingLabelsPage() {
                   </ul>
                   <Link
                     href={ribbon.link}
-                    className="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700"
+                    className="inline-flex items-center text-gray-900 font-semibold hover:text-blue-700"
                   >
                     Learn More
                     <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -225,14 +234,14 @@ export default function ShippingLabelsPage() {
         {/* Recommended Printers */}
         <section className="relative py-24 bg-gray-50">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <h2 className="text-3xl font-bold mb-12 font-open-sans text-center">
+            <h2 className="text-3xl font-semibold mb-12 font-open-sans text-center">
               Recommended Barcode Printers
             </h2>
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
               {recommendedPrinters.map((printer, idx) => (
                 <div key={idx} className="bg-white rounded-xl p-8 shadow-lg border border-gray-200">
-                  <h3 className="text-2xl font-bold mb-2 font-open-sans text-gray-900">
+                  <h3 className="text-2xl font-semibold mb-2 font-open-sans text-gray-900">
                     {printer.name}
                   </h3>
                   <p className="text-gray-600 font-inter mb-4">{printer.description}</p>
@@ -248,7 +257,7 @@ export default function ShippingLabelsPage() {
                   </ul>
                   <Link
                     href={printer.link}
-                    className="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700"
+                    className="inline-flex items-center text-gray-900 font-semibold hover:text-blue-700"
                   >
                     View Details
                     <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -264,7 +273,7 @@ export default function ShippingLabelsPage() {
         {/* Label Sizes */}
         <section className="relative py-24 bg-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <h2 className="text-3xl font-bold mb-12 font-open-sans text-center">
+            <h2 className="text-3xl font-semibold mb-12 font-open-sans text-center">
               Common Shipping Label Sizes
             </h2>
 
@@ -276,7 +285,7 @@ export default function ShippingLabelsPage() {
                 { size: '6" x 4"', use: 'Large parcels', common: 'Freight' },
               ].map((label, idx) => (
                 <div key={idx} className="bg-gradient-to-br from-gray-50 to-white rounded-xl p-6 border border-gray-200 text-center">
-                  <div className="text-2xl font-bold text-blue-600 mb-2 font-open-sans">
+                  <div className="text-2xl font-semibold text-gray-900 mb-2 font-open-sans">
                     {label.size}
                   </div>
                   <p className="text-gray-700 font-semibold mb-1 text-sm">{label.use}</p>
@@ -290,7 +299,7 @@ export default function ShippingLabelsPage() {
         {/* Download Guide CTA */}
         <section id="download-guide" className="relative py-20 bg-gradient-to-br from-blue-600 to-blue-800">
           <div className="mx-auto max-w-4xl px-6 lg:px-8 text-center">
-            <h2 className="text-3xl lg:text-4xl font-bold text-white mb-6 font-open-sans">
+            <h2 className="text-3xl lg:text-4xl font-semibold text-white mb-6 font-open-sans">
               Download Complete Shipping Label Guide
             </h2>
             <p className="text-xl text-blue-100 mb-8 font-inter">
@@ -298,7 +307,7 @@ export default function ShippingLabelsPage() {
             </p>
             <Link
               href="/contact?download=shipping-label-guide"
-              className="inline-block px-8 py-4 bg-white text-blue-600 rounded-lg font-bold hover:bg-gray-100 transition-colors shadow-lg font-inter"
+              className="inline-block px-8 py-4 bg-white text-gray-900 rounded-lg font-semibold hover:bg-gray-100 transition-colors shadow-lg font-inter"
             >
               Download Free Guide
             </Link>
@@ -309,7 +318,7 @@ export default function ShippingLabelsPage() {
         {/* FAQ */}
         <section className="relative py-24 bg-white">
           <div className="mx-auto max-w-4xl px-6 lg:px-8">
-            <h2 className="text-3xl font-bold mb-12 font-open-sans text-center">
+            <h2 className="text-3xl font-semibold mb-12 font-open-sans text-center">
               Frequently Asked Questions
             </h2>
 
@@ -333,7 +342,7 @@ export default function ShippingLabelsPage() {
                 },
               ].map((faq, idx) => (
                 <div key={idx} className="bg-gray-50 rounded-xl p-6 border border-gray-200">
-                  <h3 className="text-lg font-bold mb-2 font-open-sans text-gray-900">
+                  <h3 className="text-lg font-semibold mb-2 font-open-sans text-gray-900">
                     {faq.q}
                   </h3>
                   <p className="text-gray-600 font-inter">
@@ -348,7 +357,7 @@ export default function ShippingLabelsPage() {
         {/* Final CTA */}
         <section className="relative py-20 bg-gray-50">
           <div className="mx-auto max-w-4xl px-6 lg:px-8 text-center">
-            <h2 className="text-3xl font-bold mb-6 font-open-sans">
+            <h2 className="text-3xl font-semibold mb-6 font-open-sans">
               Ready to Streamline Your Shipping Labels?
             </h2>
             <p className="text-gray-600 font-inter mb-8">
@@ -357,13 +366,13 @@ export default function ShippingLabelsPage() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact?solution=shipping-labels"
-                className="px-8 py-4 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 transition-colors shadow-lg font-inter"
+                className="px-8 py-4 bg-gray-900 text-white rounded-lg font-semibold hover:bg-[#2563EB] transition-colors shadow-lg font-inter"
               >
                 Request Quote
               </Link>
               <Link
                 href="/#label-finder"
-                className="px-8 py-4 bg-white border-2 border-blue-600 text-blue-600 rounded-lg font-bold hover:bg-blue-50 transition-colors font-inter"
+                className="px-8 py-4 bg-white border-2 border-gray-900 text-gray-900 rounded-lg font-semibold hover:bg-blue-50 transition-colors font-inter"
               >
                 Use Label Finder
               </Link>

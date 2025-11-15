@@ -21,9 +21,9 @@ export default function IndustrialLabelsPage() {
         <section className="relative py-20 bg-gradient-to-br from-gray-50 to-white">
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="text-center max-w-4xl mx-auto">
-              <Link href="/products/labels" className="inline-flex items-center gap-2 text-blue-600 hover:text-blue-700 mb-4 font-inter font-semibold">
+              <Link href="/products/labels" className="inline-flex items-center gap-2 text-gray-900 hover:text-blue-700 mb-4 font-inter font-semibold">
                 <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 19l-7-7 7-7" />
                 </svg>
                 Back to Labels
               </Link>
@@ -31,7 +31,7 @@ export default function IndustrialLabelsPage() {
                 Heavy-Duty Solution
               </div>
               <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6 font-open-sans">
-                INDUSTRIAL <span className="text-blue-600">LABELS</span>
+                INDUSTRIAL <span className="text-gray-900">LABELS</span>
               </h1>
               <p className="text-lg lg:text-xl text-gray-600 mb-8 font-inter leading-relaxed">
                 Extreme-duty labels engineered for harsh industrial environments. Chemical-resistant, high-temperature, weatherproof labels for manufacturing, warehouses, and heavy industry applications.
@@ -80,7 +80,7 @@ export default function IndustrialLabelsPage() {
                 { material: 'Polyimide', temp: '-269°C to 400°C', features: 'Electronics, aerospace applications' },
               ].map((item, i) => (
                 <div key={i} className="bg-white rounded-xl p-6 shadow-lg">
-                  <h3 className="text-xl font-bold mb-2 text-blue-600 font-open-sans">{item.material}</h3>
+                  <h3 className="text-xl font-bold mb-2 text-gray-900 font-open-sans">{item.material}</h3>
                   <div className="text-sm text-gray-700 font-inter mb-2">
                     <strong>Temperature:</strong> {item.temp}
                   </div>
@@ -104,7 +104,7 @@ export default function IndustrialLabelsPage() {
                 { title: 'Long-Term Adhesion', desc: 'Permanent adhesive for 5+ years durability' },
               ].map((item, i) => (
                 <div key={i} className="bg-gradient-to-br from-blue-50 to-white rounded-xl p-6 border-2 border-blue-200">
-                  <h3 className="text-lg font-bold mb-2 text-blue-600 font-open-sans">{item.title}</h3>
+                  <h3 className="text-lg font-bold mb-2 text-gray-900 font-open-sans">{item.title}</h3>
                   <p className="text-gray-600 text-sm font-inter">{item.desc}</p>
                 </div>
               ))}
@@ -165,8 +165,8 @@ export default function IndustrialLabelsPage() {
                 { name: 'Polyester Labels', href: '/resources/materials/polyester' },
               ].map((product, i) => (
                 <Link key={i} href={product.href} className="bg-white rounded-xl p-6 shadow-sm hover:shadow-lg transition-shadow border border-gray-200 hover:border-blue-500 text-center group">
-                  <h3 className="font-bold text-lg mb-2 font-open-sans group-hover:text-blue-600">{product.name}</h3>
-                  <div className="text-blue-600 text-sm font-semibold">Learn More →</div>
+                  <h3 className="font-bold text-lg mb-2 font-open-sans group-hover:text-gray-900">{product.name}</h3>
+                  <div className="text-gray-900 text-sm font-semibold">Learn More →</div>
                 </Link>
               ))}
             </div>

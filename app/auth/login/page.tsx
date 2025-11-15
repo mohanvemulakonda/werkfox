@@ -64,7 +64,7 @@ export default function LoginPage() {
             Or{" "}
             <Link
               href="/auth/register"
-              className="font-medium text-blue-600 hover:text-blue-500"
+              className="font-medium text-gray-900 hover:text-blue-500"
             >
               create a new account
             </Link>
@@ -117,7 +117,7 @@ export default function LoginPage() {
                 id="remember-me"
                 name="remember-me"
                 type="checkbox"
-                className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+                className="h-4 w-4 text-gray-900 focus:ring-blue-500 border-gray-300 rounded"
               />
               <label
                 htmlFor="remember-me"
@@ -130,7 +130,7 @@ export default function LoginPage() {
             <div className="text-sm">
               <Link
                 href="/auth/forgot-password"
-                className="font-medium text-blue-600 hover:text-blue-500 font-inter"
+                className="font-medium text-gray-900 hover:text-blue-500 font-inter"
               >
                 Forgot your password?
               </Link>

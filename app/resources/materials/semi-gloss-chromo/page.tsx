@@ -21,7 +21,7 @@ export default function SemiGlossChromoPage() {
         <section className="bg-gray-50 py-4">
           <div className="mx-auto max-w-7xl px-6">
             <div className="flex items-center text-sm text-gray-600">
-              <Link href="/resources/materials" className="hover:text-blue-600">Materials Library</Link>
+              <Link href="/resources/materials" className="hover:text-gray-900">Materials Library</Link>
               <span className="mx-2">/</span>
               <span className="text-gray-900 font-semibold">Semi Gloss Chromo</span>
             </div>
@@ -33,11 +33,11 @@ export default function SemiGlossChromoPage() {
           <div className="mx-auto max-w-7xl px-6 lg:px-8">
             <div className="grid lg:grid-cols-2 gap-12 items-center">
               <div>
-                <div className="inline-block px-4 py-2 bg-blue-100 text-blue-600 rounded-full text-sm font-semibold mb-4">
+                <div className="inline-block px-4 py-2 bg-blue-100 text-gray-900 rounded-full text-sm font-semibold mb-4">
                   Paper Material
                 </div>
                 <h1 className="text-5xl font-extrabold mb-6 font-open-sans">
-                  Semi Gloss <span className="text-blue-600">Chromo</span>
+                  Semi Gloss <span className="text-gray-900">Chromo</span>
                 </h1>
                 <p className="text-xl text-gray-600 mb-8 font-inter">
                   The most popular general-purpose label material. Excellent print quality, cost-effective, and suitable for most indoor applications.
@@ -46,7 +46,7 @@ export default function SemiGlossChromoPage() {
                   <Link href="/contact?material=semi-gloss-chromo" className="px-8 py-4 bg-blue-600 text-white rounded-lg font-bold hover:bg-blue-700 text-center">
                     Request Sample
                   </Link>
-                  <button className="px-8 py-4 bg-white border-2 border-blue-600 text-blue-600 rounded-lg font-bold hover:bg-blue-50">
+                  <button className="px-8 py-4 bg-white border-2 border-blue-600 text-gray-900 rounded-lg font-bold hover:bg-blue-50">
                     Download PDF
                   </button>
                 </div>
@@ -115,9 +115,9 @@ export default function SemiGlossChromoPage() {
                   href={app.link}
                   className="group bg-gradient-to-r from-blue-50 to-white border-2 border-blue-200 rounded-xl p-6 hover:shadow-xl hover:border-blue-500 transition-all"
                 >
-                  <h3 className="text-lg font-bold mb-2 group-hover:text-blue-600 transition-colors">{app.app}</h3>
+                  <h3 className="text-lg font-bold mb-2 group-hover:text-gray-900 transition-colors">{app.app}</h3>
                   <p className="text-gray-600 text-sm mb-3">{app.desc}</p>
-                  <div className="flex items-center text-blue-600 font-semibold text-sm">
+                  <div className="flex items-center text-gray-900 font-semibold text-sm">
                     View Solution
                     <svg className="w-4 h-4 ml-2 group-hover:translate-x-1 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -203,7 +203,7 @@ export default function SemiGlossChromoPage() {
                       </li>
                     ))}
                   </ul>
-                  <Link href={ribbon.link} className="inline-flex items-center text-blue-600 font-semibold hover:text-blue-700">
+                  <Link href={ribbon.link} className="inline-flex items-center text-gray-900 font-semibold hover:text-blue-700">
                     Learn More
                     <svg className="w-4 h-4 ml-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
@@ -223,10 +223,10 @@ export default function SemiGlossChromoPage() {
               Get a free sample and custom quote for your requirements
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/contact?material=semi-gloss-chromo" className="px-8 py-4 bg-white text-blue-600 rounded-lg font-bold hover:bg-gray-100">
+              <Link href="/contact?material=semi-gloss-chromo" className="px-8 py-4 bg-white text-gray-900 rounded-lg font-bold hover:bg-gray-100">
                 Request Sample & Quote
               </Link>
-              <Link href="/resources/materials" className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-bold hover:bg-white hover:text-blue-600">
+              <Link href="/resources/materials" className="px-8 py-4 bg-transparent border-2 border-white text-white rounded-lg font-bold hover:bg-white hover:text-gray-900">
                 Browse All Materials
               </Link>
             </div>

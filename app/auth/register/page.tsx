@@ -98,7 +98,7 @@ export default function RegisterPage() {
             Or{" "}
             <Link
               href="/auth/login"
-              className="font-medium text-blue-600 hover:text-blue-500"
+              className="font-medium text-gray-900 hover:text-blue-500"
             >
               sign in to existing account
             </Link>
@@ -212,20 +212,20 @@ export default function RegisterPage() {
               name="terms"
               type="checkbox"
               required
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
+              className="h-4 w-4 text-gray-900 focus:ring-blue-500 border-gray-300 rounded"
             />
             <label
               htmlFor="terms"
               className="ml-2 block text-sm text-black font-inter"
             >
               I agree to the{" "}
-              <Link href="/terms" className="text-blue-600 hover:text-blue-500">
+              <Link href="/terms" className="text-gray-900 hover:text-blue-500">
                 Terms of Service
               </Link>{" "}
               and{" "}
               <Link
                 href="/privacy"
-                className="text-blue-600 hover:text-blue-500"
+                className="text-gray-900 hover:text-blue-500"
               >
                 Privacy Policy
               </Link>
