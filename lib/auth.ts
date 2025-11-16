@@ -16,10 +16,14 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
       },
       async authorize(credentials) {
         try {
+          console.log('[AUTH] Starting authorization...');
+
           if (!credentials?.email || !credentials?.password) {
-            console.error('Missing credentials');
+            console.error('[AUTH] Missing credentials');
             return null;
           }
+
+          console.log('[AUTH] Looking up user:', credentials.email);
 
           const user = await prisma.adminUser.findUnique({
             where: {
@@ -27,10 +31,17 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             }
           });
 
-          if (!user || !user.isActive) {
-            console.error('User not found or inactive');
+          if (!user) {
+            console.error('[AUTH] User not found:', credentials.email);
             return null;
           }
+
+          if (!user.isActive) {
+            console.error('[AUTH] User is inactive:', credentials.email);
+            return null;
+          }
+
+          console.log('[AUTH] User found, checking password...');
 
           const passwordMatch = await bcrypt.compare(
             credentials.password as string,
@@ -38,15 +49,19 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
           );
 
           if (!passwordMatch) {
-            console.error('Password mismatch');
+            console.error('[AUTH] Password mismatch for:', credentials.email);
             return null;
           }
+
+          console.log('[AUTH] Password verified, updating last login...');
 
           // Update last login
           await prisma.adminUser.update({
             where: { id: user.id },
             data: { lastLogin: new Date() }
           });
+
+          console.log('[AUTH] Login successful for:', credentials.email);
 
           return {
             id: user.id.toString(),
@@ -55,7 +70,11 @@ export const { handlers, signIn, signOut, auth } = NextAuth({
             role: user.role
           };
         } catch (error) {
-          console.error('Auth error:', error);
+          console.error('[AUTH] Authorization error:', error);
+          console.error('[AUTH] Error details:', {
+            message: error instanceof Error ? error.message : 'Unknown error',
+            stack: error instanceof Error ? error.stack : undefined
+          });
           return null;
         }
       }
