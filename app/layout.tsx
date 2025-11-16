@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Open_Sans } from "next/font/google";
 import "./globals.css";
-import { AuthProvider } from "./lib/auth-context";
+import SessionProvider from "../components/SessionProvider";
 import Analytics from "./components/Analytics";
 import { CookieConsentProvider } from "../lib/cookie-consent-context";
 import CookieBanner from "../components/CookieBanner";
@@ -112,12 +112,12 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${openSans.variable}`}>
       <body className={inter.className}>
         <Analytics />
-        <CookieConsentProvider>
-          <AuthProvider>
+        <SessionProvider>
+          <CookieConsentProvider>
             {children}
-          </AuthProvider>
-          <CookieBanner />
-        </CookieConsentProvider>
+            <CookieBanner />
+          </CookieConsentProvider>
+        </SessionProvider>
       </body>
     </html>
   );
