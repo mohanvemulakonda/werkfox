@@ -2,6 +2,7 @@ import Header from '../../components/Header';
 import Footer from '../../components/Footer';
 import Link from 'next/link';
 import Image from 'next/image';
+import ShopNowButton from '../../components/ShopNowButton';
 
 export default function Labels() {
   const labelIndustries = [
@@ -182,14 +183,27 @@ export default function Labels() {
                 READY TO GET STARTED?
               </h2>
               <p className="text-lg text-blue-100 max-w-2xl mx-auto mb-8 font-inter">
-                Contact us to discuss your specific labeling requirements
+                Shop online for standard labels or contact us for custom solutions
               </p>
-              <Link href="/contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-lg bg-white text-gray-900 font-semibold hover:bg-gray-100 transition-colors shadow-lg font-inter">
-                CONTACT US
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
-                </svg>
-              </Link>
+              <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                <ShopNowButton
+                  variant="secondary"
+                  size="lg"
+                  source="products-labels"
+                  className="bg-white text-gray-900 hover:bg-gray-100"
+                >
+                  <span>Shop Labels Online</span>
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+                  </svg>
+                </ShopNowButton>
+                <Link href="/contact" className="inline-flex items-center gap-2 px-8 py-4 rounded-lg border-2 border-white text-white font-semibold hover:bg-white hover:text-blue-600 transition-colors shadow-lg font-inter">
+                  REQUEST CUSTOM QUOTE
+                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5l7 7-7 7" />
+                  </svg>
+                </Link>
+              </div>
             </div>
           </div>
         </section>

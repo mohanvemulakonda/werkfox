@@ -1,0 +1,4 @@
+invoiceNumber,itemName,description,hsnCode,quantity,unit,unitPrice,discount,gstRate
+INV210001,Pharmaceutical Labels,Custom printed labels for medicines,49119900,1000,Nos,100,0,18
+INV210002,Barcode Ribbons,Thermal transfer ribbons,96121090,50,Rolls,1000,100,18
+QT210003,RFID Labels,RFID enabled labels,49119900,500,Nos,150,0,18

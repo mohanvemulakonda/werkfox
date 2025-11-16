@@ -4,6 +4,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import ImageCarousel from './components/ImageCarousel';
 import LabelConfigurator from './components/LabelConfigurator';
+import ShopNowButton from './components/ShopNowButton';
 import Script from 'next/script';
 
 export default function Home() {
@@ -51,8 +52,9 @@ export default function Home() {
         "email": "info@livatosolutions.com",
         "foundingDate": "2019",
         "sameAs": [
-          "https://www.linkedin.com/company/livato-solutions",
-          "https://www.facebook.com/livatosolutions"
+          "https://www.linkedin.com/company/livato-solutions/posts/?feedView=all",
+          "https://www.instagram.com/livato_solutions?igsh=MW1iMWV1aGEzZTRuYw%3D%3D&utm_source=qr",
+          "https://www.facebook.com/100063765051796/about/"
         ]
       },
       {
@@ -209,18 +211,28 @@ export default function Home() {
                   </div>
                 </div>
 
-                <div className="flex flex-col sm:flex-row gap-4">
-                  <Link href="/contact" className="group relative px-8 py-4 bg-gray-900 text-white overflow-hidden">
+                <div className="flex flex-col sm:flex-row gap-3">
+                  <ShopNowButton
+                    variant="primary"
+                    size="md"
+                    source="homepage-hero"
+                  >
+                    <span>Shop Online</span>
+                    <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+                    </svg>
+                  </ShopNowButton>
+                  <Link href="/contact" className="group relative px-6 py-3 bg-gray-900 text-white overflow-hidden">
                     <span className="relative z-10 text-sm tracking-wide flex items-center gap-2">
-                      Get Started
+                      Request Quote
                       <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                       </svg>
                     </span>
                     <div className="absolute inset-0 bg-[#2563EB] transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
                   </Link>
-                  <Link href="/products" className="px-8 py-4 border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all flex items-center gap-2">
-                    <span className="text-sm tracking-wide">View Products</span>
+                  <Link href="/products" className="px-6 py-3 border border-gray-900 text-gray-900 hover:bg-gray-900 hover:text-white transition-all flex items-center gap-2">
+                    <span className="text-sm tracking-wide">Learn More</span>
                     <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 8l4 4m0 0l-4 4m4-4H3" />
                     </svg>

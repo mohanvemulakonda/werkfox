@@ -1,0 +1,560 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model Contact {
+  id                Int           @id @default(autoincrement())
+  name              String        @db.VarChar(255)
+  email             String        @db.VarChar(255)
+  phone             String?       @db.VarChar(50)
+  company           String?       @db.VarChar(255)
+  message           String        @db.Text
+  labelFinderData   String?       @db.Text
+  source            String?       @default("contact_form") @db.VarChar(100)
+  ipAddress         String?       @db.VarChar(100)
+  userAgent         String?       @db.Text
+  status            ContactStatus @default(NEW)
+  assignedTo        String?       @db.VarChar(255)
+  notes             String?       @db.Text
+  createdAt         DateTime      @default(now())
+  updatedAt         DateTime      @updatedAt
+  convertedToLeadId Int?          @unique
+  lead              Lead?         @relation(fields: [convertedToLeadId], references: [id])
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+  @@index([convertedToLeadId])
+  @@map("contacts")
+}
+
+model Lead {
+  id              Int           @id @default(autoincrement())
+  name            String        @db.VarChar(255)
+  email           String        @db.VarChar(255)
+  phone           String?       @db.VarChar(50)
+  company         String?       @db.VarChar(255)
+  designation     String?       @db.VarChar(255)
+  billingAddress  String?       @db.Text
+  shippingAddress String?       @db.Text
+  city            String?       @db.VarChar(100)
+  state           String?       @db.VarChar(100)
+  country         String?       @default("India") @db.VarChar(100)
+  pincode         String?       @db.VarChar(20)
+  gstNumber       String?       @db.VarChar(50)
+  gstType         GstType?      @default(UNREGISTERED)
+  source          String?       @db.VarChar(100)
+  industry        String?       @db.VarChar(100)
+  leadScore       Int?          @default(0)
+  stage           LeadStage     @default(NEW)
+  status          LeadStatus    @default(ACTIVE)
+  assignedTo      String?       @db.VarChar(255)
+  notes           String?       @db.Text
+  nextFollowUp    DateTime?
+  lastContacted   DateTime?
+  createdAt       DateTime      @default(now())
+  updatedAt       DateTime      @updatedAt
+  convertedAt     DateTime?
+  activities      Activity[]
+  contact         Contact?
+  invoices        Invoice[]
+  opportunities   Opportunity[]
+
+  @@index([email])
+  @@index([stage])
+  @@index([status])
+  @@index([assignedTo])
+  @@index([createdAt])
+  @@map("leads")
+}
+
+model Opportunity {
+  id                Int                  @id @default(autoincrement())
+  name              String               @db.VarChar(255)
+  description       String?              @db.Text
+  leadId            Int
+  value             Decimal              @db.Decimal(12, 2)
+  currency          String               @default("INR") @db.VarChar(10)
+  probability       Int?                 @default(0)
+  expectedCloseDate DateTime?
+  actualCloseDate   DateTime?
+  stage             OpportunityStage     @default(QUALIFICATION)
+  status            OpportunityStatus    @default(OPEN)
+  lostReason        String?              @db.Text
+  assignedTo        String?              @db.VarChar(255)
+  notes             String?              @db.Text
+  createdAt         DateTime             @default(now())
+  updatedAt         DateTime             @updatedAt
+  activities        Activity[]
+  invoices          Invoice[]
+  lead              Lead                 @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  products          OpportunityProduct[]
+
+  @@index([leadId])
+  @@index([stage])
+  @@index([status])
+  @@index([assignedTo])
+  @@map("opportunities")
+}
+
+model Product {
+  id                  Int                  @id @default(autoincrement())
+  sku                 String               @unique @db.VarChar(100)
+  name                String               @db.VarChar(255)
+  description         String?              @db.Text
+  category            ProductCategory?
+  basePrice           Decimal              @db.Decimal(10, 2)
+  currency            String               @default("INR") @db.VarChar(10)
+  hsnCode             String?              @db.VarChar(50)
+  gstRate             Decimal              @default(18.00) @db.Decimal(5, 2)
+  unit                String?              @default("Nos") @db.VarChar(50)
+  isActive            Boolean              @default(true)
+  stockQuantity       Int?                 @default(0)
+  createdAt           DateTime             @default(now())
+  updatedAt           DateTime             @updatedAt
+  connectivity        String?              @db.VarChar(255)
+  coreSize            String?              @db.VarChar(50)
+  features            String?              @db.Text
+  image               String?              @db.VarChar(500)
+  images              String?              @db.Text
+  labelAdhesive       String?              @db.VarChar(100)
+  labelFinish         String?              @db.VarChar(100)
+  labelMaterial       String?              @db.VarChar(100)
+  labelShape          String?              @db.VarChar(50)
+  labelSize           String?              @db.VarChar(100)
+  licensePeriod       String?              @db.VarChar(50)
+  licenseType         String?              @db.VarChar(100)
+  maxPrintWidth       String?              @db.VarChar(50)
+  maxUsers            Int?
+  metaDescription     String?              @db.Text
+  metaTitle           String?              @db.VarChar(255)
+  printMethod         String?              @db.VarChar(100)
+  printResolution     String?              @db.VarChar(50)
+  printSpeed          String?              @db.VarChar(50)
+  printTechnology     String?              @db.VarChar(100)
+  printerBrand        String?              @db.VarChar(100)
+  printerModel        String?              @db.VarChar(100)
+  printerType         String?              @db.VarChar(100)
+  reorderLevel        Int?                 @default(10)
+  ribbonColor         String?              @db.VarChar(50)
+  ribbonLength        String?              @db.VarChar(50)
+  ribbonType          String?              @db.VarChar(100)
+  ribbonWidth         String?              @db.VarChar(50)
+  rollSize            String?              @db.VarChar(100)
+  serviceType         String?              @db.VarChar(100)
+  specifications      String?              @db.Text
+  subCategory         String?              @db.VarChar(100)
+  tags                String?              @db.Text
+  invoiceItems        InvoiceItem[]
+  opportunityProducts OpportunityProduct[]
+
+  @@index([sku])
+  @@index([category])
+  @@index([isActive])
+  @@index([printerBrand])
+  @@map("products")
+}
+
+model OpportunityProduct {
+  id            Int         @id @default(autoincrement())
+  opportunityId Int
+  productId     Int
+  quantity      Decimal     @db.Decimal(10, 2)
+  unitPrice     Decimal     @db.Decimal(10, 2)
+  discount      Decimal     @default(0.00) @db.Decimal(10, 2)
+  opportunity   Opportunity @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+  product       Product     @relation(fields: [productId], references: [id])
+
+  @@index([opportunityId])
+  @@index([productId])
+  @@map("opportunity_products")
+}
+
+model Subscriber {
+  id             Int       @id @default(autoincrement())
+  email          String    @unique @db.VarChar(255)
+  name           String?   @db.VarChar(255)
+  isActive       Boolean   @default(true)
+  source         String?   @db.VarChar(100)
+  subscribedAt   DateTime  @default(now())
+  unsubscribedAt DateTime?
+
+  @@index([email])
+  @@index([isActive])
+  @@map("subscribers")
+}
+
+model Download {
+  id           Int      @id @default(autoincrement())
+  email        String?  @db.VarChar(255)
+  name         String?  @db.VarChar(255)
+  company      String?  @db.VarChar(255)
+  resourceType String   @db.VarChar(100)
+  resourceName String   @db.VarChar(255)
+  resourcePath String   @db.VarChar(500)
+  ipAddress    String?  @db.VarChar(100)
+  userAgent    String?  @db.Text
+  downloadedAt DateTime @default(now())
+
+  @@index([email])
+  @@index([resourceType])
+  @@index([downloadedAt])
+  @@map("downloads")
+}
+
+model QuoteRequest {
+  id             Int         @id @default(autoincrement())
+  name           String      @db.VarChar(255)
+  email          String      @db.VarChar(255)
+  phone          String?     @db.VarChar(50)
+  company        String?     @db.VarChar(255)
+  productName    String?     @db.VarChar(255)
+  quantity       Int?
+  specifications String?     @db.Text
+  estimatedValue Decimal?    @db.Decimal(10, 2)
+  currency       String?     @default("INR") @db.VarChar(10)
+  status         QuoteStatus @default(PENDING)
+  assignedTo     String?     @db.VarChar(255)
+  notes          String?     @db.Text
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+
+  @@index([email])
+  @@index([status])
+  @@index([createdAt])
+  @@map("quote_requests")
+}
+
+model PageView {
+  id        Int      @id @default(autoincrement())
+  path      String   @db.VarChar(500)
+  title     String?  @db.VarChar(255)
+  ipAddress String?  @db.VarChar(100)
+  userAgent String?  @db.Text
+  referrer  String?  @db.VarChar(500)
+  viewedAt  DateTime @default(now())
+
+  @@index([path])
+  @@index([viewedAt])
+  @@map("page_views")
+}
+
+model AdminUser {
+  id                 Int         @id @default(autoincrement())
+  email              String      @unique @db.VarChar(255)
+  password           String      @db.VarChar(255)
+  name               String      @db.VarChar(255)
+  role               AdminRole   @default(SALES)
+  isActive           Boolean     @default(true)
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+  lastLogin          DateTime?
+  avatar             String?     @db.VarChar(500)
+  canApproveInvoices Boolean     @default(false)
+  canCreateInvoices  Boolean     @default(true)
+  canCreateLeads     Boolean     @default(true)
+  canDeleteLeads     Boolean     @default(false)
+  canEditLeads       Boolean     @default(true)
+  canViewAllLeads    Boolean     @default(false)
+  department         String?     @db.VarChar(100)
+  designation        String?     @db.VarChar(100)
+  managerId          Int?
+  monthlyTarget      Decimal?    @db.Decimal(12, 2)
+  phone              String?     @db.VarChar(50)
+  quarterlyTarget    Decimal?    @db.Decimal(12, 2)
+  manager            AdminUser?  @relation("TeamHierarchy", fields: [managerId], references: [id])
+  teamMembers        AdminUser[] @relation("TeamHierarchy")
+
+  @@index([email])
+  @@index([role])
+  @@index([isActive])
+  @@index([managerId])
+  @@map("admin_users")
+}
+
+model Customer {
+  id                Int        @id @default(autoincrement())
+  customerCode      String     @unique @db.VarChar(50)
+  companyName       String     @db.VarChar(255)
+  displayName       String?    @db.VarChar(255)
+  parentCustomerId  Int?
+  locationName      String?    @db.VarChar(255)
+  isCorporateAccount Boolean   @default(false)
+  contactPerson     String?    @db.VarChar(255)
+  email             String     @db.VarChar(255)
+  phone             String?    @db.VarChar(50)
+  alternatePhone    String?    @db.VarChar(50)
+  website           String?    @db.VarChar(255)
+  gstNumber         String?    @db.VarChar(50)
+  gstType           GstType?   @default(UNREGISTERED)
+  panNumber         String?    @db.VarChar(50)
+  billingAddress    String?    @db.Text
+  billingCity       String?    @db.VarChar(100)
+  billingState      String?    @db.VarChar(100)
+  billingPincode    String?    @db.VarChar(20)
+  billingCountry    String?    @default("India") @db.VarChar(100)
+  shippingAddress   String?    @db.Text
+  shippingCity      String?    @db.VarChar(100)
+  shippingState     String?    @db.VarChar(100)
+  shippingPincode   String?    @db.VarChar(20)
+  shippingCountry   String?    @default("India") @db.VarChar(100)
+  paymentTerms      String?    @db.VarChar(255)
+  creditLimit       Decimal?   @db.Decimal(12, 2)
+  creditDays        Int?       @default(0)
+  openingBalance    Decimal?   @default(0.00) @db.Decimal(12, 2)
+  currentBalance    Decimal?   @default(0.00) @db.Decimal(12, 2)
+  customerType      String?    @db.VarChar(50)
+  industry          String?    @db.VarChar(100)
+  isActive          Boolean    @default(true)
+  notes             String?    @db.Text
+  createdAt         DateTime   @default(now())
+  updatedAt         DateTime   @updatedAt
+  parentCustomer    Customer?  @relation("CustomerHierarchy", fields: [parentCustomerId], references: [id])
+  childAccounts     Customer[] @relation("CustomerHierarchy")
+  invoices          Invoice[]
+
+  @@index([email])
+  @@index([gstNumber])
+  @@index([isActive])
+  @@index([companyName])
+  @@index([parentCustomerId])
+  @@index([isCorporateAccount])
+  @@map("customers")
+}
+
+model Invoice {
+  id                   Int           @id @default(autoincrement())
+  invoiceNumber        String        @unique @db.VarChar(50)
+  customerId           Int?
+  customerName         String        @db.VarChar(255)
+  customerEmail        String        @db.VarChar(255)
+  customerPhone        String?       @db.VarChar(50)
+  customerCompany      String?       @db.VarChar(255)
+  subtotal             Decimal       @db.Decimal(12, 2)
+  total                Decimal       @db.Decimal(12, 2)
+  currency             String        @default("INR") @db.VarChar(10)
+  type                 InvoiceType   @default(QUOTE)
+  status               InvoiceStatus @default(DRAFT)
+  paymentTerms         String?       @db.VarChar(255)
+  dueDate              DateTime?
+  paidAt               DateTime?
+  notes                String?       @db.Text
+  termsAndConditions   String?       @db.Text
+  createdBy            String?       @db.VarChar(255)
+  sentAt               DateTime?
+  viewedAt             DateTime?
+  customer             Customer?     @relation(fields: [customerId], references: [id])
+  createdAt            DateTime      @default(now())
+  updatedAt            DateTime      @updatedAt
+  bankDetails          String?       @db.Text
+  billingAddress       String?       @db.Text
+  cgstAmount           Decimal       @default(0.00) @db.Decimal(12, 2)
+  companyGstNumber     String?       @db.VarChar(50)
+  companyState         String?       @default("Karnataka") @db.VarChar(100)
+  convertedFromQuoteId Int?          @unique
+  customerGstNumber    String?       @db.VarChar(50)
+  customerState        String?       @db.VarChar(100)
+  discountAmount       Decimal       @default(0.00) @db.Decimal(12, 2)
+  discountPercent      Decimal       @default(0.00) @db.Decimal(5, 2)
+  igstAmount           Decimal       @default(0.00) @db.Decimal(12, 2)
+  leadId               Int?
+  opportunityId        Int?
+  otherCharges         Decimal       @default(0.00) @db.Decimal(10, 2)
+  paidAmount           Decimal?      @db.Decimal(12, 2)
+  paymentMethod        String?       @db.VarChar(100)
+  placeOfSupply        String?       @db.VarChar(100)
+  roundOff             Decimal       @default(0.00) @db.Decimal(5, 2)
+  sgstAmount           Decimal       @default(0.00) @db.Decimal(12, 2)
+  shippingAddress      String?       @db.Text
+  shippingCharges      Decimal       @default(0.00) @db.Decimal(10, 2)
+  totalTax             Decimal       @default(0.00) @db.Decimal(12, 2)
+  items                InvoiceItem[]
+  convertedFromQuote   Invoice?      @relation("QuoteToInvoice", fields: [convertedFromQuoteId], references: [id])
+  convertedToInvoice   Invoice?      @relation("QuoteToInvoice")
+  lead                 Lead?         @relation(fields: [leadId], references: [id])
+  opportunity          Opportunity?  @relation(fields: [opportunityId], references: [id])
+
+  @@index([invoiceNumber])
+  @@index([customerId])
+  @@index([customerEmail])
+  @@index([leadId])
+  @@index([opportunityId])
+  @@index([status])
+  @@index([type])
+  @@index([createdAt])
+  @@map("invoices")
+}
+
+model InvoiceItem {
+  id            Int      @id @default(autoincrement())
+  invoiceId     Int
+  productId     Int?
+  itemName      String   @db.VarChar(255)
+  description   String?  @db.Text
+  hsnCode       String?  @db.VarChar(50)
+  quantity      Decimal  @db.Decimal(10, 2)
+  unit          String?  @default("Nos") @db.VarChar(50)
+  unitPrice     Decimal  @db.Decimal(10, 2)
+  discount      Decimal  @default(0.00) @db.Decimal(10, 2)
+  discountType  String?  @default("percentage") @db.VarChar(20)
+  taxableAmount Decimal  @db.Decimal(12, 2)
+  gstRate       Decimal  @db.Decimal(5, 2)
+  cgst          Decimal  @default(0.00) @db.Decimal(12, 2)
+  sgst          Decimal  @default(0.00) @db.Decimal(12, 2)
+  igst          Decimal  @default(0.00) @db.Decimal(12, 2)
+  total         Decimal  @db.Decimal(12, 2)
+  invoice       Invoice  @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  product       Product? @relation(fields: [productId], references: [id])
+
+  @@index([invoiceId])
+  @@index([productId])
+  @@map("invoice_items")
+}
+
+model Activity {
+  id            Int            @id @default(autoincrement())
+  leadId        Int?
+  opportunityId Int?
+  type          ActivityType
+  subject       String         @db.VarChar(255)
+  description   String?        @db.Text
+  outcome       String?        @db.Text
+  scheduledAt   DateTime?
+  completedAt   DateTime?
+  status        ActivityStatus @default(PENDING)
+  assignedTo    String?        @db.VarChar(255)
+  createdBy     String?        @db.VarChar(255)
+  createdAt     DateTime       @default(now())
+  updatedAt     DateTime       @updatedAt
+  lead          Lead?          @relation(fields: [leadId], references: [id], onDelete: Cascade)
+  opportunity   Opportunity?   @relation(fields: [opportunityId], references: [id], onDelete: Cascade)
+
+  @@index([leadId])
+  @@index([opportunityId])
+  @@index([type])
+  @@index([status])
+  @@index([scheduledAt])
+  @@map("activities")
+}
+
+enum ContactStatus {
+  NEW
+  CONTACTED
+  QUALIFIED
+  QUOTE_SENT
+  CONVERTED
+  LOST
+  SPAM
+}
+
+enum LeadStage {
+  NEW
+  CONTACTED
+  QUALIFIED
+  PROPOSAL_SENT
+  NEGOTIATION
+  WON
+  LOST
+}
+
+enum LeadStatus {
+  ACTIVE
+  INACTIVE
+  CONVERTED
+  DISQUALIFIED
+}
+
+enum GstType {
+  REGISTERED
+  UNREGISTERED
+  COMPOSITION
+  SEZ
+  EXPORT
+}
+
+enum OpportunityStage {
+  QUALIFICATION
+  NEEDS_ANALYSIS
+  PROPOSAL
+  NEGOTIATION
+  CLOSED_WON
+  CLOSED_LOST
+}
+
+enum OpportunityStatus {
+  OPEN
+  WON
+  LOST
+  ABANDONED
+}
+
+enum ProductCategory {
+  LABELS
+  RIBBONS
+  PRINTERS
+  SOFTWARE
+  SERVICES
+  SUPPLIES
+  ACCESSORIES
+}
+
+enum QuoteStatus {
+  PENDING
+  IN_PROGRESS
+  SENT
+  ACCEPTED
+  DECLINED
+}
+
+enum AdminRole {
+  SUPER_ADMIN
+  ADMIN
+  SALES_MANAGER
+  SALES
+  MARKETING
+  SUPPORT
+  FINANCE
+  VIEWER
+}
+
+enum InvoiceType {
+  QUOTE
+  PROFORMA
+  INVOICE
+  CREDIT_NOTE
+  DEBIT_NOTE
+}
+
+enum InvoiceStatus {
+  DRAFT
+  SENT
+  VIEWED
+  ACCEPTED
+  REJECTED
+  PARTIALLY_PAID
+  PAID
+  OVERDUE
+  CANCELLED
+}
+
+enum ActivityType {
+  CALL
+  EMAIL
+  MEETING
+  TASK
+  NOTE
+  DEMO
+  FOLLOW_UP
+}
+
+enum ActivityStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
+  RESCHEDULED
+}

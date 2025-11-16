@@ -1,0 +1,237 @@
+{
+  "imported": [
+    {
+      "invoiceNumber": "RI-1141",
+      "customerId": 9
+    },
+    {
+      "invoiceNumber": "RI-1142",
+      "customerId": 9
+    },
+    {
+      "invoiceNumber": "RI-1143",
+      "customerId": 9
+    },
+    {
+      "invoiceNumber": "RI-1144",
+      "customerId": 9
+    },
+    {
+      "invoiceNumber": "RI-1145",
+      "customerId": 9
+    },
+    {
+      "invoiceNumber": "RI-1135",
+      "customerId": 9
+    },
+    {
+      "invoiceNumber": "RI-1134",
+      "customerId": 9
+    },
+    {
+      "invoiceNumber": "RI-1136",
+      "customerId": 9
+    },
+    {
+      "invoiceNumber": "RI-1146",
+      "customerId": 9
+    },
+    {
+      "invoiceNumber": "RI-1131",
+      "customerId": 9
+    },
+    {
+      "invoiceNumber": "RI-1132",
+      "customerId": 9
+    },
+    {
+      "invoiceNumber": "RI-1137",
+      "customerId": 9
+    },
+    {
+      "invoiceNumber": "RI-1139",
+      "customerId": 9
+    },
+    {
+      "invoiceNumber": "RI-1140",
+      "customerId": 9
+    }
+  ],
+  "skipped": [
+    {
+      "invoiceNumber": "RI-1120",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1123",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1124",
+      "reason": "Extraction errors: No line items found"
+    },
+    {
+      "invoiceNumber": "RI-1125",
+      "reason": "Extraction errors: No line items found"
+    },
+    {
+      "invoiceNumber": "RI-1126",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1127",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1128",
+      "reason": "Extraction errors: No line items found"
+    },
+    {
+      "invoiceNumber": "RI-1130",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "RI-1135",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "RI-1138",
+      "reason": "Extraction errors: Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Due date not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Due date not found, Customer state not found, No line items found"
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "total": 56,
+    "imported": 14,
+    "skipped": 42,
+    "errors": 0
+  }
+}

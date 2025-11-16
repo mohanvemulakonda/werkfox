@@ -52,7 +52,7 @@ export default function Header() {
               <span className="text-lg font-bold tracking-tight font-open-sans">
                 LIVATO SOLUTIONS
               </span>
-              <span className="text-xs font-semibold text-gray-600 tracking-wide font-inter">
+              <span className="text-xs font-light text-gray-600 tracking-wide font-open-sans">
                 Innovate. Inspire. Transform.
               </span>
             </div>

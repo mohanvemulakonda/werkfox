@@ -1,0 +1,88 @@
+[
+  {
+    "companyName": "MYK LATICRETE INDIA PRIVATE LIMITED",
+    "email": "info@myklaticrete.com",
+    "phone": "+91-7010043720",
+    "gstNumber": "08AAACL5557E1ZJ",
+    "billingAddress": "Sotanala Industrial area Plot No C21, Behror, 301701 Rajasthan, India",
+    "shippingAddress": "Sotanala Industrial area Plot No C21, Behror, 301701 Rajasthan, India",
+    "invoiceCount": 19,
+    "totalRevenue": 1356056,
+    "firstInvoiceDate": "2024-06-19T00:00:00.000Z",
+    "lastInvoiceDate": "2025-11-16T15:04:08.337Z"
+  },
+  {
+    "companyName": "MYK LATICRETE",
+    "email": "mahesh@myklaticrete.com",
+    "phone": "7010043720",
+    "gstNumber": "33AAACL5557E1ZQ",
+    "state": "Tamil Nadu",
+    "billingAddress": "No-13 old no-18 B Link Road\nMettu street, Maduvangarai\nGuindy\nChennai, Tamil Nadu 600032\nindia",
+    "shippingAddress": "Plot no-A1\nsipcot industrial growth center\nperundurai, Erode Tamilnadu 638052\nIndia",
+    "invoiceCount": 1,
+    "totalRevenue": 116348,
+    "firstInvoiceDate": "2021-12-14T00:00:00.000Z",
+    "lastInvoiceDate": "2021-12-14T00:00:00.000Z"
+  },
+  {
+    "companyName": "MYK LATICRETE INDIA PRIVATE LIMITED",
+    "email": "mukesh@myklaticrete.com",
+    "phone": "9618525757",
+    "gstNumber": "08AAACL5557E1ZJ",
+    "state": "Rajasthan",
+    "billingAddress": "Sotanala Industrial area\nPlot No C21\nBehror - 301701\nRajasthan, india",
+    "shippingAddress": "Sotanala Industrial area\nPlot No C21\nBehror - 301701\nRajasthan, india",
+    "invoiceCount": 1,
+    "totalRevenue": 80641,
+    "firstInvoiceDate": "2021-12-14T00:00:00.000Z",
+    "lastInvoiceDate": "2021-12-14T00:00:00.000Z"
+  },
+  {
+    "companyName": "United Technologies",
+    "email": "jagadesh@unitedtechnologies.com",
+    "state": "Telangana",
+    "billingAddress": "Plot No 299\nSri Balaji Nest\nHAL Colony Jeedimetla\nHyderabad, Telangana India",
+    "shippingAddress": "Plot No 299\nSri Balaji Nest\nHAL Colony Jeedimetla\nHyderabad, Telangana India",
+    "invoiceCount": 2,
+    "totalRevenue": 76689,
+    "firstInvoiceDate": "2021-12-01T00:00:00.000Z",
+    "lastInvoiceDate": "2021-12-14T00:00:00.000Z"
+  },
+  {
+    "companyName": "Decision Support Systems India Ltd",
+    "email": "contact@dssindia.com",
+    "gstNumber": "36AABCD3610R1ZI",
+    "state": "Telangana",
+    "billingAddress": "132/A Bluepal Building Level 3\nStreet No. 6, Western Hills, Addagutta\nKukatpally\nHyderabad, Telangana 500085\nIndia",
+    "shippingAddress": "132/A Bluepal Building Level 3\nStreet No. 6, Western Hills, Addagutta\nKukatpally\nHyderabad, Telangana 500085\nIndia",
+    "invoiceCount": 1,
+    "totalRevenue": 56640,
+    "firstInvoiceDate": "2021-12-28T00:00:00.000Z",
+    "lastInvoiceDate": "2021-12-28T00:00:00.000Z"
+  },
+  {
+    "companyName": "Mylan R&D Center Bengaluru, Mylan Laboratories Ltd",
+    "email": "ramji.jakkuva@mylan.com",
+    "phone": "08061878223",
+    "gstNumber": "29AADCM3491M1ZX",
+    "state": "Karnataka",
+    "billingAddress": "Sy. No. 28, 29, 30 & 42\nPlot No. 48, Bommasandra-Jigani Link Road\nIndustrial Area,Bandenallasandra Village\nJigani Hobli, Anekal Taluk\nBengaluru, Karnataka 560105\nIndia",
+    "shippingAddress": "Sy. No. 28, 29, 30 & 42\nPlot No. 48, Bommasandra-Jigani Link Road\nIndustrial Area,Bandenallasandra Village\nJigani Hobli, Anekal Taluk\nBengaluru, Karnataka 560105\nIndia",
+    "invoiceCount": 1,
+    "totalRevenue": 31270,
+    "firstInvoiceDate": "2021-12-14T00:00:00.000Z",
+    "lastInvoiceDate": "2021-12-14T00:00:00.000Z"
+  },
+  {
+    "companyName": "SRI DATTA INDUSTRIES",
+    "email": "naveen@sridatta.com",
+    "gstNumber": "36AECFS8764B1ZW",
+    "state": "Telangana",
+    "billingAddress": "Cellar, H No 7-81/6, S.S.R Associate\nSY No. 334 Bachupally Village And Mandal\nIDA Bollaram Main Road, Medchal\nHyderabad, Telangana 500090\nIndia",
+    "shippingAddress": "Cellar, H No 7-81/6, S.S.R Associate\nSY No. 334 Bachupally Village And Mandal\nIDA Bollaram Main Road, Medchal\nHyderabad, Telangana 500090\nIndia",
+    "invoiceCount": 2,
+    "totalRevenue": 20349,
+    "firstInvoiceDate": "2021-12-14T00:00:00.000Z",
+    "lastInvoiceDate": "2021-12-23T00:00:00.000Z"
+  }
+]

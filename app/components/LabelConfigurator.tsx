@@ -2,6 +2,8 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import ShopNowButton from './ShopNowButton';
+import { getLabelHubWithFinderParams } from '@/lib/labelhub';
 
 export default function LabelConfigurator() {
   const router = useRouter();
@@ -682,17 +684,28 @@ export default function LabelConfigurator() {
             </div>
           </div>
 
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col sm:flex-row gap-3">
+            <ShopNowButton
+              source="label-finder"
+              variant="primary"
+              size="md"
+              className="flex-1 justify-center"
+            >
+              <span>Shop Online</span>
+              <svg className="w-4 h-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
+              </svg>
+            </ShopNowButton>
             <button
               onClick={handleRequestQuote}
-              className="group relative flex-1 inline-flex px-8 py-4 bg-gray-900 text-white overflow-hidden justify-center"
+              className="group relative flex-1 inline-flex items-center gap-2 px-6 py-3 bg-gray-900 text-white overflow-hidden justify-center"
             >
               <span className="relative z-10 text-sm tracking-wide">Request Quote</span>
               <div className="absolute inset-0 bg-[#2563EB] transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             </button>
             <button
               onClick={handleReset}
-              className="px-8 py-4 border border-gray-300 text-gray-900 hover:border-[#2563EB] hover:text-[#2563EB] transition-all text-sm tracking-wide"
+              className="px-6 py-3 border border-gray-300 text-gray-900 hover:border-[#2563EB] hover:text-[#2563EB] transition-all text-sm tracking-wide"
             >
               Start Over
             </button>

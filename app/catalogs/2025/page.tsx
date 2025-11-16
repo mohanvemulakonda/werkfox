@@ -92,18 +92,8 @@ function CatalogContent() {
           <Image src="/Livato Logo.png" alt="" width={600} height={600} className="w-full h-full object-contain" />
         </div>
 
-        {/* Decorative Corner - Top Left */}
-        <div className="absolute top-0 left-0 w-2 h-32 bg-blue-600"></div>
-        <div className="absolute top-0 left-0 w-32 h-2 bg-blue-600"></div>
-
-        {/* Decorative Corner - Bottom Right */}
-        <div className="absolute bottom-0 right-0 w-2 h-32 bg-blue-600"></div>
-        <div className="absolute bottom-0 right-0 w-32 h-2 bg-blue-600"></div>
-
-        {/* Decorative Geometric Shapes - Right Side */}
-        <div className="absolute top-24 right-16 w-20 h-20 border-4 border-blue-600 opacity-20 rotate-45"></div>
-        <div className="absolute top-48 right-32 w-12 h-12 bg-blue-600 opacity-10 rounded-full"></div>
-        <div className="absolute bottom-48 right-20 w-16 h-16 border-4 border-blue-400 opacity-20"></div>
+        {/* Full Height Decorative Bar - Right Side */}
+        <div className="absolute top-0 right-0 w-8 h-full bg-blue-600"></div>
 
         {/* Content Container with proper padding */}
         <div className="relative h-full p-12 flex flex-col justify-between z-10">
@@ -756,18 +746,8 @@ function CatalogContent() {
           <Image src="/Livato Logo.png" alt="" width={600} height={600} className="w-full h-full object-contain" />
         </div>
 
-        {/* Decorative Corner - Top Left */}
-        <div className="absolute top-0 left-0 w-2 h-32 bg-blue-600"></div>
-        <div className="absolute top-0 left-0 w-32 h-2 bg-blue-600"></div>
-
-        {/* Decorative Corner - Bottom Right */}
-        <div className="absolute bottom-0 right-0 w-2 h-32 bg-blue-600"></div>
-        <div className="absolute bottom-0 right-0 w-32 h-2 bg-blue-600"></div>
-
-        {/* Decorative Geometric Shapes - Left Side */}
-        <div className="absolute bottom-24 left-16 w-20 h-20 border-4 border-blue-600 opacity-20 rotate-45"></div>
-        <div className="absolute top-32 left-20 w-12 h-12 bg-blue-600 opacity-10 rounded-full"></div>
-        <div className="absolute top-56 left-32 w-16 h-16 border-4 border-blue-400 opacity-20"></div>
+        {/* Full Height Decorative Bar - Left Side */}
+        <div className="absolute top-0 left-0 w-8 h-full bg-blue-600"></div>
 
         {/* Content Container */}
         <div className="relative h-full p-12 flex flex-col justify-between z-10">

@@ -3,6 +3,8 @@ import { Inter, Open_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "./lib/auth-context";
 import Analytics from "./components/Analytics";
+import { CookieConsentProvider } from "../lib/cookie-consent-context";
+import CookieBanner from "../components/CookieBanner";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -110,9 +112,12 @@ export default function RootLayout({
     <html lang="en" className={`${inter.variable} ${openSans.variable}`}>
       <body className={inter.className}>
         <Analytics />
-        <AuthProvider>
-          {children}
-        </AuthProvider>
+        <CookieConsentProvider>
+          <AuthProvider>
+            {children}
+          </AuthProvider>
+          <CookieBanner />
+        </CookieConsentProvider>
       </body>
     </html>
   );

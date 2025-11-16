@@ -217,6 +217,36 @@ body {
     opacity: 0;
   }
 
+  /* Slide Up Animation for Cookie Banner */
+  @keyframes slideUp {
+    from {
+      opacity: 0;
+      transform: translateY(100%);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .animate-slide-up {
+    animation: slideUp 0.5s ease-out forwards;
+  }
+
+  /* Fade In Animation */
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+
+  .animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+  }
+
   /* Scale on Hover for Cards */
   .hover-scale {
     transition: transform 0.3s ease, box-shadow 0.3s ease;

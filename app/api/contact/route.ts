@@ -1,4 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
+import prisma from '@/lib/prisma';
+import { sendContactNotification } from '@/lib/email';
 
 export async function POST(request: NextRequest) {
   try {
@@ -13,37 +15,98 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // TODO: Implement email sending here
-    // For now, we'll just log the data and return success
-    console.log('Contact Form Submission:', {
-      name,
-      email,
-      phone,
-      company,
-      message,
-      labelFinderData: labelFinderData ? JSON.parse(labelFinderData) : null,
-      timestamp: new Date().toISOString()
+    // Get IP address and user agent for tracking
+    const ipAddress = request.headers.get('x-forwarded-for') ||
+                      request.headers.get('x-real-ip') ||
+                      'unknown';
+    const userAgent = request.headers.get('user-agent') || 'unknown';
+
+    // Determine source
+    const source = labelFinderData ? 'label_finder' : 'contact_form';
+
+    // Save to database
+    const contact = await prisma.contact.create({
+      data: {
+        name,
+        email,
+        phone: phone || null,
+        company: company || null,
+        message,
+        labelFinderData: labelFinderData || null,
+        source,
+        ipAddress,
+        userAgent,
+        status: 'NEW',
+      },
     });
 
-    // Simulate email sending
-    // In production, you would use one of these services:
-    // 1. Nodemailer with SMTP
-    // 2. SendGrid API
-    // 3. Resend API
-    // 4. AWS SES
+    console.log('Contact saved to database:', contact.id);
+
+    // Send email notification to sales team
+    sendContactNotification(contact).catch(err => {
+      // Don't block the response if email fails
+      console.error('Email notification failed:', err);
+    });
 
     return NextResponse.json(
       {
         success: true,
-        message: 'Thank you for your message. We will get back to you soon!'
+        message: 'Thank you for your message. We will get back to you soon!',
+        contactId: contact.id,
       },
       { status: 200 }
     );
 
   } catch (error) {
     console.error('Contact form error:', error);
+
+    // Check for database connection errors
+    if (error instanceof Error && error.message.includes('Can\'t reach database')) {
+      return NextResponse.json(
+        { error: 'Database connection error. Please try again later.' },
+        { status: 503 }
+      );
+    }
+
     return NextResponse.json(
-      { error: 'Failed to submit form' },
+      { error: 'Failed to submit form. Please try again.' },
+      { status: 500 }
+    );
+  }
+}
+
+// Optional: GET endpoint to retrieve contacts (for admin dashboard)
+export async function GET(request: NextRequest) {
+  try {
+    // Basic authentication check (replace with proper auth)
+    const authHeader = request.headers.get('authorization');
+    if (!authHeader || authHeader !== `Bearer ${process.env.ADMIN_API_KEY}`) {
+      return NextResponse.json(
+        { error: 'Unauthorized' },
+        { status: 401 }
+      );
+    }
+
+    const { searchParams } = new URL(request.url);
+    const limit = parseInt(searchParams.get('limit') || '50');
+    const status = searchParams.get('status') || undefined;
+
+    const contacts = await prisma.contact.findMany({
+      where: status ? { status: status as any } : undefined,
+      orderBy: { createdAt: 'desc' },
+      take: limit,
+    });
+
+    return NextResponse.json({
+      success: true,
+      data: contacts,
+      total: contacts.length,
+    });
+
+  } catch (error) {
+    console.error('Error fetching contacts:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch contacts' },
       { status: 500 }
     );
   }

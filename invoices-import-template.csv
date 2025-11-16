@@ -1,0 +1,4 @@
+invoiceNumber,date,customerName,customerEmail,customerPhone,customerState,customerGstNumber,companyState,type,status,subtotal,discountAmount,cgst,sgst,igst,total,notes,paymentTerms,paidAmount,billingAddress,shippingAddress,placeOfSupply
+INV210001,2021-01-15,ABC Pharmaceuticals,abc@example.com,9876543210,Karnataka,29XXXXX1234X1Z1,Karnataka,INVOICE,PAID,100000,0,9000,9000,0,118000,First invoice of 2021,Net 30,118000,123 MG Road Bangalore,123 MG Road Bangalore,Karnataka
+INV210002,2021-01-20,XYZ Industries,xyz@example.com,9876543211,Maharashtra,27YYYYY5678Y1Z2,Karnataka,INVOICE,SENT,50000,5000,0,0,8100,53100,Second invoice,Net 15,,456 Andheri Mumbai,456 Andheri Mumbai,Maharashtra
+QT210003,2021-02-01,Demo Company,demo@example.com,9876543212,Tamil Nadu,,Karnataka,QUOTE,DRAFT,75000,0,0,0,13500,88500,Quotation for labels,COD,,789 Anna Nagar Chennai,789 Anna Nagar Chennai,Tamil Nadu

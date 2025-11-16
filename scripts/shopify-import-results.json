@@ -1,0 +1,121 @@
+{
+  "imported": [
+    {
+      "invoiceNumber": "RI-1683",
+      "customerId": 1
+    },
+    {
+      "invoiceNumber": "RI-1684",
+      "customerId": 2
+    },
+    {
+      "invoiceNumber": "RI-1685",
+      "customerId": 1
+    },
+    {
+      "invoiceNumber": "RI-16861",
+      "customerId": 1
+    },
+    {
+      "invoiceNumber": "RI-16871",
+      "customerId": 1
+    },
+    {
+      "invoiceNumber": "RI-1688",
+      "customerId": 1
+    },
+    {
+      "invoiceNumber": "RI-1689",
+      "customerId": 1
+    },
+    {
+      "invoiceNumber": "RI-1690",
+      "customerId": 2
+    },
+    {
+      "invoiceNumber": "RI-16911",
+      "customerId": 1
+    },
+    {
+      "invoiceNumber": "RI-16921",
+      "customerId": 1
+    },
+    {
+      "invoiceNumber": "RI-1697",
+      "customerId": 1
+    },
+    {
+      "invoiceNumber": "RI-1698",
+      "customerId": 2
+    },
+    {
+      "invoiceNumber": "RI-1699",
+      "customerId": 2
+    },
+    {
+      "invoiceNumber": "RI-1693",
+      "customerId": 2
+    },
+    {
+      "invoiceNumber": "RI-1696",
+      "customerId": 1
+    },
+    {
+      "invoiceNumber": "RI-1701",
+      "customerId": 2
+    },
+    {
+      "invoiceNumber": "RI-",
+      "customerId": 1
+    }
+  ],
+  "skipped": [
+    {
+      "invoiceNumber": "RI-16861",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-16871",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Customer name not found, Customer state not found, No line items found"
+    },
+    {
+      "invoiceNumber": "",
+      "reason": "Extraction errors: Invoice number not found, Invoice date not found, Customer name not found, Customer state not found, No line items found"
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "total": 27,
+    "imported": 17,
+    "skipped": 10,
+    "errors": 0
+  }
+}

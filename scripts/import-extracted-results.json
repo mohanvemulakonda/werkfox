@@ -1,0 +1,611 @@
+{
+  "imported": [
+    {
+      "invoiceNumber": "RI-1686",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1687",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1691",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1692",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1138",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1700",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1709",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1721",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1722",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1694",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1695",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1705",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1706",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1707",
+      "customerId": 2,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1708",
+      "customerId": 2,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1702",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1703",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1704",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1719",
+      "customerId": 4,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1720",
+      "customerId": 2,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1716",
+      "customerId": 4,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1717",
+      "customerId": 2,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1718",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1710",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1711",
+      "customerId": 4,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1712",
+      "customerId": 2,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1713",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1714",
+      "customerId": 2,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1715",
+      "customerId": 2,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1729",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1730",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1737",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1738",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1739",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1746",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1747",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1727",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1728",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1724",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1725",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1726",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1735",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1736",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1734",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1731",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1732",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1733",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1744",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1745",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1740",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1741",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1753",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1754",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1755",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1756",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1775",
+      "customerId": 4,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1774",
+      "customerId": 2,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1776",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1751",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1748",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1749",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1750",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1765",
+      "customerId": 4,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1766",
+      "customerId": 4,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1773",
+      "customerId": 4,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1767",
+      "customerId": 2,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1768",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1769",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1770",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1772",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1761",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1762",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1763",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1764",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1752",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1760",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1785",
+      "customerId": 4,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1784",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1781",
+      "customerId": 2,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1782",
+      "customerId": 1,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1778",
+      "customerId": 4,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1780",
+      "customerId": 4,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1777",
+      "customerId": 2,
+      "hasErrors": true
+    },
+    {
+      "invoiceNumber": "RI-1779",
+      "customerId": 1,
+      "hasErrors": true
+    }
+  ],
+  "skipped": [
+    {
+      "invoiceNumber": "RI-1120",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1123",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1124",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1125",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1126",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1127",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1128",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1130",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1141",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1142",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1143",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1144",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1145",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "1673678173455.pdf",
+      "reason": "Cannot extract invoice number"
+    },
+    {
+      "invoiceNumber": "RI-1683",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1684",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1685",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1688",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1689",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1690",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1135",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1134",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1135",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1136",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1146",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1131",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1132",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1686",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1687",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1137",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1139",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1140",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1697",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1698",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1699",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1693",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1693",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1696",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1700",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1701",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1710",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1740",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1741",
+      "reason": "Invoice already exists"
+    },
+    {
+      "invoiceNumber": "RI-1765",
+      "reason": "Invoice already exists"
+    }
+  ],
+  "errors": [],
+  "summary": {
+    "total": 128,
+    "imported": 84,
+    "needsReview": 84,
+    "complete": 0,
+    "skipped": 44,
+    "errors": 0
+  }
+}
