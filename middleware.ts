@@ -1,20 +1,24 @@
-import { auth } from '@/lib/auth';
 import { NextResponse } from 'next/server';
+import type { NextRequest } from 'next/server';
 
-export default auth((req) => {
-  const isAdminRoute = req.nextUrl.pathname.startsWith('/admin');
-  const isLoginPage = req.nextUrl.pathname === '/login/admin';
+// Lightweight middleware - authentication is handled by NextAuth at the app level
+export function middleware(request: NextRequest) {
+  const path = request.nextUrl.pathname;
 
-  if (isAdminRoute && !req.auth) {
-    return NextResponse.redirect(new URL('/login/admin', req.url));
-  }
+  // Let NextAuth handle authentication in API routes and server components
+  // This middleware only handles basic routing
+  if (path.startsWith('/admin') && !path.startsWith('/admin/login')) {
+    // Check for session token (NextAuth.js default cookie name)
+    const sessionToken = request.cookies.get('authjs.session-token') ||
+                        request.cookies.get('__Secure-authjs.session-token');
 
-  if (isLoginPage && req.auth) {
-    return NextResponse.redirect(new URL('/admin', req.url));
+    if (!sessionToken) {
+      return NextResponse.redirect(new URL('/login/admin', request.url));
+    }
   }
 
   return NextResponse.next();
-});
+}
 
 export const config = {
   matcher: ['/admin/:path*']

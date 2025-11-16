@@ -3,6 +3,9 @@ import Credentials from 'next-auth/providers/credentials';
 import * as bcrypt from 'bcryptjs';
 import prisma from './prisma';
 
+// Force Node.js runtime for auth (not Edge)
+export const runtime = 'nodejs';
+
 export const { handlers, signIn, signOut, auth } = NextAuth({
   providers: [
     Credentials({
