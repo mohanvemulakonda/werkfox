@@ -2,6 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { sendContactNotification } from '@/lib/email';
 import { applyRateLimit, RateLimitPresets } from '@/lib/rate-limit';
+import { ValidationSchemas } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
@@ -52,16 +53,24 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Validate required fields
-    if (!name || !email || !message) {
+    // Validate input using comprehensive validation schema
+    const validationResult = ValidationSchemas.contactForm({ name, email, phone, company, message, labelFinderData });
+
+    if (!validationResult.success) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
+        {
+          error: 'Validation failed',
+          errors: validationResult.errors
+        },
         {
           status: 400,
           headers: rateLimitResult.headers,
         }
       );
     }
+
+    // Use sanitized data from validation
+    const sanitizedData = validationResult.data;
 
     // Get IP address and user agent for tracking
     const ipAddress = request.headers.get('x-forwarded-for') ||
@@ -72,15 +81,15 @@ export async function POST(request: NextRequest) {
     // Determine source
     const source = labelFinderData ? 'label_finder' : 'contact_form';
 
-    // Save to database
+    // Save to database with sanitized data
     const contact = await prisma.contact.create({
       data: {
-        name,
-        email,
-        phone: phone || null,
-        company: company || null,
-        message,
-        labelFinderData: labelFinderData || null,
+        name: sanitizedData.name,
+        email: sanitizedData.email,
+        phone: sanitizedData.phone || null,
+        company: sanitizedData.company || null,
+        message: sanitizedData.message,
+        labelFinderData: sanitizedData.labelFinderData || null,
         source,
         ipAddress,
         userAgent,
