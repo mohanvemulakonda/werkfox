@@ -1,9 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { sendContactNotification } from '@/lib/email';
+import { applyRateLimit, RateLimitPresets } from '@/lib/rate-limit';
 
 export async function POST(request: NextRequest) {
   try {
+    // Apply rate limiting - 10 requests per minute from same IP
+    const rateLimitResult = await applyRateLimit(request, RateLimitPresets.LENIENT);
+
+    if (!rateLimitResult.success) {
+      return NextResponse.json(
+        {
+          error: 'Too many requests. Please try again later.',
+          message: 'You have exceeded the rate limit. Please wait a moment before submitting again.',
+        },
+        {
+          status: 429,
+          headers: rateLimitResult.headers,
+        }
+      );
+    }
+
     const body = await request.json();
     const { name, email, phone, company, message, labelFinderData } = body;
 
@@ -11,7 +28,10 @@ export async function POST(request: NextRequest) {
     if (!name || !email || !message) {
       return NextResponse.json(
         { error: 'Missing required fields' },
-        { status: 400 }
+        {
+          status: 400,
+          headers: rateLimitResult.headers,
+        }
       );
     }
 
@@ -54,7 +74,10 @@ export async function POST(request: NextRequest) {
         message: 'Thank you for your message. We will get back to you soon!',
         contactId: contact.id,
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: rateLimitResult.headers,
+      }
     );
 
   } catch (error) {
