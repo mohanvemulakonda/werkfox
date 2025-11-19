@@ -15,11 +15,13 @@ function ContactFormContent() {
     phone: '',
     company: '',
     message: '',
-    labelFinderData: ''
+    labelFinderData: '',
+    website: '' // Honeypot field
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitStatus, setSubmitStatus] = useState<'idle' | 'success' | 'error'>('idle');
   const [recommendation, setRecommendation] = useState<any>(null);
+  const [formStartTime] = useState<number>(Date.now());
 
   useEffect(() => {
     // Check if user came from Label Finder
@@ -57,12 +59,34 @@ Please provide pricing and availability information.`;
     setSubmitStatus('idle');
 
     try {
+      // Honeypot check - if 'website' field is filled, it's likely a bot
+      if (formData.website) {
+        console.warn('Spam detected: honeypot field filled');
+        setSubmitStatus('success'); // Fake success to fool bots
+        return;
+      }
+
+      // Timing check - form must take at least 3 seconds to fill (bot protection)
+      const timeSpent = Date.now() - formStartTime;
+      if (timeSpent < 3000) {
+        setSubmitStatus('error');
+        throw new Error('Please take your time to fill out the form');
+      }
+
       const response = await fetch('/api/contact', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
-        body: JSON.stringify(formData),
+        body: JSON.stringify({
+          name: formData.name,
+          email: formData.email,
+          phone: formData.phone,
+          company: formData.company,
+          message: formData.message,
+          labelFinderData: formData.labelFinderData,
+          _timingCheck: timeSpent // Send timing info for server-side validation
+        }),
       });
 
       const data = await response.json();
@@ -80,7 +104,8 @@ Please provide pricing and availability information.`;
         phone: '',
         company: '',
         message: '',
-        labelFinderData: ''
+        labelFinderData: '',
+        website: ''
       });
       setRecommendation(null);
 
@@ -347,6 +372,20 @@ Please provide pricing and availability information.`;
                         rows={6}
                         className="w-full px-4 py-3 rounded-lg border border-gray-300 focus:border-[#2563EB] focus:ring-2 focus:ring-blue-200 outline-none transition-all font-light resize-none"
                         placeholder="Tell us about your labeling needs..."
+                      />
+                    </div>
+
+                    {/* Honeypot field - hidden from users, visible to bots */}
+                    <div className="hidden" aria-hidden="true">
+                      <label htmlFor="website">Website (leave blank)</label>
+                      <input
+                        type="text"
+                        id="website"
+                        name="website"
+                        value={formData.website}
+                        onChange={handleChange}
+                        tabIndex={-1}
+                        autoComplete="off"
                       />
                     </div>
 

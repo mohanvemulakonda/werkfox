@@ -1,19 +1,76 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { sendContactNotification } from '@/lib/email';
+import { applyRateLimit, RateLimitPresets } from '@/lib/rate-limit';
+import { ValidationSchemas } from '@/lib/validation';
 
 export async function POST(request: NextRequest) {
   try {
-    const body = await request.json();
-    const { name, email, phone, company, message, labelFinderData } = body;
+    // Apply rate limiting - 10 requests per minute from same IP
+    const rateLimitResult = await applyRateLimit(request, RateLimitPresets.LENIENT);
 
-    // Validate required fields
-    if (!name || !email || !message) {
+    if (!rateLimitResult.success) {
       return NextResponse.json(
-        { error: 'Missing required fields' },
-        { status: 400 }
+        {
+          error: 'Too many requests. Please try again later.',
+          message: 'You have exceeded the rate limit. Please wait a moment before submitting again.',
+        },
+        {
+          status: 429,
+          headers: rateLimitResult.headers,
+        }
       );
     }
+
+    const body = await request.json();
+    const { name, email, phone, company, message, labelFinderData, website, _timingCheck } = body;
+
+    // Server-side honeypot check
+    if (website) {
+      console.warn('Spam detected: honeypot field filled', { ip: request.headers.get('x-forwarded-for') });
+      // Return success to fool bots, but don't save
+      return NextResponse.json(
+        {
+          success: true,
+          message: 'Thank you for your message. We will get back to you soon!',
+        },
+        {
+          status: 200,
+          headers: rateLimitResult.headers,
+        }
+      );
+    }
+
+    // Server-side timing check - require at least 2 seconds
+    if (_timingCheck && _timingCheck < 2000) {
+      console.warn('Spam detected: form submitted too quickly', { time: _timingCheck });
+      return NextResponse.json(
+        { error: 'Please take your time to fill out the form' },
+        {
+          status: 400,
+          headers: rateLimitResult.headers,
+        }
+      );
+    }
+
+    // Validate input using comprehensive validation schema
+    const validationResult = ValidationSchemas.contactForm({ name, email, phone, company, message, labelFinderData });
+
+    if (!validationResult.success) {
+      return NextResponse.json(
+        {
+          error: 'Validation failed',
+          errors: validationResult.errors
+        },
+        {
+          status: 400,
+          headers: rateLimitResult.headers,
+        }
+      );
+    }
+
+    // Use sanitized data from validation
+    const sanitizedData = validationResult.data;
 
     // Get IP address and user agent for tracking
     const ipAddress = request.headers.get('x-forwarded-for') ||
@@ -24,15 +81,15 @@ export async function POST(request: NextRequest) {
     // Determine source
     const source = labelFinderData ? 'label_finder' : 'contact_form';
 
-    // Save to database
+    // Save to database with sanitized data
     const contact = await prisma.contact.create({
       data: {
-        name,
-        email,
-        phone: phone || null,
-        company: company || null,
-        message,
-        labelFinderData: labelFinderData || null,
+        name: sanitizedData.name,
+        email: sanitizedData.email,
+        phone: sanitizedData.phone || null,
+        company: sanitizedData.company || null,
+        message: sanitizedData.message,
+        labelFinderData: sanitizedData.labelFinderData || null,
         source,
         ipAddress,
         userAgent,
@@ -54,7 +111,10 @@ export async function POST(request: NextRequest) {
         message: 'Thank you for your message. We will get back to you soon!',
         contactId: contact.id,
       },
-      { status: 200 }
+      {
+        status: 200,
+        headers: rateLimitResult.headers,
+      }
     );
 
   } catch (error) {
