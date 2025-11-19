@@ -22,7 +22,35 @@ export async function POST(request: NextRequest) {
     }
 
     const body = await request.json();
-    const { name, email, phone, company, message, labelFinderData } = body;
+    const { name, email, phone, company, message, labelFinderData, website, _timingCheck } = body;
+
+    // Server-side honeypot check
+    if (website) {
+      console.warn('Spam detected: honeypot field filled', { ip: request.headers.get('x-forwarded-for') });
+      // Return success to fool bots, but don't save
+      return NextResponse.json(
+        {
+          success: true,
+          message: 'Thank you for your message. We will get back to you soon!',
+        },
+        {
+          status: 200,
+          headers: rateLimitResult.headers,
+        }
+      );
+    }
+
+    // Server-side timing check - require at least 2 seconds
+    if (_timingCheck && _timingCheck < 2000) {
+      console.warn('Spam detected: form submitted too quickly', { time: _timingCheck });
+      return NextResponse.json(
+        { error: 'Please take your time to fill out the form' },
+        {
+          status: 400,
+          headers: rateLimitResult.headers,
+        }
+      );
+    }
 
     // Validate required fields
     if (!name || !email || !message) {
