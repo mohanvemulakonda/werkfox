@@ -27,6 +27,48 @@ interface Customer {
   billingState: string | null;
   billingPincode: string | null;
   shippingAddress: string | null;
+  creditDays?: number | null;
+  paymentTerms?: string | null;
+}
+
+interface CustomerContact {
+  id: number;
+  customerId: number;
+  name: string;
+  email: string | null;
+  phone: string | null;
+  designation: string | null;
+  department: string | null;
+  isPrimary: boolean;
+  isBilling: boolean;
+  isShipping: boolean;
+  isDefault?: boolean;
+}
+
+interface Currency {
+  id: number;
+  code: string;
+  name: string;
+  symbol: string;
+}
+
+interface PaymentTerm {
+  id: number;
+  name: string;
+  days: number;
+  description: string | null;
+}
+
+interface UnitOfMeasure {
+  id: number;
+  code: string;
+  name: string;
+}
+
+interface CompanySettings {
+  defaultTermsConditions: string | null;
+  defaultPaymentTerms: string | null;
+  companyState: string | null;
 }
 
 interface InvoiceItem {
@@ -53,6 +95,14 @@ export default function InvoiceForm({ invoice }: InvoiceFormProps) {
   const [products, setProducts] = useState<Product[]>([]);
   const [selectedCustomer, setSelectedCustomer] = useState<Customer | null>(null);
   const [showManualEntry, setShowManualEntry] = useState(false);
+  const [customerContacts, setCustomerContacts] = useState<CustomerContact[]>([]);
+  const [loadingContacts, setLoadingContacts] = useState(false);
+
+  // Metadata state - database driven
+  const [currencies, setCurrencies] = useState<Currency[]>([]);
+  const [paymentTermsList, setPaymentTermsList] = useState<PaymentTerm[]>([]);
+  const [units, setUnits] = useState<UnitOfMeasure[]>([]);
+  const [companySettings, setCompanySettings] = useState<CompanySettings | null>(null);
 
   const [formData, setFormData] = useState({
     type: invoice?.type || 'QUOTE',
@@ -60,20 +110,30 @@ export default function InvoiceForm({ invoice }: InvoiceFormProps) {
     customerName: invoice?.customerName || '',
     customerEmail: invoice?.customerEmail || '',
     customerPhone: invoice?.customerPhone || '',
+    customerCompany: invoice?.customerCompany || '',
     billingAddress: invoice?.billingAddress || '',
     shippingAddress: invoice?.shippingAddress || '',
+    // Separate shipping contact for delivery
+    shippingContactName: invoice?.shippingContactName || '',
+    shippingContactPhone: invoice?.shippingContactPhone || '',
+    sameAsBilling: true, // Toggle for shipping contact
     customerGstNumber: invoice?.customerGstNumber || '',
     customerState: invoice?.customerState || '',
     placeOfSupply: invoice?.placeOfSupply || '',
-    companyState: invoice?.companyState || 'Karnataka',
+    companyState: invoice?.companyState || 'Telangana',
     paymentTerms: invoice?.paymentTerms || 'Due on Receipt',
+    creditDays: invoice?.creditDays || 0,
+    poReference: invoice?.poReference || '',
+    currency: invoice?.currency || 'INR',
     notes: invoice?.notes || '',
+    termsAndConditions: invoice?.termsAndConditions || '',
   });
 
   const [items, setItems] = useState<InvoiceItem[]>(invoice?.items || []);
 
   useEffect(() => {
     fetchProducts();
+    fetchMetadata();
   }, []);
 
   const fetchProducts = async () => {
@@ -88,29 +148,137 @@ export default function InvoiceForm({ invoice }: InvoiceFormProps) {
     }
   };
 
+  const fetchMetadata = async () => {
+    try {
+      const response = await fetch('/api/metadata');
+      if (response.ok) {
+        const data = await response.json();
+        setCurrencies(data.currencies || []);
+        setPaymentTermsList(data.paymentTerms || []);
+        setUnits(data.units || []);
+        setCompanySettings(data.companySettings);
+
+        // Set default terms from company settings if creating new invoice
+        if (!invoice && data.companySettings?.defaultTermsConditions) {
+          setFormData(prev => ({
+            ...prev,
+            termsAndConditions: data.companySettings.defaultTermsConditions,
+            companyState: data.companySettings.companyState || 'Telangana',
+          }));
+        }
+      }
+    } catch (error) {
+      console.error('Error fetching metadata:', error);
+    }
+  };
+
+  // Fetch contacts for a specific customer
+  const fetchCustomerContacts = async (customerId: number) => {
+    setLoadingContacts(true);
+    try {
+      const response = await fetch(`/api/customers/${customerId}/contacts`);
+      if (response.ok) {
+        const data = await response.json();
+        setCustomerContacts(data);
+        return data;
+      }
+    } catch (error) {
+      console.error('Error fetching customer contacts:', error);
+    }
+    setLoadingContacts(false);
+    return [];
+  };
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
-  const handleCustomerSelect = (customer: Customer | null) => {
+  const handleCustomerSelect = async (customer: Customer | null) => {
     if (customer) {
       setSelectedCustomer(customer);
+
+      // Fetch contacts for this customer
+      const contacts = await fetchCustomerContacts(customer.id);
+      setLoadingContacts(false);
+
+      // Find matching payment term based on customer credit days
+      let paymentTerm = formData.paymentTerms;
+      if (customer.creditDays && customer.creditDays > 0) {
+        const matchingTerm = paymentTermsList.find(t => t.days === customer.creditDays);
+        if (matchingTerm) {
+          paymentTerm = matchingTerm.name;
+        } else {
+          paymentTerm = `Net ${customer.creditDays}`;
+        }
+      } else if (customer.paymentTerms) {
+        paymentTerm = customer.paymentTerms;
+      }
+
+      // Use primary/first contact if available
+      const primaryContact = contacts.find((c: CustomerContact) => c.isPrimary) || contacts[0];
+
+      // For billing/invoice purposes: use contact person or fall back to displayName
+      const billingContactName = primaryContact?.name || customer.contactPerson || customer.displayName || '';
+      const billingContactEmail = primaryContact?.email || customer.email || '';
+      const billingContactPhone = primaryContact?.phone || customer.phone || '';
+
+      // For shipping contact: ONLY use actual person names, never company names
+      // This is the contact person for delivery guy to call
+      const actualPersonName = primaryContact?.name || customer.contactPerson || '';
+      const actualPersonPhone = primaryContact?.phone || customer.phone || '';
+
       setFormData(prev => ({
         ...prev,
         customerId: customer.id,
-        customerName: customer.displayName,
-        customerEmail: customer.email || '',
-        customerPhone: customer.phone || '',
+        customerName: billingContactName,
+        customerEmail: billingContactEmail,
+        customerPhone: billingContactPhone,
+        customerCompany: customer.companyName || '',
         billingAddress: customer.billingAddress || '',
         shippingAddress: customer.shippingAddress || customer.billingAddress || '',
+        // Shipping contact: only use real person names, not company names
+        shippingContactName: actualPersonName,
+        shippingContactPhone: actualPersonPhone,
+        sameAsBilling: actualPersonName !== '', // Only same as billing if we have a real contact
         customerGstNumber: customer.gstNumber || '',
         customerState: customer.billingState || '',
         placeOfSupply: customer.billingState || '',
+        creditDays: customer.creditDays || 0,
+        paymentTerms: paymentTerm,
       }));
       setShowManualEntry(false);
     } else {
       setSelectedCustomer(null);
+      setCustomerContacts([]);
+    }
+  };
+
+  // Handle billing contact selection from dropdown
+  const handleBillingContactSelect = (contactId: string) => {
+    const contact = customerContacts.find(c => c.id === parseInt(contactId));
+    if (contact) {
+      setFormData(prev => ({
+        ...prev,
+        customerName: contact.name,
+        customerEmail: contact.email || prev.customerEmail,
+        customerPhone: contact.phone || prev.customerPhone,
+        // Also update shipping if same as billing
+        shippingContactName: prev.sameAsBilling ? contact.name : prev.shippingContactName,
+        shippingContactPhone: prev.sameAsBilling ? (contact.phone || prev.customerPhone) : prev.shippingContactPhone,
+      }));
+    }
+  };
+
+  // Handle shipping contact selection from dropdown
+  const handleShippingContactSelect = (contactId: string) => {
+    const contact = customerContacts.find(c => c.id === parseInt(contactId));
+    if (contact) {
+      setFormData(prev => ({
+        ...prev,
+        shippingContactName: contact.name,
+        shippingContactPhone: contact.phone || '',
+      }));
     }
   };
 
@@ -209,8 +377,16 @@ export default function InvoiceForm({ invoice }: InvoiceFormProps) {
 
       const totals = calculateTotals();
 
+      // Resolve shipping contact based on toggle
+      const shippingContactName = formData.sameAsBilling ? formData.customerName : formData.shippingContactName;
+      const shippingContactPhone = formData.sameAsBilling ? formData.customerPhone : formData.shippingContactPhone;
+      const shippingAddress = formData.sameAsBilling ? formData.billingAddress : formData.shippingAddress;
+
       const payload = {
         ...formData,
+        shippingContactName,
+        shippingContactPhone,
+        shippingAddress,
         items: items.map(item => ({
           productId: item.productId || null,
           itemName: item.productName || 'Unnamed Item',
@@ -264,8 +440,8 @@ export default function InvoiceForm({ invoice }: InvoiceFormProps) {
         </div>
       )}
 
-      {/* Document Type and Payment Terms */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+      {/* Document Type, Payment Terms, Currency, PO Reference */}
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <div>
           <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">
             Document Type <span className="text-red-500">*</span>
@@ -294,13 +470,59 @@ export default function InvoiceForm({ invoice }: InvoiceFormProps) {
             required
             className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent font-inter"
           >
-            <option value="Due on Receipt">Due on Receipt</option>
-            <option value="Net 15">Net 15 Days</option>
-            <option value="Net 30">Net 30 Days</option>
-            <option value="Net 45">Net 45 Days</option>
-            <option value="Net 60">Net 60 Days</option>
-            <option value="Net 90">Net 90 Days</option>
+            {paymentTermsList.length > 0 ? (
+              paymentTermsList.map(term => (
+                <option key={term.id} value={term.name}>
+                  {term.name} {term.days > 0 ? `(${term.days} days)` : ''}
+                </option>
+              ))
+            ) : (
+              <>
+                <option value="Due on Receipt">Due on Receipt</option>
+                <option value="Net 15">Net 15 Days</option>
+                <option value="Net 30">Net 30 Days</option>
+                <option value="Net 45">Net 45 Days</option>
+                <option value="Net 60">Net 60 Days</option>
+                <option value="Net 90">Net 90 Days</option>
+              </>
+            )}
           </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">
+            Currency
+          </label>
+          <select
+            name="currency"
+            value={formData.currency}
+            onChange={handleChange}
+            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent font-inter"
+          >
+            {currencies.length > 0 ? (
+              currencies.map(curr => (
+                <option key={curr.id} value={curr.code}>
+                  {curr.code} - {curr.name}
+                </option>
+              ))
+            ) : (
+              <option value="INR">INR - Indian Rupee</option>
+            )}
+          </select>
+        </div>
+
+        <div>
+          <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">
+            PO / Reference No.
+          </label>
+          <input
+            type="text"
+            name="poReference"
+            value={formData.poReference}
+            onChange={handleChange}
+            placeholder="e.g., PO-2024-001"
+            className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent font-inter"
+          />
         </div>
       </div>
 
@@ -324,6 +546,31 @@ export default function InvoiceForm({ invoice }: InvoiceFormProps) {
         )}
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+          {/* Billing Contact Lookup - Only show when customer is selected and has contacts */}
+          {selectedCustomer && customerContacts.length > 0 && (
+            <div className="md:col-span-2 p-3 bg-blue-50 border border-blue-200 rounded">
+              <label className="block text-sm font-medium text-blue-800 mb-2 font-inter">
+                Select Billing Contact <span className="text-blue-600">(from {selectedCustomer.companyName || selectedCustomer.displayName})</span>
+              </label>
+              <select
+                value={customerContacts.find(c => c.name === formData.customerName)?.id || ''}
+                onChange={(e) => handleBillingContactSelect(e.target.value)}
+                className="w-full px-4 py-2 border border-blue-300 bg-white focus:ring-2 focus:ring-blue-500 focus:border-transparent font-inter"
+              >
+                <option value="">-- Select Contact --</option>
+                {customerContacts.filter(c => c.isBilling).map(contact => (
+                  <option key={contact.id} value={contact.id}>
+                    {contact.name}
+                    {contact.designation ? ` - ${contact.designation}` : ''}
+                    {contact.phone ? ` (${contact.phone})` : ''}
+                    {contact.isPrimary ? ' ★' : ''}
+                  </option>
+                ))}
+              </select>
+              {loadingContacts && <p className="text-xs text-blue-600 mt-1">Loading contacts...</p>}
+            </div>
+          )}
+
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">
               Customer Name <span className="text-red-500">*</span>
@@ -422,16 +669,82 @@ export default function InvoiceForm({ invoice }: InvoiceFormProps) {
               className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent font-inter"
             />
           </div>
+        </div>
+      </div>
+
+      {/* Shipping Details - Separate section for delivery contact */}
+      <div className="mb-6 p-4 border border-blue-200 bg-blue-50">
+        <div className="flex items-center justify-between mb-4">
+          <h3 className="text-lg font-semibold text-gray-900 font-open-sans">Shipping Details</h3>
+          <p className="text-xs text-gray-600 font-inter">Contact person for delivery</p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {/* Shipping Contact Lookup - Show when customer is selected and has contacts */}
+          {selectedCustomer && customerContacts.length > 0 && (
+            <div className="md:col-span-2 p-3 bg-green-50 border border-green-200 rounded">
+              <label className="block text-sm font-medium text-green-800 mb-2 font-inter">
+                Select Shipping Contact <span className="text-green-600">(from {selectedCustomer.companyName || selectedCustomer.displayName})</span>
+              </label>
+              <select
+                value={customerContacts.find(c => c.name === formData.shippingContactName)?.id || ''}
+                onChange={(e) => handleShippingContactSelect(e.target.value)}
+                className="w-full px-4 py-2 border border-green-300 bg-white focus:ring-2 focus:ring-green-500 focus:border-transparent font-inter"
+              >
+                <option value="">-- Select Contact --</option>
+                {customerContacts.filter(c => c.isShipping).map(contact => (
+                  <option key={contact.id} value={contact.id}>
+                    {contact.name}
+                    {contact.designation ? ` - ${contact.designation}` : ''}
+                    {contact.phone ? ` (${contact.phone})` : ''}
+                    {contact.isPrimary ? ' ★' : ''}
+                  </option>
+                ))}
+              </select>
+            </div>
+          )}
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">
+              Shipping Contact Name <span className="text-blue-600">(for delivery)</span>
+            </label>
+            <input
+              type="text"
+              name="shippingContactName"
+              value={formData.shippingContactName}
+              onChange={handleChange}
+              placeholder="Contact person for delivery"
+              className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent font-inter"
+            />
+            {!formData.shippingContactName && (
+              <p className="text-xs text-orange-600 mt-1">No contact person set for this customer. Please enter manually.</p>
+            )}
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">
+              Shipping Contact Phone <span className="text-blue-600">(for delivery guy)</span>
+            </label>
+            <input
+              type="text"
+              name="shippingContactPhone"
+              value={formData.shippingContactPhone}
+              onChange={handleChange}
+              placeholder="Phone number for delivery"
+              className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent font-inter"
+            />
+          </div>
 
           <div className="md:col-span-2">
             <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">
-              Shipping Address (if different)
+              Shipping Address
             </label>
             <textarea
               name="shippingAddress"
               value={formData.shippingAddress}
               onChange={handleChange}
               rows={3}
+              placeholder="Full shipping address"
               className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent font-inter"
             />
           </div>
@@ -630,16 +943,34 @@ export default function InvoiceForm({ invoice }: InvoiceFormProps) {
       {/* Notes */}
       <div className="mb-6">
         <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">
-          Notes / Terms & Conditions
+          Notes
         </label>
         <textarea
           name="notes"
           value={formData.notes}
           onChange={handleChange}
-          rows={4}
-          placeholder="Payment terms, delivery instructions, etc."
+          rows={3}
+          placeholder="Additional notes, delivery instructions, special requests..."
           className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent font-inter"
         />
+      </div>
+
+      {/* Terms & Conditions */}
+      <div className="mb-6">
+        <label className="block text-sm font-medium text-gray-700 mb-2 font-inter">
+          Terms & Conditions
+        </label>
+        <textarea
+          name="termsAndConditions"
+          value={formData.termsAndConditions}
+          onChange={handleChange}
+          rows={5}
+          placeholder="1. Goods once sold will not be taken back.&#10;2. Payment terms as agreed.&#10;3. E&OE"
+          className="w-full px-4 py-2 border border-gray-300 focus:ring-2 focus:ring-blue-500 focus:border-transparent font-inter text-sm"
+        />
+        <p className="mt-1 text-xs text-gray-500 font-inter">
+          Default terms are auto-populated from company settings. You can modify as needed.
+        </p>
       </div>
 
       {/* Actions */}

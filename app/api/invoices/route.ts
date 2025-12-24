@@ -2,14 +2,45 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 
-function generateInvoiceNumber(type: string): string {
+// Generate sequential invoice number using database
+async function generateInvoiceNumber(type: string): Promise<string> {
   const now = new Date();
   const year = now.getFullYear().toString().slice(-2);
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
-  const random = Math.floor(Math.random() * 10000).toString().padStart(4, '0');
 
-  const prefix = type === 'QUOTE' ? 'QT' : type === 'PROFORMA' ? 'PI' : 'INV';
-  return `${prefix}${year}${month}${random}`;
+  // Get company settings for prefix and next number
+  const settings = await prisma.companySettings.findFirst();
+
+  let prefix = 'INV';
+  let nextNumber = 1;
+
+  if (settings) {
+    if (type === 'QUOTE') {
+      prefix = settings.quotePrefix || 'QT';
+      nextNumber = settings.nextQuoteNumber || 1;
+      // Increment quote number
+      await prisma.companySettings.update({
+        where: { id: settings.id },
+        data: { nextQuoteNumber: nextNumber + 1 }
+      });
+    } else if (type === 'PROFORMA') {
+      prefix = settings.proformaPrefix || 'PI';
+      // Use invoice number for proforma
+      nextNumber = settings.nextInvoiceNumber || 1;
+    } else {
+      prefix = settings.invoicePrefix || 'INV';
+      nextNumber = settings.nextInvoiceNumber || 1;
+      // Increment invoice number
+      await prisma.companySettings.update({
+        where: { id: settings.id },
+        data: { nextInvoiceNumber: nextNumber + 1 }
+      });
+    }
+  }
+
+  // Format: PREFIX-YY-MM-NNNN (e.g., LIV-24-12-0001)
+  const formattedNumber = nextNumber.toString().padStart(4, '0');
+  return `${prefix}-${year}${month}-${formattedNumber}`;
 }
 
 export async function GET(request: NextRequest) {
@@ -78,8 +109,8 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Generate invoice number
-    const invoiceNumber = generateInvoiceNumber(body.type || 'QUOTE');
+    // Generate invoice number (sequential from database)
+    const invoiceNumber = await generateInvoiceNumber(body.type || 'QUOTE');
 
     // Create invoice with items
     const invoice = await prisma.invoice.create({
@@ -92,18 +123,25 @@ export async function POST(request: NextRequest) {
         customerName: body.customerName,
         customerEmail: body.customerEmail,
         customerPhone: body.customerPhone || null,
+        customerCompany: body.customerCompany || null,
         billingAddress: body.billingAddress || null,
         shippingAddress: body.shippingAddress || null,
+        // Separate shipping contact for delivery
+        shippingContactName: body.shippingContactName || null,
+        shippingContactPhone: body.shippingContactPhone || null,
         customerGstNumber: body.customerGstNumber || null,
         customerState: body.customerState,
         placeOfSupply: body.placeOfSupply || null,
 
         // Company details
         companyGstNumber: body.companyGstNumber || null,
-        companyState: body.companyState || 'Karnataka',
+        companyState: body.companyState || 'Telangana',
 
-        // Payment terms
+        // Payment terms and references
         paymentTerms: body.paymentTerms || 'Due on Receipt',
+        creditDays: body.creditDays || 0,
+        poReference: body.poReference || null,
+        currency: body.currency || 'INR',
 
         // Amounts
         subtotal: body.subtotal,
@@ -116,6 +154,7 @@ export async function POST(request: NextRequest) {
 
         // Additional info
         notes: body.notes || null,
+        termsAndConditions: body.termsAndConditions || null,
 
         // Items
         items: {

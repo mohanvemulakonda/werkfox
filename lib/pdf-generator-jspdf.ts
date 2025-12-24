@@ -3,6 +3,21 @@ import autoTable from 'jspdf-autotable';
 import fs from 'fs';
 import path from 'path';
 
+// Currency configuration - maps currency codes to display formats
+const CURRENCY_CONFIG: Record<string, { symbol: string; name: string }> = {
+  INR: { symbol: 'INR ', name: 'Indian Rupees' },
+  USD: { symbol: 'USD ', name: 'US Dollars' },
+  EUR: { symbol: 'EUR ', name: 'Euros' },
+  GBP: { symbol: 'GBP ', name: 'British Pounds' },
+  AED: { symbol: 'AED ', name: 'UAE Dirhams' },
+};
+
+// Helper to get currency display values
+function getCurrency(code?: string) {
+  const currencyCode = code || 'INR';
+  return CURRENCY_CONFIG[currencyCode] || CURRENCY_CONFIG.INR;
+}
+
 interface InvoiceItem {
   itemName: string;
   description: string | null;
@@ -23,11 +38,19 @@ interface InvoiceData {
   createdAt: Date;
   dueDate: Date | null;
   customerName: string;
+  customerCompany?: string | null;
+  customerPhone?: string | null;
+  customerEmail?: string | null;
   billingAddress: string | null;
   shippingAddress: string | null;
+  // Separate shipping contact for delivery
+  shippingContactName?: string | null;
+  shippingContactPhone?: string | null;
   customerGstNumber: string | null;
   placeOfSupply: string | null;
   paymentTerms?: string | null;
+  poReference?: string | null;
+  currency?: string;
   subtotal: number;
   totalTax: number;
   igstAmount: number;
@@ -92,6 +115,9 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
     compress: false,
     precision: 16
   });
+
+  // Get currency configuration for this invoice
+  const currency = getCurrency(invoice.currency);
 
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -167,7 +193,9 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
   yPos += 5;
 
   doc.setFont('helvetica', 'bold');
-  doc.text('Invoice Date', leftCol, yPos);
+  const dateLabel = invoice.type === 'QUOTE' ? 'Quote Date' :
+                    invoice.type === 'PROFORMA' ? 'Proforma Date' : 'Invoice Date';
+  doc.text(dateLabel, leftCol, yPos);
   doc.setFont('helvetica', 'normal');
   doc.text(`: ${new Date(invoice.createdAt).toLocaleDateString('en-GB')}`, valueCol, yPos);
   yPos += 5;
@@ -183,7 +211,7 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
   doc.setFont('helvetica', 'normal');
   doc.text(`: ${invoice.dueDate ? new Date(invoice.dueDate).toLocaleDateString('en-GB') : 'N/A'}`, valueCol, yPos);
 
-  // Place of Supply (right column)
+  // Place of Supply and PO Reference (right column)
   const rightCol = 120;
   const rightValueCol = 155;
   yPos -= 10; // Go back up for right column
@@ -192,73 +220,182 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
   doc.setFont('helvetica', 'normal');
   doc.text(`: ${invoice.placeOfSupply || 'N/A'}`, rightValueCol, yPos);
 
+  // PO Reference if exists
+  if (invoice.poReference) {
+    yPos += 5;
+    doc.setFont('helvetica', 'bold');
+    doc.text('PO Reference', rightCol, yPos);
+    doc.setFont('helvetica', 'normal');
+    doc.text(`: ${invoice.poReference}`, rightValueCol, yPos);
+  }
+
   yPos += 20;
 
   // Horizontal line
   doc.line(20, yPos, pageWidth - 20, yPos);
   yPos += 8;
 
-  // Bill To and Ship To sections
+  // Bill To and Ship To sections - Professional layout
   const billToX = 20;
   const shipToX = pageWidth / 2 + 5;
+  const colWidth = (pageWidth - 40) / 2 - 5;
+
+  // Section headers with background
+  doc.setFillColor(245, 245, 245);
+  doc.rect(billToX, yPos - 2, colWidth, 7, 'F');
+  doc.rect(shipToX, yPos - 2, colWidth, 7, 'F');
 
   doc.setFontSize(9);
   doc.setFont('helvetica', 'bold');
-  doc.text('Bill To', billToX, yPos);
-  doc.text('Ship To', shipToX, yPos);
-  yPos += 5;
+  doc.setTextColor(50, 50, 50);
+  doc.text('BILL TO', billToX + 2, yPos + 3);
+  doc.text('SHIP TO', shipToX + 2, yPos + 3);
+  yPos += 10;
 
+  // Helper to check if a name is a valid contact (not a place name in address)
+  const isValidContactName = (name: string | null | undefined, address: string | null | undefined, company: string | null | undefined): boolean => {
+    if (!name || name.trim() === '') return false;
+    if (name === company) return false;
+    // Check if name appears in address (likely a place name)
+    if (address && address.toLowerCase().includes(name.toLowerCase())) return false;
+    return true;
+  };
+
+  // Bill To Content
+  let billYPos = yPos;
   doc.setFontSize(8);
-  doc.setFont('helvetica', 'bold');
-  doc.text(invoice.customerName, billToX, yPos);
-  yPos += 4;
+  doc.setTextColor(0, 0, 0);
+
+  // Company name (bold)
+  if (invoice.customerCompany) {
+    doc.setFont('helvetica', 'bold');
+    doc.text(invoice.customerCompany, billToX, billYPos);
+    billYPos += 4;
+  }
+
+  // Contact person name - only show if valid (not same as company and not in address)
+  const billingContactValid = isValidContactName(invoice.customerName, invoice.billingAddress, invoice.customerCompany);
+  if (billingContactValid) {
+    doc.setFont('helvetica', 'bold');
+    doc.text(invoice.customerName, billToX, billYPos);
+    billYPos += 4;
+  }
 
   doc.setFont('helvetica', 'normal');
+  doc.setTextColor(60, 60, 60);
+
+  // Phone
+  if (invoice.customerPhone) {
+    doc.text(`Phone: ${invoice.customerPhone}`, billToX, billYPos);
+    billYPos += 4;
+  }
+
+  // Email
+  if (invoice.customerEmail) {
+    doc.text(`Email: ${invoice.customerEmail}`, billToX, billYPos);
+    billYPos += 4;
+  }
+
+  // Address
   if (invoice.billingAddress) {
-    const billLines = doc.splitTextToSize(invoice.billingAddress, 80);
-    doc.text(billLines, billToX, yPos);
-    yPos += billLines.length * 4;
+    const billLines = doc.splitTextToSize(invoice.billingAddress, colWidth - 5);
+    doc.text(billLines, billToX, billYPos);
+    billYPos += billLines.length * 4;
   }
 
+  // GST Number
   if (invoice.customerGstNumber) {
-    doc.text(`GSTIN: ${invoice.customerGstNumber}`, billToX, yPos);
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0, 0, 0);
+    doc.text(`GSTIN: ${invoice.customerGstNumber}`, billToX, billYPos);
+    billYPos += 4;
   }
 
-  // Ship To (reset yPos for right column)
-  let shipYPos = yPos - (invoice.billingAddress ? doc.splitTextToSize(invoice.billingAddress, 80).length * 4 : 0) - 4;
+  // Ship To Content - Contact info most prominent for delivery
+  let shipYPos = yPos;
+  doc.setFontSize(8);
+  doc.setTextColor(0, 0, 0);
+
+  // Determine if we have a valid shipping contact (not same as company and not in address)
+  const shippingContactValid = isValidContactName(invoice.shippingContactName, invoice.shippingAddress, invoice.customerCompany);
+  const fallbackContactValid = !shippingContactValid && isValidContactName(invoice.customerName, invoice.shippingAddress, invoice.customerCompany);
+  const shipContactName = shippingContactValid ? invoice.shippingContactName : (fallbackContactValid ? invoice.customerName : null);
+  const shipContactPhone = invoice.shippingContactPhone || invoice.customerPhone;
+
+  // Company name (bold) for shipping
+  if (invoice.customerCompany) {
+    doc.setFont('helvetica', 'bold');
+    doc.text(invoice.customerCompany, shipToX, shipYPos);
+    shipYPos += 4;
+  }
+
+  // Contact person name with label (important for delivery) - HIGHLIGHTED
+  // Only show if we have a valid contact name (not a place name)
+  if (shipContactName) {
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(37, 99, 235); // Blue to highlight
+    doc.text(`Contact: ${shipContactName}`, shipToX, shipYPos);
+    shipYPos += 4;
+  }
+
+  // Phone for shipping - PROMINENT for delivery guy
+  if (shipContactPhone) {
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0, 0, 0);
+    doc.text(`Phone: ${shipContactPhone}`, shipToX, shipYPos);
+    shipYPos += 4;
+  }
+
+  doc.setFont('helvetica', 'normal');
+  doc.setTextColor(60, 60, 60);
+
+  // Shipping Address
   if (invoice.shippingAddress) {
-    const shipLines = doc.splitTextToSize(invoice.shippingAddress, 80);
+    const shipLines = doc.splitTextToSize(invoice.shippingAddress, colWidth - 5);
     doc.text(shipLines, shipToX, shipYPos);
     shipYPos += shipLines.length * 4;
   }
 
-  yPos = Math.max(yPos + 8, shipYPos + 8);
+  // GST Number on shipping too
+  if (invoice.customerGstNumber) {
+    doc.setFont('helvetica', 'bold');
+    doc.setTextColor(0, 0, 0);
+    doc.text(`GSTIN: ${invoice.customerGstNumber}`, shipToX, shipYPos);
+    shipYPos += 4;
+  }
+
+  yPos = Math.max(billYPos, shipYPos) + 8;
 
   // Horizontal line
   doc.line(20, yPos, pageWidth - 20, yPos);
   yPos += 5;
 
-  // Draw table manually to match admin panel EXACTLY
+  // Draw table with professional header
   const startX = 20;
   const tableWidth = pageWidth - 40;
 
-  // Table header
-  doc.setFontSize(9);
+  // Table header with background
+  doc.setFillColor(37, 99, 235); // Blue background
+  doc.rect(startX, yPos, tableWidth, 8, 'F');
+
+  doc.setFontSize(8);
   doc.setFont('helvetica', 'bold');
-  doc.setTextColor(0, 0, 0);
+  doc.setTextColor(255, 255, 255); // White text
 
-  // Header row
+  // Header row - separate Qty and Unit columns with proper spacing
   const headerY = yPos;
-  doc.text('#', startX + 2, headerY + 4);
-  doc.text('Item & Description', startX + 10, headerY + 4);
-  doc.text('HSN/SAC', startX + 95, headerY + 4, { align: 'right' });
-  doc.text('Qty', startX + 115, headerY + 4, { align: 'right' });
-  doc.text('Rate', startX + 135, headerY + 4, { align: 'right' });
-  doc.text('GST %', startX + 155, headerY + 4, { align: 'right' });
-  doc.text('Amount', tableWidth + 20, headerY + 4, { align: 'right' });
+  doc.text('#', startX + 3, headerY + 5);
+  doc.text('Item & Description', startX + 10, headerY + 5);
+  doc.text('HSN', startX + 68, headerY + 5);
+  doc.text('Qty', startX + 90, headerY + 5, { align: 'right' });
+  doc.text('Unit', startX + 93, headerY + 5);
+  doc.text('Rate', startX + 125, headerY + 5, { align: 'right' });
+  doc.text('GST%', startX + 143, headerY + 5, { align: 'right' });
+  doc.text('Amount', pageWidth - 22, headerY + 5, { align: 'right' });
 
-  // Header bottom border only
-  yPos += 6;
+  // Move past header
+  yPos += 10;
+  doc.setTextColor(0, 0, 0);
   doc.setDrawColor(200, 200, 200);
   doc.setLineWidth(0.3);
   doc.line(startX, yPos, tableWidth + 20, yPos);
@@ -266,54 +403,57 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
 
   // Table body
   doc.setFont('helvetica', 'normal');
-  doc.setFontSize(9);
-  doc.setTextColor(75, 75, 75); // Gray 600
+  doc.setFontSize(8);
+  doc.setTextColor(60, 60, 60);
 
   invoice.items.forEach((item, index) => {
     const rowStartY = yPos;
 
-    // Serial number (gray)
-    doc.setTextColor(75, 75, 75);
-    doc.text((index + 1).toString(), startX + 2, yPos + 4);
+    // Serial number
+    doc.setTextColor(100, 100, 100);
+    doc.text((index + 1).toString(), startX + 3, yPos + 4);
 
-    // Item name (medium weight, black) and description
+    // Item name (bold, black) and description
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 0, 0);
-    const itemLines = doc.splitTextToSize(item.itemName, 70);
+    const itemLines = doc.splitTextToSize(item.itemName, 48);
     doc.text(itemLines, startX + 10, yPos + 4);
     let itemHeight = itemLines.length * 4;
 
     // Description if exists (smaller, gray, normal weight)
     if (item.description) {
       doc.setFont('helvetica', 'normal');
-      doc.setFontSize(8);
-      doc.setTextColor(75, 75, 75);
-      const descLines = doc.splitTextToSize(item.description, 70);
+      doc.setFontSize(7);
+      doc.setTextColor(100, 100, 100);
+      const descLines = doc.splitTextToSize(item.description, 48);
       doc.text(descLines, startX + 10, yPos + 4 + itemHeight);
-      itemHeight += descLines.length * 4;
-      doc.setFontSize(9);
+      itemHeight += descLines.length * 3.5;
+      doc.setFontSize(8);
     }
 
-    // All numeric columns: gray text, normal weight, right-aligned
+    // Data columns
     doc.setFont('helvetica', 'normal');
-    doc.setTextColor(75, 75, 75);
+    doc.setTextColor(60, 60, 60);
 
     // HSN/SAC
-    doc.text(item.hsnCode, startX + 95, yPos + 4, { align: 'right' });
+    doc.text(item.hsnCode || '-', startX + 68, yPos + 4);
 
-    // Qty
-    doc.text(`${Number(item.quantity).toLocaleString('en-IN')} ${item.unit}`, startX + 115, yPos + 4, { align: 'right' });
+    // Qty (right-aligned, separate from unit)
+    doc.text(Number(item.quantity).toLocaleString('en-IN'), startX + 90, yPos + 4, { align: 'right' });
+
+    // Unit (left-aligned, separate column)
+    doc.text(item.unit || 'Nos', startX + 93, yPos + 4);
 
     // Rate
-    doc.text(`₹${Number(item.unitPrice).toFixed(2)}`, startX + 135, yPos + 4, { align: 'right' });
+    doc.text(`${currency.symbol}${Number(item.unitPrice).toFixed(2)}`, startX + 125, yPos + 4, { align: 'right' });
 
     // GST %
-    doc.text(`${Number(item.gstRate)}%`, startX + 155, yPos + 4, { align: 'right' });
+    doc.text(`${Number(item.gstRate)}%`, startX + 143, yPos + 4, { align: 'right' });
 
-    // Amount (medium weight, black)
+    // Amount (bold, black)
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 0, 0);
-    doc.text(`₹${Number(item.taxableAmount).toLocaleString('en-IN')}`, tableWidth + 20, yPos + 4, { align: 'right' });
+    doc.text(`${currency.symbol}${Number(item.taxableAmount).toLocaleString('en-IN', { minimumFractionDigits: 2 })}`, pageWidth - 22, yPos + 4, { align: 'right' });
 
     // Move to next row
     yPos += Math.max(10, itemHeight + 3);
@@ -338,7 +478,7 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
   doc.text('Subtotal', totalsX, yPos);
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(0, 0, 0); // Black
-  doc.text(`₹${Number(invoice.subtotal).toLocaleString('en-IN')}`, amountX, yPos, { align: 'right' });
+  doc.text(`${currency.symbol}${Number(invoice.subtotal).toLocaleString('en-IN')}`, amountX, yPos, { align: 'right' });
   yPos += 6;
 
   if (invoice.igstAmount > 0) {
@@ -347,7 +487,7 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
     doc.text('IGST (18%)', totalsX, yPos);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 0, 0);
-    doc.text(`₹${Number(invoice.igstAmount).toLocaleString('en-IN')}`, amountX, yPos, { align: 'right' });
+    doc.text(`${currency.symbol}${Number(invoice.igstAmount).toLocaleString('en-IN')}`, amountX, yPos, { align: 'right' });
     yPos += 6;
   }
 
@@ -357,7 +497,7 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
     doc.text('CGST (9%)', totalsX, yPos);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 0, 0);
-    doc.text(`₹${Number(invoice.cgstAmount).toLocaleString('en-IN')}`, amountX, yPos, { align: 'right' });
+    doc.text(`${currency.symbol}${Number(invoice.cgstAmount).toLocaleString('en-IN')}`, amountX, yPos, { align: 'right' });
     yPos += 6;
   }
 
@@ -367,7 +507,7 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
     doc.text('SGST (9%)', totalsX, yPos);
     doc.setFont('helvetica', 'bold');
     doc.setTextColor(0, 0, 0);
-    doc.text(`₹${Number(invoice.sgstAmount).toLocaleString('en-IN')}`, amountX, yPos, { align: 'right' });
+    doc.text(`${currency.symbol}${Number(invoice.sgstAmount).toLocaleString('en-IN')}`, amountX, yPos, { align: 'right' });
     yPos += 6;
   }
 
@@ -381,7 +521,7 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
   doc.setFont('helvetica', 'bold');
   doc.setTextColor(0, 0, 0);
   doc.text('Total', totalsX, yPos);
-  doc.text(`₹${Number(invoice.total).toLocaleString('en-IN')}`, amountX, yPos, { align: 'right' });
+  doc.text(`${currency.symbol}${Number(invoice.total).toLocaleString('en-IN')}`, amountX, yPos, { align: 'right' });
 
   // Total in words
   yPos += 10;
@@ -390,7 +530,7 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
     doc.setFont('helvetica', 'bold');
     doc.text('Total In Words:', 20, yPos);
     yPos += 5;
-    const totalInWords = `Indian Rupee ${numberToWordsIndian(invoice.total)} Only`;
+    const totalInWords = `${currency.name} ${numberToWordsIndian(invoice.total)} Only`;
     doc.setFont('helvetica', 'bolditalic');
     const wordsLines = doc.splitTextToSize(totalInWords, 100);
     doc.text(wordsLines, 20, yPos);

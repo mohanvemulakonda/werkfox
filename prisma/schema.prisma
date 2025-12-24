@@ -325,6 +325,31 @@ model Customer {
   @@index([parentCustomerId])
   @@index([isCorporateAccount])
   @@map("customers")
+  contacts         CustomerContact[]
+}
+
+// Multiple contacts per customer for billing/shipping lookup
+model CustomerContact {
+  id           Int       @id @default(autoincrement())
+  customerId   Int
+  name         String    @db.VarChar(255)
+  email        String?   @db.VarChar(255)
+  phone        String?   @db.VarChar(50)
+  designation  String?   @db.VarChar(100)
+  department   String?   @db.VarChar(100)
+  isPrimary    Boolean   @default(false)
+  isBilling    Boolean   @default(true)
+  isShipping   Boolean   @default(true)
+  isActive     Boolean   @default(true)
+  notes        String?   @db.Text
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+  customer     Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade)
+
+  @@index([customerId])
+  @@index([isPrimary])
+  @@index([isActive])
+  @@map("customer_contacts")
 }
 
 model Invoice {
@@ -335,12 +360,17 @@ model Invoice {
   customerEmail        String        @db.VarChar(255)
   customerPhone        String?       @db.VarChar(50)
   customerCompany      String?       @db.VarChar(255)
+  // Separate shipping contact for delivery
+  shippingContactName  String?       @db.VarChar(255)
+  shippingContactPhone String?       @db.VarChar(50)
   subtotal             Decimal       @db.Decimal(12, 2)
   total                Decimal       @db.Decimal(12, 2)
   currency             String        @default("INR") @db.VarChar(10)
   type                 InvoiceType   @default(QUOTE)
   status               InvoiceStatus @default(DRAFT)
   paymentTerms         String?       @db.VarChar(255)
+  poReference          String?       @db.VarChar(100)
+  creditDays           Int?          @default(0)
   dueDate              DateTime?
   paidAt               DateTime?
   notes                String?       @db.Text
@@ -355,7 +385,7 @@ model Invoice {
   billingAddress       String?       @db.Text
   cgstAmount           Decimal       @default(0.00) @db.Decimal(12, 2)
   companyGstNumber     String?       @db.VarChar(50)
-  companyState         String?       @default("Karnataka") @db.VarChar(100)
+  companyState         String?       @default("Telangana") @db.VarChar(100)
   convertedFromQuoteId Int?          @unique
   customerGstNumber    String?       @db.VarChar(50)
   customerState        String?       @db.VarChar(100)
@@ -557,4 +587,88 @@ enum ActivityStatus {
   COMPLETED
   CANCELLED
   RESCHEDULED
+}
+
+// Currency configuration - database-driven
+model Currency {
+  id           Int      @id @default(autoincrement())
+  code         String   @unique @db.VarChar(10)
+  name         String   @db.VarChar(100)
+  symbol       String   @db.VarChar(10)
+  symbolNative String   @db.VarChar(10)
+  decimalDigits Int     @default(2)
+  isDefault    Boolean  @default(false)
+  isActive     Boolean  @default(true)
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([code])
+  @@index([isDefault])
+  @@map("currencies")
+}
+
+// Company settings and invoice defaults - metadata driven
+model CompanySettings {
+  id                     Int      @id @default(autoincrement())
+  companyName            String   @db.VarChar(255)
+  companyAddress         String?  @db.Text
+  companyCity            String?  @db.VarChar(100)
+  companyState           String?  @db.VarChar(100)
+  companyPincode         String?  @db.VarChar(20)
+  companyCountry         String?  @default("India") @db.VarChar(100)
+  companyPhone           String?  @db.VarChar(50)
+  companyEmail           String?  @db.VarChar(255)
+  companyWebsite         String?  @db.VarChar(255)
+  companyGstNumber       String?  @db.VarChar(50)
+  companyPanNumber       String?  @db.VarChar(50)
+  logoUrl                String?  @db.VarChar(500)
+  defaultCurrency        String   @default("INR") @db.VarChar(10)
+  defaultPaymentTerms    String?  @db.VarChar(255)
+  defaultCreditDays      Int?     @default(0)
+  defaultTermsConditions String?  @db.Text
+  bankName               String?  @db.VarChar(255)
+  bankAccountNumber      String?  @db.VarChar(50)
+  bankIfscCode           String?  @db.VarChar(20)
+  bankBranch             String?  @db.VarChar(255)
+  invoicePrefix          String?  @default("INV") @db.VarChar(20)
+  quotePrefix            String?  @default("QT") @db.VarChar(20)
+  proformaPrefix         String?  @default("PI") @db.VarChar(20)
+  nextInvoiceNumber      Int?     @default(1)
+  nextQuoteNumber        Int?     @default(1)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@map("company_settings")
+}
+
+// Payment terms options - database driven dropdown
+model PaymentTerm {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  days        Int      @default(0)
+  description String?  @db.VarChar(255)
+  isDefault   Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+  @@map("payment_terms")
+}
+
+// Unit of measurement - database driven
+model UnitOfMeasure {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique @db.VarChar(20)
+  name        String   @db.VarChar(100)
+  description String?  @db.VarChar(255)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([code])
+  @@index([isActive])
+  @@map("units_of_measure")
 }
