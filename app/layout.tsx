@@ -1,10 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Open_Sans } from "next/font/google";
 import "./globals.css";
-import SessionProvider from "../components/SessionProvider";
-import Analytics from "./components/Analytics";
-import { CookieConsentProvider } from "../lib/cookie-consent-context";
-import CookieBanner from "../components/CookieBanner";
 
 const inter = Inter({ 
   subsets: ["latin"],
@@ -19,44 +15,36 @@ const openSans = Open_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL('https://livatosolutions.com'),
+  metadataBase: new URL('https://werkfox.com'),
   title: {
-    default: 'Livato Solutions - Custom Labels, Barcode Printers & Thermal Ribbons',
-    template: '%s | Livato Solutions'
+    default: 'WerkFox - ERP & CRM for Manufacturing',
+    template: '%s | WerkFox'
   },
   icons: {
-    icon: '/Livato Logo.png',
-    shortcut: '/Livato Logo.png',
-    apple: '/Livato Logo.png',
+    icon: '/icon.svg',
+    shortcut: '/icon.svg',
+    apple: '/icon.svg',
   },
-  manifest: '/manifest.json',
-  description: 'Leading provider of custom labeling solutions in India. Specialized in pharmaceutical labels, barcode printers, thermal ribbons, and complete labeling systems for healthcare, logistics, retail, and manufacturing industries.',
+  description: 'Complete ERP & CRM solution for small manufacturing companies. Inventory management, production planning, sales, and customer management in one powerful platform.',
   keywords: [
-    'custom labels India',
-    'pharmaceutical labels',
-    'barcode labels',
-    'thermal labels',
-    'barcode printers',
-    'thermal ribbons',
-    'label printing solutions',
-    'healthcare labels',
-    'logistics labels',
-    'retail labels',
-    'manufacturing labels',
-    'Zebra printers India',
-    'TSC printers',
-    'SATO printers',
-    'label design services',
-    'FDA compliant labels',
-    'GMP labels',
-    'variable data printing',
-    'RFID labels',
-    'label configurator',
-    'Hyderabad label supplier'
+    'ERP software',
+    'CRM software',
+    'manufacturing ERP',
+    'inventory management',
+    'production planning',
+    'small business ERP',
+    'manufacturing software India',
+    'factory management',
+    'work order management',
+    'sales management',
+    'invoicing software',
+    'GST billing',
+    'cloud ERP',
+    'affordable ERP'
   ],
-  authors: [{ name: 'Livato Solutions LLP' }],
-  creator: 'Livato Solutions LLP',
-  publisher: 'Livato Solutions LLP',
+  authors: [{ name: 'WerkFox' }],
+  creator: 'WerkFox',
+  publisher: 'WerkFox',
   formatDetection: {
     email: false,
     address: false,
@@ -65,23 +53,23 @@ export const metadata: Metadata = {
   openGraph: {
     type: 'website',
     locale: 'en_IN',
-    url: 'https://livatosolutions.com',
-    siteName: 'Livato Solutions',
-    title: 'Livato Solutions - Custom Labels, Barcode Printers & Thermal Ribbons',
-    description: 'Leading provider of custom labeling solutions in India. Pharmaceutical labels, barcode printers, thermal ribbons, and complete labeling systems.',
+    url: 'https://werkfox.com',
+    siteName: 'WerkFox',
+    title: 'WerkFox - ERP & CRM for Manufacturing',
+    description: 'Complete ERP & CRM solution for small manufacturing companies. Run your factory smarter.',
     images: [
       {
         url: '/og-image.jpg',
         width: 1200,
         height: 630,
-        alt: 'Livato Solutions - Custom Labeling Solutions',
+        alt: 'WerkFox - ERP & CRM for Manufacturing',
       }
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'Livato Solutions - Custom Labels & Barcode Printers',
-    description: 'Leading provider of custom labeling solutions in India. Pharmaceutical labels, barcode printers, thermal ribbons.',
+    title: 'WerkFox - ERP & CRM for Manufacturing',
+    description: 'Complete ERP & CRM solution for small manufacturing companies.',
     images: ['/og-image.jpg'],
   },
   robots: {
@@ -95,12 +83,8 @@ export const metadata: Metadata = {
       'max-snippet': -1,
     },
   },
-  verification: {
-    google: 'your-google-verification-code',
-    yandex: 'your-yandex-verification-code',
-  },
   alternates: {
-    canonical: 'https://livatosolutions.com',
+    canonical: 'https://werkfox.com',
   },
 };
 
@@ -112,13 +96,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${inter.variable} ${openSans.variable}`}>
       <body className={inter.className}>
-        <Analytics />
-        <SessionProvider>
-          <CookieConsentProvider>
-            {children}
-            <CookieBanner />
-          </CookieConsentProvider>
-        </SessionProvider>
+        {children}
       </body>
     </html>
   );
