@@ -66,7 +66,7 @@ export default function ProductionModule() {
                   Plan production, manage work orders, and track shop floor progress with tools built specifically for manufacturers.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Link href="/signup" className="cta-button">
+                  <Link href="/sign-up" className="cta-button">
                     Start Free Trial
                     <ArrowRight size={20} />
                   </Link>
@@ -223,7 +223,7 @@ export default function ProductionModule() {
               Start your free trial and experience smarter manufacturing operations.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/signup" className="cta-button">
+              <Link href="/sign-up" className="cta-button">
                 Start Free Trial
                 <ArrowRight size={20} />
               </Link>

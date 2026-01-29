@@ -66,7 +66,7 @@ export default function InventoryModule() {
                   Track raw materials, work-in-progress, and finished goods across multiple warehouses with real-time visibility, batch tracking, and intelligent reorder alerts.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Link href="/signup" className="cta-button">
+                  <Link href="/sign-up" className="cta-button">
                     Start Free Trial
                     <ArrowRight size={20} />
                   </Link>
@@ -194,7 +194,7 @@ export default function InventoryModule() {
               Start your free trial today and see the difference real-time inventory control makes.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/signup" className="cta-button">
+              <Link href="/sign-up" className="cta-button">
                 Start Free Trial
                 <ArrowRight size={20} />
               </Link>

@@ -85,7 +85,7 @@ export default function AnalyticsModule() {
                   Transform your business data into actionable insights with powerful dashboards, custom reports, and real-time analytics.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Link href="/signup" className="cta-button">
+                  <Link href="/sign-up" className="cta-button">
                     Start Free Trial
                     <ArrowRight size={20} />
                   </Link>
@@ -301,7 +301,7 @@ export default function AnalyticsModule() {
               Start your free trial and unlock the power of data-driven decision making.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/signup" className="cta-button">
+              <Link href="/sign-up" className="cta-button">
                 Start Free Trial
                 <ArrowRight size={20} />
               </Link>

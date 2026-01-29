@@ -66,7 +66,7 @@ export default function CRMModule() {
                   Manage leads, track opportunities, and close more deals with a CRM designed specifically for manufacturing businesses.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4">
-                  <Link href="/signup" className="cta-button">
+                  <Link href="/sign-up" className="cta-button">
                     Start Free Trial
                     <ArrowRight size={20} />
                   </Link>
@@ -255,7 +255,7 @@ export default function CRMModule() {
               Start your free trial and see how WerkFox CRM can transform your customer relationships.
             </p>
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Link href="/signup" className="cta-button">
+              <Link href="/sign-up" className="cta-button">
                 Start Free Trial
                 <ArrowRight size={20} />
               </Link>

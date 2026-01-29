@@ -80,7 +80,7 @@ export default function Header() {
                 {item.name}
               </Link>
             ))}
-            <Link href="/signup" className="header-cta ml-4">
+            <Link href="/sign-up" className="header-cta ml-4">
               Start Free Trial
             </Link>
           </div>
@@ -134,7 +134,7 @@ export default function Header() {
                 </Link>
               ))}
               <Link
-                href="/signup"
+                href="/sign-up"
                 className="cta-button mt-3 text-center"
                 onClick={() => setMobileMenuOpen(false)}
               >
