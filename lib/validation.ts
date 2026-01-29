@@ -74,14 +74,16 @@ export class Validator {
   }
 
   /**
-   * Validate phone number (Indian format)
+   * Validate phone number (international format)
    */
   phone(value: string, fieldName: string = 'phone'): boolean {
     if (!value) return true;
 
-    // Allow +91, 0, or plain 10-digit numbers
-    const phoneRegex = /^(\+91|0)?[6-9]\d{9}$/;
-    if (!phoneRegex.test(value.replace(/[\s-]/g, ''))) {
+    // Allow international formats: +country code, spaces, dashes, parentheses
+    // Minimum 7 digits, maximum 15 (ITU-T E.164)
+    const cleaned = value.replace(/[\s\-().]/g, '');
+    const phoneRegex = /^\+?[0-9]{7,15}$/;
+    if (!phoneRegex.test(cleaned)) {
       this.addError(fieldName, `${fieldName} must be a valid phone number`);
       return false;
     }

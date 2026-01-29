@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" viewBox="300 130 520 330">
+<defs>
+  <linearGradient id="grad1" gradientUnits="userSpaceOnUse" x1="480.923" y1="334.1324" x2="659.8858" y2="203.22">
+    <stop offset="0" style="stop-color:#E03B12"/>
+    <stop offset="1" style="stop-color:#FD9220"/>
+  </linearGradient>
+  <linearGradient id="grad2" gradientUnits="userSpaceOnUse" x1="625.7062" y1="314.8164" x2="772.365" y2="197.1915">
+    <stop offset="0" style="stop-color:#E2D3D9"/>
+    <stop offset="1" style="stop-color:#F9F9F9"/>
+  </linearGradient>
+  <linearGradient id="grad3" gradientUnits="userSpaceOnUse" x1="407.4477" y1="374.3898" x2="593.275" y2="332.7136">
+    <stop offset="0" style="stop-color:#E03B12"/>
+    <stop offset="1" style="stop-color:#FD9220"/>
+  </linearGradient>
+  <linearGradient id="grad4" gradientUnits="userSpaceOnUse" x1="698.9063" y1="438.1718" x2="706.2738" y2="320.7846">
+    <stop offset="0" style="stop-color:#E2D3D9"/>
+    <stop offset="1" style="stop-color:#F9F9F9"/>
+  </linearGradient>
+</defs>
+<g>
+  <!-- Main fox head -->
+  <path fill="url(#grad1)" d="M775.8,224.55l-55.62-17.23c0,0-23.63-27.56-75.31-36.92c-51.68-9.35-120.59,4.43-120.59,4.43
+    s16.24,26.09,33.47,32.49c0,0-105.33,37.41-121.08,84.17c-15.75,46.76,93.29,52.66,93.29,52.66l97.69-13.28
+    c0,0,21.66-45.28,62.02-46.76C730.02,282.62,769.4,262.45,775.8,224.55z"/>
+  <!-- Highlight -->
+  <path fill="url(#grad2)" d="M775.8,224.55
+    c-30.6,22.26-61.43,17.01-61.43,17.01s-11.23-4.42-41.01,6.37c-29.78,10.79-51.37,13.81-71.84,39.29
+    c-20.04,24.94-35.04,31.92-33.57,51.76l59.71-8.12c0,0,21.66-45.28,62.02-46.76C730.02,282.62,769.4,262.45,775.8,224.55z"/>
+  <!-- Tail -->
+  <path fill="url(#grad3)" d="M482.98,243.62
+    c-40.25,27.28-16.6,77.42,46.51,85.65c84.01,10.95,174.18-66.1,259.08,31.99c0,0-55.91,3.12-112.77,37
+    c-48.55,28.93-145.07,93.6-230.96,48.29C328.78,385.33,390.13,250.88,482.98,243.62z"/>
+  <!-- Tail highlight -->
+  <path fill="url(#grad4)" d="M788.56,361.26
+    c-49.54-57.23-100.87-54.84-151.72-45.09c0.02,0.01,17.17,7.52,22.84,14.32c0,0-28.1,12.48-40.34,23.83c0,0,33.15,3.4,42.61,6.05
+    c0,0-22.69,20.05-29.12,31.39c0,0,35-0.94,48.14,3.5C735.99,364.2,788.56,361.26,788.56,361.26z"/>
+</g>
+</svg>
