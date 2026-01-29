@@ -15,6 +15,11 @@ export default async function AdminLayout({
     redirect('/sign-in');
   }
 
+  // Require a selected organization for admin routes
+  if (!session.currentOrg) {
+    redirect('/admin/organizations/select');
+  }
+
   return (
     <div className="min-h-screen bg-white relative">
       {/* Background Logo Watermark */}
@@ -33,9 +38,9 @@ export default async function AdminLayout({
 
       {/* Content */}
       <div className="relative z-10">
-        <AdminHeader user={session.user} />
+        <AdminHeader user={session.user} organizations={session.organizations} currentOrg={session.currentOrg} />
         <div className="flex">
-          <AdminSidebar />
+          <AdminSidebar enabledModules={session.currentOrg.enabledModules} />
           <main className="flex-1 p-8">
             {children}
           </main>

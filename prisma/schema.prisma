@@ -36,8 +36,10 @@ model Contact {
 
 model Lead {
   id              Int           @id @default(autoincrement())
+  organizationId  Int?
+  organization    Organization?  @relation(fields: [organizationId], references: [id])
   name            String        @db.VarChar(255)
-  email           String        @db.VarChar(255)
+  email           String        @db.VarChar(255) 
   phone           String?       @db.VarChar(50)
   company         String?       @db.VarChar(255)
   designation     String?       @db.VarChar(255)
@@ -66,6 +68,7 @@ model Lead {
   invoices        Invoice[]
   opportunities   Opportunity[]
 
+  @@index([organizationId])
   @@index([email])
   @@index([stage])
   @@index([status])
@@ -76,8 +79,10 @@ model Lead {
 
 model Opportunity {
   id                Int                  @id @default(autoincrement())
+  organizationId    Int?
+  organization      Organization?        @relation(fields: [organizationId], references: [id])
   name              String               @db.VarChar(255)
-  description       String?              @db.Text
+  description       String?              @db.Text 
   leadId            Int
   value             Decimal              @db.Decimal(12, 2)
   currency          String               @default("INR") @db.VarChar(10)
@@ -96,6 +101,7 @@ model Opportunity {
   lead              Lead                 @relation(fields: [leadId], references: [id], onDelete: Cascade)
   products          OpportunityProduct[]
 
+  @@index([organizationId])
   @@index([leadId])
   @@index([stage])
   @@index([status])
@@ -105,8 +111,10 @@ model Opportunity {
 
 model Product {
   id                  Int                  @id @default(autoincrement())
+  organizationId      Int?
+  organization        Organization?        @relation(fields: [organizationId], references: [id])
   sku                 String               @unique @db.VarChar(100)
-  name                String               @db.VarChar(255)
+  name                String               @db.VarChar(255) 
   description         String?              @db.Text
   category            ProductCategory?
   basePrice           Decimal              @db.Decimal(10, 2)
@@ -154,6 +162,7 @@ model Product {
   invoiceItems        InvoiceItem[]
   opportunityProducts OpportunityProduct[]
 
+  @@index([organizationId])
   @@index([sku])
   @@index([category])
   @@index([isActive])
@@ -210,8 +219,10 @@ model Download {
 
 model QuoteRequest {
   id             Int         @id @default(autoincrement())
+  organizationId Int?
+  organization   Organization? @relation(fields: [organizationId], references: [id])
   name           String      @db.VarChar(255)
-  email          String      @db.VarChar(255)
+  email          String      @db.VarChar(255) 
   phone          String?     @db.VarChar(50)
   company        String?     @db.VarChar(255)
   productName    String?     @db.VarChar(255)
@@ -225,6 +236,7 @@ model QuoteRequest {
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 
+  @@index([organizationId])
   @@index([email])
   @@index([status])
   @@index([createdAt])
@@ -278,10 +290,50 @@ model AdminUser {
   @@map("admin_users")
 }
 
+model Organization {
+  id          Int         @id @default(autoincrement())
+  name        String      @db.VarChar(255)
+  slug        String      @unique @db.VarChar(255)
+  packageType PackageType @default(FULL_SUITE)
+  billingInfo String?     @db.Text
+  isActive    Boolean     @default(true)
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+  members     OrganizationMember[]
+
+  // Tenant-scoped relations
+  leads       Lead[]
+  customers   Customer[]
+  products    Product[]
+  opportunities Opportunity[]
+  invoices    Invoice[]
+  quoteRequests QuoteRequest[]
+
+  @@index([slug])
+  @@map("organizations")
+}
+
+model OrganizationMember {
+  id             Int      @id @default(autoincrement())
+  organizationId Int
+  clerkUserId    String   @db.VarChar(255)
+  role           String   @default("MEMBER") @db.VarChar(50)
+  isActive       Boolean  @default(true)
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
+
+  @@index([organizationId])
+  @@index([clerkUserId])
+  @@map("organization_members")
+}
+
 model Customer {
   id                Int        @id @default(autoincrement())
+  organizationId    Int?
+  organization      Organization? @relation(fields: [organizationId], references: [id])
   customerCode      String     @unique @db.VarChar(50)
-  companyName       String     @db.VarChar(255)
+  companyName       String     @db.VarChar(255) 
   displayName       String?    @db.VarChar(255)
   parentCustomerId  Int?
   locationName      String?    @db.VarChar(255)
@@ -319,6 +371,7 @@ model Customer {
   childAccounts     Customer[] @relation("CustomerHierarchy")
   invoices          Invoice[]
 
+  @@index([organizationId])
   @@index([email])
   @@index([gstNumber])
   @@index([isActive])
@@ -327,7 +380,7 @@ model Customer {
   @@index([isCorporateAccount])
   @@map("customers")
   contacts         CustomerContact[]
-}
+} 
 
 // Multiple contacts per customer for billing/shipping lookup
 model CustomerContact {
@@ -355,8 +408,10 @@ model CustomerContact {
 
 model Invoice {
   id                   Int           @id @default(autoincrement())
+  organizationId       Int?
+  organization         Organization? @relation(fields: [organizationId], references: [id])
   invoiceNumber        String        @unique @db.VarChar(50)
-  customerId           Int?
+  customerId           Int? 
   customerName         String        @db.VarChar(255)
   customerEmail        String        @db.VarChar(255)
   customerPhone        String?       @db.VarChar(50)
@@ -410,6 +465,7 @@ model Invoice {
   lead                 Lead?         @relation(fields: [leadId], references: [id])
   opportunity          Opportunity?  @relation(fields: [opportunityId], references: [id])
 
+  @@index([organizationId])
   @@index([invoiceNumber])
   @@index([customerId])
   @@index([customerEmail])
@@ -588,6 +644,12 @@ enum ActivityStatus {
   COMPLETED
   CANCELLED
   RESCHEDULED
+}
+
+enum PackageType {
+  CRM_ONLY
+  ERP_ONLY
+  FULL_SUITE
 }
 
 // Currency configuration - database-driven
