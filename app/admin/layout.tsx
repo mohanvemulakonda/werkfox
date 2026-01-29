@@ -12,20 +12,20 @@ export default async function AdminLayout({
   const session = await auth();
 
   if (!session) {
-    redirect('/login/admin');
+    redirect('/sign-in');
   }
 
   return (
     <div className="min-h-screen bg-white relative">
       {/* Background Logo Watermark */}
       <div className="fixed inset-0 flex items-center justify-center pointer-events-none overflow-hidden z-0">
-        <div className="relative opacity-[0.05]">
+        <div className="relative opacity-[0.03]">
           <Image
-            src="/Livato Logo.png"
+            src="/fox-icon.svg"
             alt=""
             width={600}
             height={600}
-            className="select-none mix-blend-multiply"
+            className="select-none"
             priority={false}
           />
         </div>

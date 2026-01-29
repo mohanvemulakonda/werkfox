@@ -1,25 +1,21 @@
-import { NextResponse } from 'next/server';
-import type { NextRequest } from 'next/server';
+import { clerkMiddleware, createRouteMatcher } from '@clerk/nextjs/server';
 
-// Lightweight middleware - authentication is handled by NextAuth at the app level
-export function middleware(request: NextRequest) {
-  const path = request.nextUrl.pathname;
+const isProtectedRoute = createRouteMatcher([
+  '/admin(.*)',
+  '/dashboard(.*)',
+]);
 
-  // Let NextAuth handle authentication in API routes and server components
-  // This middleware only handles basic routing
-  if (path.startsWith('/admin') && !path.startsWith('/admin/login')) {
-    // Check for session token (NextAuth.js default cookie name)
-    const sessionToken = request.cookies.get('authjs.session-token') ||
-                        request.cookies.get('__Secure-authjs.session-token');
-
-    if (!sessionToken) {
-      return NextResponse.redirect(new URL('/login/admin', request.url));
-    }
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtectedRoute(req)) {
+    await auth.protect();
   }
-
-  return NextResponse.next();
-}
+});
 
 export const config = {
-  matcher: ['/admin/:path*']
+  matcher: [
+    // Skip Next.js internals and all static files
+    '/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)',
+    // Always run for API routes
+    '/(api|trpc)(.*)',
+  ],
 };

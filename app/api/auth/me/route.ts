@@ -1,38 +1,35 @@
-import { NextRequest, NextResponse } from "next/server";
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { NextResponse } from "next/server";
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   try {
-    const token = request.cookies.get("session-token")?.value;
+    const { userId } = await auth();
 
-    if (!token) {
+    if (!userId) {
       return NextResponse.json(
-        { message: "No token provided" },
+        { message: "Not authenticated" },
         { status: 401 }
       );
     }
 
-    // Decode simple session token
-    try {
-      const decoded = JSON.parse(Buffer.from(token, "base64").toString());
+    const user = await currentUser();
 
-      // Check if token is expired (7 days)
-      if (Date.now() - decoded.timestamp > 7 * 24 * 60 * 60 * 1000) {
-        return NextResponse.json({ message: "Token expired" }, { status: 401 });
-      }
-
-      // Mock user data (in production, fetch from database)
-      const user = {
-        id: decoded.userId,
-        email: decoded.email,
-        firstName: "Admin",
-        lastName: "User",
-        company: "Livato",
-      };
-
-      return NextResponse.json({ user }, { status: 200 });
-    } catch {
-      return NextResponse.json({ message: "Invalid token" }, { status: 401 });
+    if (!user) {
+      return NextResponse.json(
+        { message: "User not found" },
+        { status: 404 }
+      );
     }
+
+    return NextResponse.json({
+      user: {
+        id: user.id,
+        email: user.emailAddresses[0]?.emailAddress,
+        firstName: user.firstName,
+        lastName: user.lastName,
+        imageUrl: user.imageUrl,
+      }
+    }, { status: 200 });
   } catch (error) {
     console.error("Auth verification error:", error);
     return NextResponse.json(
