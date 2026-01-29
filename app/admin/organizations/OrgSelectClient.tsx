@@ -15,6 +15,7 @@ export default function OrgSelectClient({ organizations = [] }: { organizations?
       body: JSON.stringify({ organizationId: id }),
     });
 
+    
     if (res.ok) {
       // reload to pick up cookie+auth
       window.location.href = '/admin';

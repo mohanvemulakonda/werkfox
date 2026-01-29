@@ -36,10 +36,8 @@ model Contact {
 
 model Lead {
   id              Int           @id @default(autoincrement())
-  organizationId  Int?
-  organization    Organization?  @relation(fields: [organizationId], references: [id])
   name            String        @db.VarChar(255)
-  email           String        @db.VarChar(255) 
+  email           String        @db.VarChar(255)
   phone           String?       @db.VarChar(50)
   company         String?       @db.VarChar(255)
   designation     String?       @db.VarChar(255)
@@ -68,7 +66,6 @@ model Lead {
   invoices        Invoice[]
   opportunities   Opportunity[]
 
-  @@index([organizationId])
   @@index([email])
   @@index([stage])
   @@index([status])
@@ -79,10 +76,8 @@ model Lead {
 
 model Opportunity {
   id                Int                  @id @default(autoincrement())
-  organizationId    Int?
-  organization      Organization?        @relation(fields: [organizationId], references: [id])
   name              String               @db.VarChar(255)
-  description       String?              @db.Text 
+  description       String?              @db.Text
   leadId            Int
   value             Decimal              @db.Decimal(12, 2)
   currency          String               @default("INR") @db.VarChar(10)
@@ -101,7 +96,6 @@ model Opportunity {
   lead              Lead                 @relation(fields: [leadId], references: [id], onDelete: Cascade)
   products          OpportunityProduct[]
 
-  @@index([organizationId])
   @@index([leadId])
   @@index([stage])
   @@index([status])
@@ -111,10 +105,8 @@ model Opportunity {
 
 model Product {
   id                  Int                  @id @default(autoincrement())
-  organizationId      Int?
-  organization        Organization?        @relation(fields: [organizationId], references: [id])
   sku                 String               @unique @db.VarChar(100)
-  name                String               @db.VarChar(255) 
+  name                String               @db.VarChar(255)
   description         String?              @db.Text
   category            ProductCategory?
   basePrice           Decimal              @db.Decimal(10, 2)
@@ -162,7 +154,6 @@ model Product {
   invoiceItems        InvoiceItem[]
   opportunityProducts OpportunityProduct[]
 
-  @@index([organizationId])
   @@index([sku])
   @@index([category])
   @@index([isActive])
@@ -219,10 +210,8 @@ model Download {
 
 model QuoteRequest {
   id             Int         @id @default(autoincrement())
-  organizationId Int?
-  organization   Organization? @relation(fields: [organizationId], references: [id])
   name           String      @db.VarChar(255)
-  email          String      @db.VarChar(255) 
+  email          String      @db.VarChar(255)
   phone          String?     @db.VarChar(50)
   company        String?     @db.VarChar(255)
   productName    String?     @db.VarChar(255)
@@ -236,7 +225,6 @@ model QuoteRequest {
   createdAt      DateTime    @default(now())
   updatedAt      DateTime    @updatedAt
 
-  @@index([organizationId])
   @@index([email])
   @@index([status])
   @@index([createdAt])
@@ -290,88 +278,48 @@ model AdminUser {
   @@map("admin_users")
 }
 
-model Organization {
-  id          Int         @id @default(autoincrement())
-  name        String      @db.VarChar(255)
-  slug        String      @unique @db.VarChar(255)
-  packageType PackageType @default(FULL_SUITE)
-  billingInfo String?     @db.Text
-  isActive    Boolean     @default(true)
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-  members     OrganizationMember[]
-
-  // Tenant-scoped relations
-  leads       Lead[]
-  customers   Customer[]
-  products    Product[]
-  opportunities Opportunity[]
-  invoices    Invoice[]
-  quoteRequests QuoteRequest[]
-
-  @@index([slug])
-  @@map("organizations")
-}
-
-model OrganizationMember {
-  id             Int      @id @default(autoincrement())
-  organizationId Int
-  clerkUserId    String   @db.VarChar(255)
-  role           String   @default("MEMBER") @db.VarChar(50)
-  isActive       Boolean  @default(true)
-  createdAt      DateTime @default(now())
-  updatedAt      DateTime @updatedAt
-  organization   Organization @relation(fields: [organizationId], references: [id], onDelete: Cascade)
-
-  @@index([organizationId])
-  @@index([clerkUserId])
-  @@map("organization_members")
-}
-
 model Customer {
-  id                Int        @id @default(autoincrement())
-  organizationId    Int?
-  organization      Organization? @relation(fields: [organizationId], references: [id])
-  customerCode      String     @unique @db.VarChar(50)
-  companyName       String     @db.VarChar(255) 
-  displayName       String?    @db.VarChar(255)
-  parentCustomerId  Int?
-  locationName      String?    @db.VarChar(255)
-  isCorporateAccount Boolean   @default(false)
-  contactPerson     String?    @db.VarChar(255)
-  email             String     @db.VarChar(255)
-  phone             String?    @db.VarChar(50)
-  alternatePhone    String?    @db.VarChar(50)
-  website           String?    @db.VarChar(255)
-  gstNumber         String?    @db.VarChar(50)
-  gstType           GstType?   @default(UNREGISTERED)
-  panNumber         String?    @db.VarChar(50)
-  billingAddress    String?    @db.Text
-  billingCity       String?    @db.VarChar(100)
-  billingState      String?    @db.VarChar(100)
-  billingPincode    String?    @db.VarChar(20)
-  billingCountry    String?    @default("India") @db.VarChar(100)
-  shippingAddress   String?    @db.Text
-  shippingCity      String?    @db.VarChar(100)
-  shippingState     String?    @db.VarChar(100)
-  shippingPincode   String?    @db.VarChar(20)
-  shippingCountry   String?    @default("India") @db.VarChar(100)
-  paymentTerms      String?    @db.VarChar(255)
-  creditLimit       Decimal?   @db.Decimal(12, 2)
-  creditDays        Int?       @default(0)
-  openingBalance    Decimal?   @default(0.00) @db.Decimal(12, 2)
-  currentBalance    Decimal?   @default(0.00) @db.Decimal(12, 2)
-  customerType      String?    @db.VarChar(50)
-  industry          String?    @db.VarChar(100)
-  isActive          Boolean    @default(true)
-  notes             String?    @db.Text
-  createdAt         DateTime   @default(now())
-  updatedAt         DateTime   @updatedAt
-  parentCustomer    Customer?  @relation("CustomerHierarchy", fields: [parentCustomerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  childAccounts     Customer[] @relation("CustomerHierarchy")
-  invoices          Invoice[]
+  id                 Int               @id @default(autoincrement())
+  customerCode       String            @unique @db.VarChar(50)
+  companyName        String            @db.VarChar(255)
+  displayName        String?           @db.VarChar(255)
+  parentCustomerId   Int?
+  locationName       String?           @db.VarChar(255)
+  isCorporateAccount Boolean           @default(false)
+  contactPerson      String?           @db.VarChar(255)
+  email              String            @db.VarChar(255)
+  phone              String?           @db.VarChar(50)
+  alternatePhone     String?           @db.VarChar(50)
+  website            String?           @db.VarChar(255)
+  gstNumber          String?           @db.VarChar(50)
+  gstType            GstType?          @default(UNREGISTERED)
+  panNumber          String?           @db.VarChar(50)
+  billingAddress     String?           @db.Text
+  billingCity        String?           @db.VarChar(100)
+  billingState       String?           @db.VarChar(100)
+  billingPincode     String?           @db.VarChar(20)
+  billingCountry     String?           @default("India") @db.VarChar(100)
+  shippingAddress    String?           @db.Text
+  shippingCity       String?           @db.VarChar(100)
+  shippingState      String?           @db.VarChar(100)
+  shippingPincode    String?           @db.VarChar(20)
+  shippingCountry    String?           @default("India") @db.VarChar(100)
+  paymentTerms       String?           @db.VarChar(255)
+  creditLimit        Decimal?          @db.Decimal(12, 2)
+  creditDays         Int?              @default(0)
+  openingBalance     Decimal?          @default(0.00) @db.Decimal(12, 2)
+  currentBalance     Decimal?          @default(0.00) @db.Decimal(12, 2)
+  customerType       String?           @db.VarChar(50)
+  industry           String?           @db.VarChar(100)
+  isActive           Boolean           @default(true)
+  notes              String?           @db.Text
+  createdAt          DateTime          @default(now())
+  updatedAt          DateTime          @updatedAt
+  parentCustomer     Customer?         @relation("CustomerHierarchy", fields: [parentCustomerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  childAccounts      Customer[]        @relation("CustomerHierarchy")
+  invoices           Invoice[]
+  contacts           CustomerContact[]
 
-  @@index([organizationId])
   @@index([email])
   @@index([gstNumber])
   @@index([isActive])
@@ -379,26 +327,24 @@ model Customer {
   @@index([parentCustomerId])
   @@index([isCorporateAccount])
   @@map("customers")
-  contacts         CustomerContact[]
-} 
+}
 
-// Multiple contacts per customer for billing/shipping lookup
 model CustomerContact {
-  id           Int       @id @default(autoincrement())
-  customerId   Int
-  name         String    @db.VarChar(255)
-  email        String?   @db.VarChar(255)
-  phone        String?   @db.VarChar(50)
-  designation  String?   @db.VarChar(100)
-  department   String?   @db.VarChar(100)
-  isPrimary    Boolean   @default(false)
-  isBilling    Boolean   @default(true)
-  isShipping   Boolean   @default(true)
-  isActive     Boolean   @default(true)
-  notes        String?   @db.Text
-  createdAt    DateTime  @default(now())
-  updatedAt    DateTime  @updatedAt
-  customer     Customer  @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
+  id          Int      @id @default(autoincrement())
+  customerId  Int
+  name        String   @db.VarChar(255)
+  email       String?  @db.VarChar(255)
+  phone       String?  @db.VarChar(50)
+  designation String?  @db.VarChar(100)
+  department  String?  @db.VarChar(100)
+  isPrimary   Boolean  @default(false)
+  isBilling   Boolean  @default(true)
+  isShipping  Boolean  @default(true)
+  isActive    Boolean  @default(true)
+  notes       String?  @db.Text
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  customer    Customer @relation(fields: [customerId], references: [id], onDelete: Cascade, onUpdate: NoAction)
 
   @@index([customerId])
   @@index([isPrimary])
@@ -408,15 +354,12 @@ model CustomerContact {
 
 model Invoice {
   id                   Int           @id @default(autoincrement())
-  organizationId       Int?
-  organization         Organization? @relation(fields: [organizationId], references: [id])
   invoiceNumber        String        @unique @db.VarChar(50)
-  customerId           Int? 
+  customerId           Int?
   customerName         String        @db.VarChar(255)
   customerEmail        String        @db.VarChar(255)
   customerPhone        String?       @db.VarChar(50)
   customerCompany      String?       @db.VarChar(255)
-  // Separate shipping contact for delivery
   shippingContactName  String?       @db.VarChar(255)
   shippingContactPhone String?       @db.VarChar(50)
   subtotal             Decimal       @db.Decimal(12, 2)
@@ -434,7 +377,6 @@ model Invoice {
   createdBy            String?       @db.VarChar(255)
   sentAt               DateTime?
   viewedAt             DateTime?
-  customer             Customer?     @relation(fields: [customerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
   bankDetails          String?       @db.Text
@@ -459,13 +401,13 @@ model Invoice {
   shippingAddress      String?       @db.Text
   shippingCharges      Decimal       @default(0.00) @db.Decimal(10, 2)
   totalTax             Decimal       @default(0.00) @db.Decimal(12, 2)
+  customer             Customer?     @relation(fields: [customerId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   items                InvoiceItem[]
   convertedFromQuote   Invoice?      @relation("QuoteToInvoice", fields: [convertedFromQuoteId], references: [id], onDelete: NoAction, onUpdate: NoAction)
   convertedToInvoice   Invoice?      @relation("QuoteToInvoice")
   lead                 Lead?         @relation(fields: [leadId], references: [id])
   opportunity          Opportunity?  @relation(fields: [opportunityId], references: [id])
 
-  @@index([organizationId])
   @@index([invoiceNumber])
   @@index([customerId])
   @@index([customerEmail])
@@ -527,6 +469,86 @@ model Activity {
   @@index([status])
   @@index([scheduledAt])
   @@map("activities")
+}
+
+model Currency {
+  id            Int      @id @default(autoincrement())
+  code          String   @unique @db.VarChar(10)
+  name          String   @db.VarChar(100)
+  symbol        String   @db.VarChar(10)
+  symbolNative  String   @db.VarChar(10)
+  decimalDigits Int      @default(2)
+  isDefault     Boolean  @default(false)
+  isActive      Boolean  @default(true)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  @@index([code])
+  @@index([isDefault])
+  @@map("currencies")
+}
+
+model CompanySettings {
+  id                     Int      @id @default(autoincrement())
+  companyName            String   @db.VarChar(255)
+  companyAddress         String?  @db.Text
+  companyCity            String?  @db.VarChar(100)
+  companyState           String?  @db.VarChar(100)
+  companyPincode         String?  @db.VarChar(20)
+  companyCountry         String?  @default("India") @db.VarChar(100)
+  companyPhone           String?  @db.VarChar(50)
+  companyEmail           String?  @db.VarChar(255)
+  companyWebsite         String?  @db.VarChar(255)
+  companyGstNumber       String?  @db.VarChar(50)
+  companyPanNumber       String?  @db.VarChar(50)
+  logoUrl                String?  @db.VarChar(500)
+  defaultCurrency        String   @default("INR") @db.VarChar(10)
+  defaultPaymentTerms    String?  @db.VarChar(255)
+  defaultCreditDays      Int?     @default(0)
+  defaultTermsConditions String?  @db.Text
+  bankName               String?  @db.VarChar(255)
+  bankAccountNumber      String?  @db.VarChar(50)
+  bankIfscCode           String?  @db.VarChar(20)
+  bankBranch             String?  @db.VarChar(255)
+  invoicePrefix          String?  @default("INV") @db.VarChar(20)
+  quotePrefix            String?  @default("QT") @db.VarChar(20)
+  proformaPrefix         String?  @default("PI") @db.VarChar(20)
+  nextInvoiceNumber      Int?     @default(1)
+  nextQuoteNumber        Int?     @default(1)
+  createdAt              DateTime @default(now())
+  updatedAt              DateTime @updatedAt
+
+  @@map("company_settings")
+}
+
+model PaymentTerm {
+  id          Int      @id @default(autoincrement())
+  name        String   @db.VarChar(100)
+  days        Int      @default(0)
+  description String?  @db.VarChar(255)
+  isDefault   Boolean  @default(false)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([isActive])
+  @@map("payment_terms")
+}
+
+model UnitOfMeasure {
+  id          Int      @id @default(autoincrement())
+  code        String   @unique @db.VarChar(20)
+  name        String   @db.VarChar(100)
+  description String?  @db.VarChar(255)
+  isActive    Boolean  @default(true)
+  sortOrder   Int      @default(0)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@index([code])
+  @@index([isActive])
+  @@map("units_of_measure")
 }
 
 enum ContactStatus {
@@ -644,94 +666,4 @@ enum ActivityStatus {
   COMPLETED
   CANCELLED
   RESCHEDULED
-}
-
-enum PackageType {
-  CRM_ONLY
-  ERP_ONLY
-  FULL_SUITE
-}
-
-// Currency configuration - database-driven
-model Currency {
-  id           Int      @id @default(autoincrement())
-  code         String   @unique @db.VarChar(10)
-  name         String   @db.VarChar(100)
-  symbol       String   @db.VarChar(10)
-  symbolNative String   @db.VarChar(10)
-  decimalDigits Int     @default(2)
-  isDefault    Boolean  @default(false)
-  isActive     Boolean  @default(true)
-  createdAt    DateTime @default(now())
-  updatedAt    DateTime @updatedAt
-
-  @@index([code])
-  @@index([isDefault])
-  @@map("currencies")
-}
-
-// Company settings and invoice defaults - metadata driven
-model CompanySettings {
-  id                     Int      @id @default(autoincrement())
-  companyName            String   @db.VarChar(255)
-  companyAddress         String?  @db.Text
-  companyCity            String?  @db.VarChar(100)
-  companyState           String?  @db.VarChar(100)
-  companyPincode         String?  @db.VarChar(20)
-  companyCountry         String?  @default("India") @db.VarChar(100)
-  companyPhone           String?  @db.VarChar(50)
-  companyEmail           String?  @db.VarChar(255)
-  companyWebsite         String?  @db.VarChar(255)
-  companyGstNumber       String?  @db.VarChar(50)
-  companyPanNumber       String?  @db.VarChar(50)
-  logoUrl                String?  @db.VarChar(500)
-  defaultCurrency        String   @default("INR") @db.VarChar(10)
-  defaultPaymentTerms    String?  @db.VarChar(255)
-  defaultCreditDays      Int?     @default(0)
-  defaultTermsConditions String?  @db.Text
-  bankName               String?  @db.VarChar(255)
-  bankAccountNumber      String?  @db.VarChar(50)
-  bankIfscCode           String?  @db.VarChar(20)
-  bankBranch             String?  @db.VarChar(255)
-  invoicePrefix          String?  @default("INV") @db.VarChar(20)
-  quotePrefix            String?  @default("QT") @db.VarChar(20)
-  proformaPrefix         String?  @default("PI") @db.VarChar(20)
-  nextInvoiceNumber      Int?     @default(1)
-  nextQuoteNumber        Int?     @default(1)
-  createdAt              DateTime @default(now())
-  updatedAt              DateTime @updatedAt
-
-  @@map("company_settings")
-}
-
-// Payment terms options - database driven dropdown
-model PaymentTerm {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(100)
-  days        Int      @default(0)
-  description String?  @db.VarChar(255)
-  isDefault   Boolean  @default(false)
-  isActive    Boolean  @default(true)
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([isActive])
-  @@map("payment_terms")
-}
-
-// Unit of measurement - database driven
-model UnitOfMeasure {
-  id          Int      @id @default(autoincrement())
-  code        String   @unique @db.VarChar(20)
-  name        String   @db.VarChar(100)
-  description String?  @db.VarChar(255)
-  isActive    Boolean  @default(true)
-  sortOrder   Int      @default(0)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-
-  @@index([code])
-  @@index([isActive])
-  @@map("units_of_measure")
 }
