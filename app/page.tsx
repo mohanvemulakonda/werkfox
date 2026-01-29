@@ -15,20 +15,32 @@ export default function Home() {
       <Header />
 
       {/* Hero Section */}
-      <section className="relative min-h-screen flex items-center pt-24 pb-12 lg:pt-20 lg:pb-0 overflow-hidden">
-        {/* Background gradient blob */}
-        <div className="absolute -right-40 top-1/4 w-[600px] h-[600px] bg-gradient-to-br from-[var(--werkfox-primary)]/10 to-[var(--werkfox-accent)]/10 rounded-full blur-3xl pointer-events-none" />
-        <div className="absolute -left-40 bottom-1/4 w-[500px] h-[500px] bg-gradient-to-br from-[var(--werkfox-accent)]/10 to-[var(--werkfox-primary)]/10 rounded-full blur-3xl pointer-events-none" />
-
+      <section className="relative min-h-screen flex items-center pt-24 pb-12 lg:pt-20 lg:pb-0 overflow-hidden bg-gray-50">
+        {/* Large Fox SVG Background */}
+        <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" className="w-[900px] h-[900px] lg:w-[1200px] lg:h-[1200px] opacity-[0.08]">
+            <defs>
+              <linearGradient id="fox-grad-hero" x1="0%" y1="0%" x2="100%" y2="100%">
+                <stop offset="0%" stopColor="#E03B12"/>
+                <stop offset="100%" stopColor="#FD9220"/>
+              </linearGradient>
+            </defs>
+            <g transform="translate(-2, 4) scale(0.045)">
+              <path fill="url(#fox-grad-hero)" d="M775.8,224.55l-55.62-17.23c0,0-23.63-27.56-75.31-36.92c-51.68-9.35-120.59,4.43-120.59,4.43s16.24,26.09,33.47,32.49c0,0-105.33,37.41-121.08,84.17c-15.75,46.76,93.29,52.66,93.29,52.66l97.69-13.28c0,0,21.66-45.28,62.02-46.76C730.02,282.62,769.4,262.45,775.8,224.55z"/>
+              <path fill="url(#fox-grad-hero)" d="M482.98,243.62c-40.25,27.28-16.6,77.42,46.51,85.65c84.01,10.95,174.18-66.1,259.08,31.99c0,0-55.91,3.12-112.77,37c-48.55,28.93-145.07,93.6-230.96,48.29C328.78,385.33,390.13,250.88,482.98,243.62z"/>
+            </g>
+          </svg>
+        </div>
 
         <div className="relative z-10 max-w-7xl mx-auto px-6 lg:px-8 py-8 lg:py-16 w-full">
-          <div className="max-w-3xl">
-            <div className="section-label mb-4 lg:mb-6">ERP + CRM FOR MANUFACTURING</div>
-            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-light mb-4 lg:mb-8 leading-[1.05] text-foreground tracking-tight">
+          {/* Glass Card */}
+          <div className="backdrop-blur-md bg-white/70 border border-gray-200/50 rounded-3xl p-8 sm:p-12 lg:p-16 max-w-3xl shadow-xl">
+            <div className="text-sm uppercase tracking-[0.2em] mb-4 lg:mb-6 text-[var(--werkfox-primary)]">ERP + CRM FOR MANUFACTURING</div>
+            <h1 className="text-4xl sm:text-5xl lg:text-7xl font-light mb-4 lg:mb-8 leading-[1.05] text-gray-900 tracking-tight">
               Run your factory<br />
-              <span className="font-semibold">smarter.</span>
+              <span className="font-semibold bg-gradient-to-r from-[var(--werkfox-primary)] to-[var(--werkfox-accent)] bg-clip-text text-transparent">smarter.</span>
             </h1>
-            <p className="text-lg sm:text-xl lg:text-2xl text-muted mb-6 lg:mb-12 font-light leading-relaxed">
+            <p className="text-lg sm:text-xl lg:text-2xl text-gray-600 mb-6 lg:mb-12 font-light leading-relaxed">
               Complete ERP & CRM built for small manufacturing companies. Inventory, production, sales, and customer management in one powerful platform.
             </p>
             <div className="flex flex-col sm:flex-row gap-3 lg:gap-4 mb-6 lg:mb-8">
@@ -46,7 +58,7 @@ export default function Home() {
                 </svg>
               </Link>
             </div>
-            <div className="flex items-center gap-8 text-sm text-muted">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 sm:gap-8 text-sm text-gray-500">
               <div className="flex items-center gap-2">
                 <svg className="w-5 h-5 text-[var(--werkfox-primary)]" fill="currentColor" viewBox="0 0 20 20">
                   <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
