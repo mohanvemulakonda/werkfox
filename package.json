@@ -14,8 +14,11 @@
   },
   "dependencies": {
     "@clerk/nextjs": "^6.37.0",
+    "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.1.0",
     "@types/pdfkit": "^0.17.3",
+    "@upstash/redis": "^1.36.1",
+    "@vercel/blob": "^2.0.1",
     "bcryptjs": "^3.0.3",
     "canvas": "^3.2.0",
     "jspdf": "^3.0.3",

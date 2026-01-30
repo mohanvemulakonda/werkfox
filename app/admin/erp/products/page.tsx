@@ -1,29 +1,73 @@
-import prisma from '@/lib/prisma';
 import Link from 'next/link';
 
-async function getProducts() {
-  return await prisma.product.findMany({
-    orderBy: { createdAt: 'desc' }
-  });
-}
+// Demo products data
+const demoProducts = [
+  {
+    id: 1,
+    sku: 'SKU-001',
+    name: 'Thermal Barcode Labels (50x25mm)',
+    description: 'Premium quality thermal labels for barcode printing',
+    category: 'Labels',
+    hsnCode: '48211010',
+    currency: 'INR',
+    basePrice: 450,
+    gstRate: 18,
+    stockQuantity: 5000,
+    unit: 'Rolls',
+    isActive: true,
+  },
+  {
+    id: 2,
+    sku: 'SKU-002',
+    name: 'Desktop Barcode Printer',
+    description: 'High-speed desktop label printer',
+    category: 'Printers',
+    hsnCode: '84433210',
+    currency: 'INR',
+    basePrice: 12500,
+    gstRate: 18,
+    stockQuantity: 25,
+    unit: 'Pcs',
+    isActive: true,
+  },
+  {
+    id: 3,
+    sku: 'SKU-003',
+    name: 'Ribbon Wax 110mm x 300m',
+    description: 'Wax ribbon for label printers',
+    category: 'Ribbons',
+    hsnCode: '59119090',
+    currency: 'INR',
+    basePrice: 280,
+    gstRate: 18,
+    stockQuantity: 1200,
+    unit: 'Rolls',
+    isActive: true,
+  },
+  {
+    id: 4,
+    sku: 'SKU-004',
+    name: 'Industrial Handheld Scanner',
+    description: 'Rugged barcode scanner for warehouse',
+    category: 'Scanners',
+    hsnCode: '84716050',
+    currency: 'INR',
+    basePrice: 8500,
+    gstRate: 18,
+    stockQuantity: 0,
+    unit: 'Pcs',
+    isActive: false,
+  },
+];
 
-async function getProductStats() {
-  const [total, active, categories] = await Promise.all([
-    prisma.product.count(),
-    prisma.product.count({ where: { isActive: true } }),
-    prisma.product.groupBy({
-      by: ['category'],
-      _count: true,
-      where: { category: { not: null } }
-    })
-  ]);
+export default function ProductsPage() {
+  const products = demoProducts;
 
-  return { total, active, categories };
-}
-
-export default async function ProductsPage() {
-  const products = await getProducts();
-  const stats = await getProductStats();
+  const stats = {
+    total: products.length,
+    active: products.filter(p => p.isActive).length,
+    categories: [...new Set(products.map(p => p.category))].length,
+  };
 
   return (
     <div>
@@ -33,7 +77,7 @@ export default async function ProductsPage() {
           <p className="text-gray-600 font-inter font-light">Manage your products and services with HSN codes and GST rates</p>
         </div>
         <Link
-          href="/admin/products/create"
+          href="/admin/erp/products/create"
           className="group relative inline-flex items-center gap-2 px-6 py-3 bg-[#2563EB] text-white overflow-hidden font-inter"
         >
           <span className="relative z-10 text-sm tracking-wide">+ Add Product</span>
@@ -53,7 +97,7 @@ export default async function ProductsPage() {
         </div>
         <div className="bg-white shadow-sm border border-gray-100 p-6">
           <p className="text-sm text-gray-600 font-inter">Categories</p>
-          <p className="text-3xl font-bold text-blue-600 font-open-sans">{stats.categories.length}</p>
+          <p className="text-3xl font-bold text-blue-600 font-open-sans">{stats.categories}</p>
         </div>
       </div>
 
@@ -67,7 +111,7 @@ export default async function ProductsPage() {
             <h3 className="text-lg font-medium text-gray-900 mb-2 font-open-sans">No products yet</h3>
             <p className="text-gray-600 mb-6 font-inter font-light">Add your first product to get started</p>
             <Link
-              href="/admin/products/create"
+              href="/admin/erp/products/create"
               className="group relative inline-flex items-center gap-2 px-6 py-3 bg-[#2563EB] text-white overflow-hidden font-inter"
             >
               <span className="relative z-10 text-sm tracking-wide">Add Product</span>
@@ -129,10 +173,10 @@ export default async function ProductsPage() {
                       {product.hsnCode || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">
-                      {product.currency} {Number(product.basePrice).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {product.currency} {product.basePrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
-                      {Number(product.gstRate)}%
+                      {product.gstRate}%
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
                       {product.stockQuantity || 0} {product.unit}
@@ -146,7 +190,7 @@ export default async function ProductsPage() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <Link
-                        href={`/admin/products/${product.id}`}
+                        href={`/admin/erp/products/${product.id}`}
                         className="text-blue-600 hover:text-blue-700 font-medium font-inter mr-4"
                       >
                         Edit

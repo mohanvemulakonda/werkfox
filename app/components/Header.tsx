@@ -30,13 +30,13 @@ export default function Header() {
         <div className="flex items-center justify-between h-12">
           <Link href="/" className="flex items-center gap-2">
             <Image
-              src="/fox-icon.svg"
+              src="/logo.png"
               alt="WerkFox"
-              width={32}
-              height={32}
-              className="h-8 w-auto"
+              width={36}
+              height={36}
+              className="h-9 w-auto"
             />
-            <span className="text-[15px] font-medium text-[#1d1d1f] tracking-tight">WerkFox</span>
+            <span className="text-[15px] font-semibold text-[#1d1d1f] tracking-tight">WerkFox</span>
           </Link>
 
           <div className="hidden lg:flex items-center gap-1">

@@ -1,42 +1,90 @@
-import prisma from '@/lib/prisma';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 
+// Demo customers data
+const demoCustomers = [
+  {
+    id: 1,
+    customerCode: 'CUST-001',
+    companyName: 'Tech Manufacturing Pvt Ltd',
+    displayName: 'Tech Manufacturing',
+    email: 'accounts@techmanufacturing.com',
+    phone: '+91 98765 43210',
+    contactPerson: 'Rahul Sharma',
+    website: 'techmanufacturing.com',
+    industry: 'Manufacturing',
+    gstNumber: '27AABCT1234F1ZH',
+    gstType: 'REGISTERED',
+    billingAddress: 'Plot No. 45, MIDC Industrial Area',
+    billingCity: 'Mumbai',
+    billingState: 'Maharashtra',
+    billingPincode: '400093',
+    billingCountry: 'India',
+    shippingAddress: 'Plot No. 45, MIDC Industrial Area',
+    shippingCity: 'Mumbai',
+    shippingState: 'Maharashtra',
+    shippingPincode: '400093',
+    shippingCountry: 'India',
+    paymentTerms: 'Net 30',
+    creditDays: 30,
+    creditLimit: 1000000,
+    isCorporateAccount: true,
+    isActive: true,
+    locationName: null,
+    parentCustomerId: null,
+    notes: 'Key account - handles bulk orders quarterly',
+    invoices: [
+      { id: 1, invoiceNumber: 'INV-2026-001', createdAt: new Date('2026-01-25'), total: 125000, status: 'PAID' },
+      { id: 2, invoiceNumber: 'INV-2026-005', createdAt: new Date('2026-01-20'), total: 87500, status: 'SENT' },
+    ],
+    parentCustomer: null,
+    childAccounts: [
+      { id: 10, companyName: 'Tech Manufacturing Pvt Ltd', displayName: 'Tech Mfg - Pune', locationName: 'Pune Warehouse' },
+    ],
+  },
+  {
+    id: 2,
+    customerCode: 'CUST-002',
+    companyName: 'Sharma Steel Works',
+    displayName: 'Sharma Steel',
+    email: 'purchase@sharmasteel.in',
+    phone: '+91 87654 32109',
+    contactPerson: 'Amit Sharma',
+    website: 'sharmasteel.in',
+    industry: 'Steel & Metal',
+    gstNumber: '07AABCS5678G2ZI',
+    gstType: 'REGISTERED',
+    billingAddress: '123 Industrial Estate',
+    billingCity: 'Delhi',
+    billingState: 'Delhi',
+    billingPincode: '110001',
+    billingCountry: 'India',
+    shippingAddress: '123 Industrial Estate',
+    shippingCity: 'Delhi',
+    shippingState: 'Delhi',
+    shippingPincode: '110001',
+    shippingCountry: 'India',
+    paymentTerms: 'Net 15',
+    creditDays: 15,
+    creditLimit: 500000,
+    isCorporateAccount: false,
+    isActive: true,
+    locationName: null,
+    parentCustomerId: null,
+    notes: null,
+    invoices: [],
+    parentCustomer: null,
+    childAccounts: [],
+  },
+];
+
 interface PageProps {
-  params: Promise<{
-    id: string;
-  }>;
-}
-
-async function getCustomer(id: string) {
-  // Validate that id is a valid number
-  const customerId = parseInt(id);
-  if (isNaN(customerId)) {
-    return null;
-  }
-
-  const customer = await prisma.customer.findUnique({
-    where: { id: customerId },
-    include: {
-      parentCustomer: true,
-      childAccounts: true,
-      invoices: {
-        orderBy: { createdAt: 'desc' },
-        take: 10
-      }
-    }
-  });
-
-  if (!customer) {
-    return null;
-  }
-
-  return customer;
+  params: Promise<{ id: string }>;
 }
 
 export default async function CustomerDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const customer = await getCustomer(id);
+  const customer = demoCustomers.find(c => c.id === parseInt(id));
 
   if (!customer) {
     notFound();
@@ -192,7 +240,7 @@ export default async function CustomerDetailPage({ params }: PageProps) {
               <div>
                 <label className="text-sm font-medium text-gray-600 font-inter">Credit Limit</label>
                 <p className="text-gray-900 font-inter">
-                  ₹{Number(customer.creditLimit).toLocaleString('en-IN')}
+                  ₹{customer.creditLimit.toLocaleString('en-IN')}
                 </p>
               </div>
             )}
@@ -289,10 +337,10 @@ export default async function CustomerDetailPage({ params }: PageProps) {
                   <tr key={invoice.id}>
                     <td className="px-4 py-2 text-sm font-medium text-gray-900 font-inter">{invoice.invoiceNumber}</td>
                     <td className="px-4 py-2 text-sm text-gray-600 font-inter">
-                      {new Date(invoice.createdAt).toLocaleDateString('en-IN')}
+                      {invoice.createdAt.toLocaleDateString('en-IN')}
                     </td>
                     <td className="px-4 py-2 text-sm text-gray-900 font-inter">
-                      ₹{Number(invoice.total).toLocaleString('en-IN')}
+                      ₹{invoice.total.toLocaleString('en-IN')}
                     </td>
                     <td className="px-4 py-2">
                       <span className={`px-2 py-1 text-xs font-medium border font-inter ${
@@ -304,7 +352,7 @@ export default async function CustomerDetailPage({ params }: PageProps) {
                       </span>
                     </td>
                     <td className="px-4 py-2">
-                      <Link href={`/admin/invoices/${invoice.id}`} className="text-blue-600 hover:text-blue-700 text-sm font-inter">
+                      <Link href={`/admin/erp/invoices/${invoice.id}`} className="text-blue-600 hover:text-blue-700 text-sm font-inter">
                         View
                       </Link>
                     </td>
@@ -313,13 +361,6 @@ export default async function CustomerDetailPage({ params }: PageProps) {
               </tbody>
             </table>
           </div>
-          {customer.invoices.length === 10 && (
-            <div className="mt-4 text-center">
-              <Link href={`/admin/invoices?customer=${customer.id}`} className="text-blue-600 hover:text-blue-700 text-sm font-inter">
-                View All Invoices →
-              </Link>
-            </div>
-          )}
         </div>
       )}
 

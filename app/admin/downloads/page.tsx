@@ -1,13 +1,14 @@
-import prisma from '@/lib/prisma';
+// Demo downloads data
+const demoDownloads = [
+  { id: 1, resourceType: 'Product Catalog 2026', email: 'john@techcorp.com', company: 'TechCorp Ltd', downloadedAt: new Date('2026-01-20') },
+  { id: 2, resourceType: 'Price List Q1', email: 'priya@manufacturing.in', company: 'Priya Manufacturing', downloadedAt: new Date('2026-01-18') },
+  { id: 3, resourceType: 'Technical Specs', email: 'amit@gmail.com', company: null, downloadedAt: new Date('2026-01-15') },
+  { id: 4, resourceType: 'Product Catalog 2026', email: 'sales@sharma.in', company: 'Sharma Industries', downloadedAt: new Date('2026-01-12') },
+  { id: 5, resourceType: 'Case Study - Manufacturing', email: 'raj@industrial.com', company: 'Industrial Solutions', downloadedAt: new Date('2026-01-10') },
+];
 
-async function getDownloads() {
-  return await prisma.download.findMany({
-    orderBy: { downloadedAt: 'desc' }
-  });
-}
-
-export default async function DownloadsPage() {
-  const downloads = await getDownloads();
+export default function DownloadsPage() {
+  const downloads = demoDownloads;
 
   return (
     <div>
@@ -72,7 +73,7 @@ export default async function DownloadsPage() {
                       {download.company || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
-                      {new Date(download.downloadedAt).toLocaleDateString()}
+                      {download.downloadedAt.toLocaleDateString()}
                     </td>
                   </tr>
                 ))}

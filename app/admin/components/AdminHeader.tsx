@@ -1,60 +1,67 @@
 'use client';
 
-import { SignOutButton, useUser } from '@clerk/nextjs';
 import Image from 'next/image';
 import Link from 'next/link';
 
 export default function AdminHeader({ user, organizations = [], currentOrg = null }: { user?: any; organizations?: any[]; currentOrg?: any }) {
-  const { user: clerkUser } = useUser();
-
   const displayUser = user || {
-    name: clerkUser?.fullName || clerkUser?.firstName || 'User',
-    email: clerkUser?.emailAddresses[0]?.emailAddress || ''
+    name: 'Demo User',
+    email: 'demo@werkfox.com'
   };
 
   return (
-    <header className="bg-white border-b border-gray-200 sticky top-0 z-50">
-      <div className="flex items-center justify-between px-8 py-4">
+    <header className="admin-header">
+      <div className="admin-header-inner">
         <div className="flex items-center gap-4">
-          <Link href="/admin" className="flex items-center gap-3">
+          <Link href="/admin" className="admin-logo-link">
             <Image
-              src="/fox-icon.svg"
+              src="/logo.png"
               alt="WerkFox"
               width={40}
               height={40}
             />
             <div>
-              <h1 className="text-lg font-bold text-gray-900 font-open-sans">WerkFox Admin</h1>
-              <p className="text-xs text-gray-500 font-light font-inter">Dashboard & Management</p>
+              <h1 className="admin-title">WerkFox Admin</h1>
+              <p className="admin-subtitle">Dashboard & Management</p>
             </div>
           </Link>
 
-          {/* Organization Switcher (client) */}
-          <div className="ml-4 hidden md:block">
+          {/* Organization Switcher */}
+          <div className="admin-org-switcher hidden md:block">
             <details className="relative">
-              <summary className="cursor-pointer px-3 py-2 bg-gray-100 rounded">{currentOrg ? currentOrg.name : 'No Organization'}</summary>
-              <div className="absolute right-0 mt-2 w-64 bg-white border rounded shadow z-50 p-2">
+              <summary className="admin-org-trigger cursor-pointer">
+                {currentOrg ? currentOrg.name : 'No Organization'}
+              </summary>
+              <div className="admin-org-dropdown">
                 {organizations && organizations.length > 0 ? (
                   organizations.map((o) => (
-                    <div key={o.id} className="flex items-center justify-between p-2 hover:bg-gray-50">
+                    <div key={o.id} className="admin-org-item">
                       <div>
                         <div className="text-sm font-medium">{o.name}</div>
                         <div className="text-xs text-gray-500">{o.slug} — {o.role}</div>
                       </div>
-                      <div>
-                        <button onClick={async () => {
-                          await fetch('/api/admin/organizations/switch', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ organizationId: o.id }) });
+                      <button
+                        onClick={async () => {
+                          await fetch('/api/admin/organizations/switch', {
+                            method: 'POST',
+                            headers: { 'Content-Type': 'application/json' },
+                            body: JSON.stringify({ organizationId: o.id })
+                          });
                           window.location.href = '/admin';
-                        }} className="px-2 py-1 bg-blue-600 text-white text-sm rounded">Switch</button>
-                      </div>
+                        }}
+                        className="admin-btn admin-btn-primary text-xs py-1 px-2"
+                      >
+                        Switch
+                      </button>
                     </div>
                   ))
                 ) : (
-                  <div className="text-sm text-gray-500">No organizations</div>
+                  <div className="text-sm text-gray-500 p-2">No organizations</div>
                 )}
-
-                <div className="mt-2">
-                  <Link href="/admin/organizations/select" className="text-sm text-blue-600">Manage organizations</Link>
+                <div className="mt-2 pt-2 border-t border-gray-100">
+                  <Link href="/admin/organizations/select" className="admin-table-link text-sm">
+                    Manage organizations
+                  </Link>
                 </div>
               </div>
             </details>
@@ -62,16 +69,15 @@ export default function AdminHeader({ user, organizations = [], currentOrg = nul
         </div>
 
         <div className="flex items-center gap-4">
-          <div className="text-right">
-            <p className="text-sm font-medium text-gray-900 font-inter">{displayUser?.name}</p>
-            <p className="text-xs text-gray-500 font-inter">{displayUser?.email}</p>
+          <div className="admin-user-info">
+            <p className="admin-user-name">{displayUser?.name}</p>
+            <p className="admin-user-email">{displayUser?.email}</p>
           </div>
-          <SignOutButton>
-            <button className="group relative inline-flex items-center gap-2 px-4 py-2 bg-gray-100 text-gray-700 overflow-hidden font-inter">
-              <span className="relative z-10 text-sm tracking-wide">Sign Out</span>
-              <div className="absolute inset-0 bg-gray-900 text-white transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+          <Link href="/">
+            <button className="admin-btn admin-btn-secondary">
+              Exit Demo
             </button>
-          </SignOutButton>
+          </Link>
         </div>
       </div>
     </header>

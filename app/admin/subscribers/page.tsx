@@ -1,14 +1,16 @@
-import prisma from '@/lib/prisma';
 import Link from 'next/link';
 
-async function getSubscribers() {
-  return await prisma.subscriber.findMany({
-    orderBy: { subscribedAt: 'desc' }
-  });
-}
+// Demo subscribers data
+const demoSubscribers = [
+  { id: 1, email: 'john.doe@techcorp.com', isActive: true, subscribedAt: new Date('2026-01-15') },
+  { id: 2, email: 'priya.sharma@manufacturing.in', isActive: true, subscribedAt: new Date('2026-01-12') },
+  { id: 3, email: 'amit.patel@gmail.com', isActive: true, subscribedAt: new Date('2026-01-10') },
+  { id: 4, email: 'sales@industrialparts.com', isActive: false, subscribedAt: new Date('2025-12-28') },
+  { id: 5, email: 'purchasing@sharmasteel.in', isActive: true, subscribedAt: new Date('2025-12-20') },
+];
 
-export default async function SubscribersPage() {
-  const subscribers = await getSubscribers();
+export default function SubscribersPage() {
+  const subscribers = demoSubscribers;
   const activeCount = subscribers.filter(s => s.isActive).length;
 
   return (
@@ -67,12 +69,12 @@ export default async function SubscribersPage() {
                       {subscriber.email}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-900 border border-gray-900 font-inter">
+                      <span className={`px-2 py-1 text-xs font-medium bg-gray-100 border border-gray-900 font-inter ${subscriber.isActive ? 'text-gray-900' : 'text-gray-500'}`}>
                         {subscriber.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
-                      {new Date(subscriber.subscribedAt).toLocaleDateString()}
+                      {subscriber.subscribedAt.toLocaleDateString()}
                     </td>
                   </tr>
                 ))}

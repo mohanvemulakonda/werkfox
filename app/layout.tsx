@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import { Inter, Open_Sans } from "next/font/google";
-import { ClerkProvider } from "@clerk/nextjs";
+import { ChatWidget } from "./components/AIChat";
 import "./globals.css";
 
 const inter = Inter({ 
@@ -22,9 +22,9 @@ export const metadata: Metadata = {
     template: '%s | WerkFox'
   },
   icons: {
-    icon: '/icon.svg',
-    shortcut: '/icon.svg',
-    apple: '/icon.svg',
+    icon: '/icon.png',
+    shortcut: '/icon.png',
+    apple: '/icon.png',
   },
   description: 'Complete ERP & CRM solution for small manufacturing companies. Inventory management, production planning, sales, and customer management in one powerful platform.',
   keywords: [
@@ -95,12 +95,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <ClerkProvider>
-      <html lang="en" className={`${inter.variable} ${openSans.variable}`}>
-        <body className={inter.className}>
-          {children}
-        </body>
-      </html>
-    </ClerkProvider>
+    <html lang="en" className={`${inter.variable} ${openSans.variable}`}>
+      <body className={inter.className}>
+        {children}
+        <ChatWidget />
+      </body>
+    </html>
   );
 }

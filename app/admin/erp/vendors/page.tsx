@@ -1,116 +1,99 @@
 import Link from 'next/link';
 
-// Demo customers data
-const demoCustomers = [
+// Demo vendors data
+const demoVendors = [
   {
-    id: 1,
-    customerCode: 'CUST-001',
-    name: 'Tech Manufacturing Pvt Ltd',
-    displayName: 'Tech Manufacturing',
-    email: 'accounts@techmanufacturing.com',
+    id: '1',
+    code: 'VEN-001',
+    name: 'Rama Industries Pvt Ltd',
+    displayName: 'Rama Industries',
+    email: 'sales@ramaindustries.com',
     phone: '+91 98765 43210',
-    contactPerson: 'Rahul Sharma',
+    contactPerson: 'Rajesh Kumar',
     city: 'Mumbai',
     state: 'Maharashtra',
-    gstNumber: '27AABCT1234F1ZH',
-    gstType: 'REGISTERED',
-    creditLimit: 1000000,
-    currentBalance: 245000,
-    invoiceCount: 12,
+    gstNumber: '27AABCR1234F1ZH',
+    creditLimit: 500000,
+    creditDays: 30,
+    currentBalance: 125000,
     isActive: true,
+    createdAt: new Date('2025-01-15'),
   },
   {
-    id: 2,
-    customerCode: 'CUST-002',
+    id: '2',
+    code: 'VEN-002',
     name: 'Sharma Steel Works',
     displayName: 'Sharma Steel',
-    email: 'purchase@sharmasteel.in',
+    email: 'orders@sharmasteel.in',
     phone: '+91 87654 32109',
     contactPerson: 'Amit Sharma',
     city: 'Delhi',
     state: 'Delhi',
     gstNumber: '07AABCS5678G2ZI',
-    gstType: 'REGISTERED',
-    creditLimit: 500000,
-    currentBalance: 87500,
-    invoiceCount: 8,
+    creditLimit: 300000,
+    creditDays: 15,
+    currentBalance: 45000,
     isActive: true,
+    createdAt: new Date('2025-02-01'),
   },
   {
-    id: 3,
-    customerCode: 'CUST-003',
-    name: 'Patel Plastics Industries',
-    displayName: 'Patel Plastics',
-    email: 'info@patelplastics.com',
+    id: '3',
+    code: 'VEN-003',
+    name: 'Patel Packaging Solutions',
+    displayName: 'Patel Packaging',
+    email: 'info@patelpackaging.com',
     phone: '+91 76543 21098',
     contactPerson: 'Nilesh Patel',
     city: 'Ahmedabad',
     state: 'Gujarat',
     gstNumber: '24AABCP9012H3ZJ',
-    gstType: 'REGISTERED',
-    creditLimit: 750000,
+    creditLimit: 200000,
+    creditDays: 7,
     currentBalance: 0,
-    invoiceCount: 15,
     isActive: true,
+    createdAt: new Date('2025-02-15'),
   },
   {
-    id: 4,
-    customerCode: 'CUST-004',
-    name: 'Chennai Enterprises',
-    displayName: null,
-    email: 'orders@chennaienterprises.co.in',
+    id: '4',
+    code: 'VEN-004',
+    name: 'Chennai Chemicals Ltd',
+    displayName: 'Chennai Chemicals',
+    email: 'supply@chennaichem.co.in',
     phone: '+91 65432 10987',
     contactPerson: 'Venkat Raman',
     city: 'Chennai',
     state: 'Tamil Nadu',
     gstNumber: '33AABCC3456I4ZK',
-    gstType: 'COMPOSITION',
-    creditLimit: 300000,
-    currentBalance: 156000,
-    invoiceCount: 6,
-    isActive: true,
-  },
-  {
-    id: 5,
-    customerCode: 'CUST-005',
-    name: 'Kolkata Trading Co',
-    displayName: 'KTC',
-    email: 'sales@ktc.in',
-    phone: '+91 54321 09876',
-    contactPerson: 'Sourav Das',
-    city: 'Kolkata',
-    state: 'West Bengal',
-    gstNumber: null,
-    gstType: 'UNREGISTERED',
-    creditLimit: 100000,
-    currentBalance: 45000,
-    invoiceCount: 3,
+    creditLimit: 750000,
+    creditDays: 45,
+    currentBalance: 320000,
     isActive: false,
+    createdAt: new Date('2024-11-20'),
   },
 ];
 
-export default function CustomersPage() {
-  const customers = demoCustomers;
+export default function VendorsPage() {
+  const vendors = demoVendors;
 
   const stats = {
-    total: customers.length,
-    active: customers.filter(c => c.isActive).length,
-    totalReceivable: customers.reduce((sum, c) => sum + (c.currentBalance || 0), 0),
-    overLimit: customers.filter(c => (c.currentBalance || 0) > (c.creditLimit || Infinity)).length,
+    total: vendors.length,
+    active: vendors.filter(v => v.isActive).length,
+    totalPayable: vendors.reduce((sum, v) => sum + (v.currentBalance || 0), 0),
+    overLimit: vendors.filter(v => (v.currentBalance || 0) > (v.creditLimit || Infinity)).length,
   };
 
   return (
     <div>
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 font-open-sans">Customers</h1>
-          <p className="text-gray-600 font-inter font-light">Manage your customer accounts and billing</p>
+          <h1 className="text-3xl font-bold text-gray-900 mb-2 font-open-sans">Vendors</h1>
+          <p className="text-gray-600 font-inter font-light">Manage your suppliers and vendor relationships</p>
         </div>
         <Link
-          href="/admin/customers/create"
+          href="/admin/erp/vendors/create"
           className="group relative inline-flex items-center gap-2 px-6 py-3 bg-[#2563EB] text-white overflow-hidden font-inter"
         >
-          <span className="relative z-10 text-sm tracking-wide">+ Add Customer</span>
+          <span className="relative z-10 text-sm tracking-wide">+ Add Vendor</span>
           <div className="absolute inset-0 bg-gray-900 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
         </Link>
       </div>
@@ -118,16 +101,16 @@ export default function CustomersPage() {
       {/* Stats */}
       <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
         <div className="bg-white shadow-sm border border-gray-100 p-6">
-          <p className="text-sm text-gray-600 font-inter">Total Customers</p>
+          <p className="text-sm text-gray-600 font-inter">Total Vendors</p>
           <p className="text-3xl font-bold text-gray-900 font-open-sans">{stats.total}</p>
         </div>
         <div className="bg-white shadow-sm border border-gray-100 p-6">
-          <p className="text-sm text-gray-600 font-inter">Active Customers</p>
+          <p className="text-sm text-gray-600 font-inter">Active Vendors</p>
           <p className="text-3xl font-bold text-green-600 font-open-sans">{stats.active}</p>
         </div>
         <div className="bg-white shadow-sm border border-gray-100 p-6">
-          <p className="text-sm text-gray-600 font-inter">Total Receivable</p>
-          <p className="text-3xl font-bold text-amber-600 font-open-sans">₹{(stats.totalReceivable / 100000).toFixed(1)}L</p>
+          <p className="text-sm text-gray-600 font-inter">Total Payable</p>
+          <p className="text-3xl font-bold text-amber-600 font-open-sans">₹{stats.totalPayable.toLocaleString('en-IN')}</p>
         </div>
         <div className="bg-white shadow-sm border border-gray-100 p-6">
           <p className="text-sm text-gray-600 font-inter">Over Credit Limit</p>
@@ -135,20 +118,20 @@ export default function CustomersPage() {
         </div>
       </div>
 
-      {/* Customers Table */}
+      {/* Vendors Table */}
       <div className="bg-white shadow-sm border border-gray-100">
-        {customers.length === 0 ? (
+        {vendors.length === 0 ? (
           <div className="p-12 text-center">
             <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z" />
             </svg>
-            <h3 className="text-lg font-medium text-gray-900 mb-2 font-open-sans">No customers yet</h3>
-            <p className="text-gray-600 mb-6 font-inter font-light">Add your first customer to start billing</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2 font-open-sans">No vendors yet</h3>
+            <p className="text-gray-600 mb-6 font-inter font-light">Add your first vendor to start managing supplier relationships</p>
             <Link
-              href="/admin/customers/create"
+              href="/admin/erp/vendors/create"
               className="group relative inline-flex items-center gap-2 px-6 py-3 bg-[#2563EB] text-white overflow-hidden font-inter"
             >
-              <span className="relative z-10 text-sm tracking-wide">Add Customer</span>
+              <span className="relative z-10 text-sm tracking-wide">Add Vendor</span>
               <div className="absolute inset-0 bg-gray-900 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
             </Link>
           </div>
@@ -161,7 +144,7 @@ export default function CustomersPage() {
                     Code
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Customer Name
+                    Vendor Name
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
                     Contact
@@ -170,7 +153,10 @@ export default function CustomersPage() {
                     Location
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    GST
+                    GST Number
+                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
+                    Credit Limit
                   </th>
                   <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
                     Balance
@@ -184,61 +170,61 @@ export default function CustomersPage() {
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
-                {customers.map((customer) => (
-                  <tr key={customer.id} className="hover:bg-gray-50">
+                {vendors.map((vendor) => (
+                  <tr key={vendor.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">
-                      {customer.customerCode}
+                      {vendor.code}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900 font-inter">{customer.name}</div>
-                      {customer.displayName && customer.displayName !== customer.name && (
-                        <div className="text-sm text-gray-500 font-inter">{customer.displayName}</div>
+                      <div className="text-sm font-medium text-gray-900 font-inter">{vendor.name}</div>
+                      {vendor.displayName && vendor.displayName !== vendor.name && (
+                        <div className="text-sm text-gray-500 font-inter">{vendor.displayName}</div>
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 font-inter">{customer.contactPerson}</div>
-                      <div className="text-sm text-gray-500 font-inter">{customer.phone}</div>
+                      <div className="text-sm text-gray-900 font-inter">{vendor.contactPerson}</div>
+                      <div className="text-sm text-gray-500 font-inter">{vendor.phone}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
-                      {customer.city}, {customer.state}
+                      {vendor.city}, {vendor.state}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-600 font-inter font-mono">
-                        {customer.gstNumber || '-'}
-                      </div>
-                      <div className="text-xs text-gray-400">{customer.gstType}</div>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter font-mono">
+                      {vendor.gstNumber || '-'}
+                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
+                      ₹{vendor.creditLimit?.toLocaleString('en-IN') || '-'}
+                      <div className="text-xs text-gray-400">{vendor.creditDays} days</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-inter">
                       <span className={`font-medium ${
-                        (customer.currentBalance || 0) > (customer.creditLimit || Infinity)
+                        (vendor.currentBalance || 0) > (vendor.creditLimit || Infinity)
                           ? 'text-red-600'
-                          : customer.currentBalance > 0
+                          : vendor.currentBalance > 0
                             ? 'text-amber-600'
                             : 'text-gray-600'
                       }`}>
-                        ₹{customer.currentBalance?.toLocaleString('en-IN') || '0'}
+                        ₹{vendor.currentBalance?.toLocaleString('en-IN') || '0'}
                       </span>
-                      <div className="text-xs text-gray-400">of ₹{(customer.creditLimit / 100000).toFixed(1)}L</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 text-xs font-medium bg-gray-100 border border-gray-900 font-inter ${
-                        customer.isActive ? 'text-gray-900' : 'text-gray-500'
+                        vendor.isActive ? 'text-gray-900' : 'text-gray-500'
                       }`}>
-                        {customer.isActive ? 'Active' : 'Inactive'}
+                        {vendor.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <Link
-                        href={`/admin/customers/${customer.id}`}
+                        href={`/admin/erp/vendors/${vendor.id}`}
                         className="text-blue-600 hover:text-blue-700 font-medium font-inter mr-4"
                       >
                         View
                       </Link>
                       <Link
-                        href={`/admin/erp/invoices/create?customerId=${customer.id}`}
+                        href={`/admin/erp/purchase-orders/create?vendorId=${vendor.id}`}
                         className="text-green-600 hover:text-green-700 font-medium font-inter"
                       >
-                        Invoice
+                        New PO
                       </Link>
                     </td>
                   </tr>

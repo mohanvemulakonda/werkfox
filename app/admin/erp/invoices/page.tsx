@@ -1,14 +1,55 @@
-import prisma from '@/lib/prisma';
 import Link from 'next/link';
 
-async function getInvoices() {
-  return await prisma.invoice.findMany({
-    orderBy: { createdAt: 'desc' }
-  });
-}
+// Demo invoices data
+const demoInvoices = [
+  {
+    id: 1,
+    invoiceNumber: 'INV-2026-001',
+    customerName: 'Tech Manufacturing Pvt Ltd',
+    customerEmail: 'accounts@techmanufacturing.com',
+    type: 'INVOICE',
+    currency: 'INR',
+    total: 125000,
+    status: 'PAID',
+    createdAt: new Date('2026-01-25'),
+  },
+  {
+    id: 2,
+    invoiceNumber: 'INV-2026-002',
+    customerName: 'Sharma Steel Works',
+    customerEmail: 'purchase@sharmasteel.in',
+    type: 'INVOICE',
+    currency: 'INR',
+    total: 87500,
+    status: 'SENT',
+    createdAt: new Date('2026-01-22'),
+  },
+  {
+    id: 3,
+    invoiceNumber: 'QUO-2026-001',
+    customerName: 'Patel Plastics Industries',
+    customerEmail: 'info@patelplastics.com',
+    type: 'QUOTE',
+    currency: 'INR',
+    total: 225000,
+    status: 'DRAFT',
+    createdAt: new Date('2026-01-20'),
+  },
+  {
+    id: 4,
+    invoiceNumber: 'PRO-2026-001',
+    customerName: 'Chennai Enterprises',
+    customerEmail: 'orders@chennaienterprises.co.in',
+    type: 'PROFORMA',
+    currency: 'INR',
+    total: 156000,
+    status: 'SENT',
+    createdAt: new Date('2026-01-18'),
+  },
+];
 
-export default async function InvoicesPage() {
-  const invoices = await getInvoices();
+export default function InvoicesPage() {
+  const invoices = demoInvoices;
 
   return (
     <div>
@@ -18,7 +59,7 @@ export default async function InvoicesPage() {
           <p className="text-gray-600 font-inter font-light">Create and manage invoices and quotes</p>
         </div>
         <Link
-          href="/admin/invoices/create"
+          href="/admin/erp/invoices/create"
           className="group relative inline-flex items-center gap-2 px-6 py-3 bg-[#2563EB] text-white overflow-hidden font-inter"
         >
           <span className="relative z-10 text-sm tracking-wide">+ Create New</span>
@@ -35,7 +76,7 @@ export default async function InvoicesPage() {
             <h3 className="text-lg font-medium text-gray-900 mb-2 font-open-sans">No invoices yet</h3>
             <p className="text-gray-600 mb-6 font-inter font-light">Create your first invoice or quote to get started</p>
             <Link
-              href="/admin/invoices/create"
+              href="/admin/erp/invoices/create"
               className="group relative inline-flex items-center gap-2 px-6 py-3 bg-[#2563EB] text-white overflow-hidden font-inter"
             >
               <span className="relative z-10 text-sm tracking-wide">Create Invoice</span>
@@ -86,19 +127,23 @@ export default async function InvoicesPage() {
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">
-                      {invoice.currency} {invoice.total.toFixed(2)}
+                      {invoice.currency} {invoice.total.toLocaleString('en-IN')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-900 border border-gray-900 font-inter">
+                      <span className={`px-2 py-1 text-xs font-medium border font-inter ${
+                        invoice.status === 'PAID' ? 'bg-green-100 text-green-800 border-green-200' :
+                        invoice.status === 'SENT' ? 'bg-blue-100 text-blue-800 border-blue-200' :
+                        'bg-gray-100 text-gray-800 border-gray-200'
+                      }`}>
                         {invoice.status}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
-                      {new Date(invoice.createdAt).toLocaleDateString()}
+                      {invoice.createdAt.toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
                       <Link
-                        href={`/admin/invoices/${invoice.id}`}
+                        href={`/admin/erp/invoices/${invoice.id}`}
                         className="text-blue-600 hover:text-blue-700 font-medium font-inter"
                       >
                         View
