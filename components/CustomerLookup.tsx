@@ -59,16 +59,18 @@ export default function CustomerLookup({ onSelect, selectedCustomer }: CustomerL
     }
   };
 
-  const filteredCustomers = customers.filter(customer =>
-    customer.displayName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.companyName?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.email?.toLowerCase().includes(searchTerm.toLowerCase()) ||
-    customer.phone?.includes(searchTerm)
-  );
+  const filteredCustomers = customers.filter(customer => {
+    const name = (customer.displayName || (customer as any).name || '').toLowerCase();
+    const company = (customer.companyName || '').toLowerCase();
+    const email = (customer.email || '').toLowerCase();
+    const phone = customer.phone || '';
+    const term = searchTerm.toLowerCase();
+    return name.includes(term) || company.includes(term) || email.includes(term) || phone.includes(term);
+  });
 
   const handleSelect = (customer: Customer) => {
     onSelect(customer);
-    setSearchTerm(customer.displayName);
+    setSearchTerm(customer.displayName || (customer as any).name || '');
     setIsOpen(false);
   };
 
@@ -119,7 +121,7 @@ export default function CustomerLookup({ onSelect, selectedCustomer }: CustomerL
                   className="px-4 py-3 hover:bg-blue-50 cursor-pointer border-b border-gray-100 last:border-b-0"
                 >
                   <div className="font-medium text-gray-900 font-inter">
-                    {customer.displayName}
+                    {customer.displayName || (customer as any).name}
                   </div>
                   {customer.companyName && (
                     <div className="text-sm text-gray-600 font-inter">

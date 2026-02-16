@@ -129,10 +129,10 @@ export default function SalesOrderForm({ salesOrder }: SalesOrderFormProps) {
   const handleCustomerSelect = (customer: any) => {
     if (customer) {
       setCustomerId(customer.id);
-      setCustomerName(customer.displayName || customer.companyName || '');
+      setCustomerName(customer.displayName || customer.name || customer.companyName || '');
       setCustomerEmail(customer.email || '');
       setCustomerGst(customer.gstNumber || '');
-      setCustomerState(customer.billingState || '');
+      setCustomerState(customer.billingState || customer.state || '');
     } else {
       setCustomerId(null);
       setCustomerName('');

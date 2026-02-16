@@ -219,7 +219,7 @@ export default function InvoiceForm({ invoice }: InvoiceFormProps) {
       const primaryContact = contacts.find((c: CustomerContact) => c.isPrimary) || contacts[0];
 
       // For billing/invoice purposes: use contact person or fall back to displayName
-      const billingContactName = primaryContact?.name || customer.contactPerson || customer.displayName || '';
+      const billingContactName = primaryContact?.name || customer.contactPerson || customer.displayName || customer.name || '';
       const billingContactEmail = primaryContact?.email || customer.email || '';
       const billingContactPhone = primaryContact?.phone || customer.phone || '';
 
@@ -242,8 +242,8 @@ export default function InvoiceForm({ invoice }: InvoiceFormProps) {
         shippingContactPhone: actualPersonPhone,
         sameAsBilling: actualPersonName !== '', // Only same as billing if we have a real contact
         customerGstNumber: customer.gstNumber || '',
-        customerState: customer.billingState || '',
-        placeOfSupply: customer.billingState || '',
+        customerState: customer.billingState || customer.state || '',
+        placeOfSupply: customer.billingState || customer.state || '',
         creditDays: customer.creditDays || 0,
         paymentTerms: paymentTerm,
       }));

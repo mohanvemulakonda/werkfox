@@ -116,10 +116,10 @@ export default function QuotationForm({ quotation }: QuotationFormProps) {
       setFormData((prev) => ({
         ...prev,
         customerId: customer.id,
-        customerName: customer.displayName || customer.contactPerson || '',
+        customerName: customer.displayName || customer.name || customer.contactPerson || '',
         customerEmail: customer.email || '',
         customerGst: customer.gstNumber || '',
-        customerState: customer.billingState || '',
+        customerState: customer.billingState || customer.state || '',
       }));
     } else {
       setSelectedCustomer(null);
