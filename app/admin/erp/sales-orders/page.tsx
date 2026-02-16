@@ -1,183 +1,183 @@
+'use client';
+
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
-import prisma from '@/lib/prisma';
+import FilterBar from '../../components/FilterBar';
+import KanbanBoard from '../../components/KanbanBoard';
+import KanbanCard from '../../components/KanbanCard';
 
-const statusBadgeClass: Record<string, string> = {
-  PENDING: 'admin-badge admin-badge-pending',
-  CONFIRMED: 'admin-badge admin-badge-confirmed',
-  IN_PROGRESS: 'admin-badge admin-badge-in-progress',
-  COMPLETED: 'admin-badge admin-badge-completed',
-  CANCELLED: 'admin-badge admin-badge-cancelled',
-  ON_HOLD: 'admin-badge admin-badge-on-hold',
-};
-
-const paymentBadgeClass: Record<string, string> = {
-  UNPAID: 'admin-badge admin-badge-unpaid',
-  PARTIAL: 'admin-badge admin-badge-partial',
-  PAID: 'admin-badge admin-badge-paid',
-  OVERDUE: 'admin-badge admin-badge-overdue',
-  REFUNDED: 'admin-badge admin-badge-cancelled',
-};
-
-async function getSalesOrders() {
-  const orders = await prisma.sales_orders.findMany({
-    orderBy: { createdAt: 'desc' },
-    include: {
-      customer: { select: { name: true, customerCode: true } },
-      items: { select: { id: true } },
-    },
-  });
-
-  const total = orders.length;
-  const pending = orders.filter(o => o.status === 'PENDING').length;
-  const confirmed = orders.filter(o => o.status === 'CONFIRMED').length;
-  const inProgress = orders.filter(o => o.status === 'IN_PROGRESS').length;
-  const totalValue = orders.reduce((sum, o) => sum + Number(o.total), 0);
-  const unpaidValue = orders
-    .filter(o => o.paymentStatus !== 'PAID')
-    .reduce((sum, o) => sum + Number(o.total), 0);
-
-  return { orders, stats: { total, pending, confirmed, inProgress, totalValue, unpaidValue } };
+interface SalesOrder {
+  id: number;
+  soNumber: string;
+  orderDate: string;
+  deliveryDate?: string;
+  total: string;
+  status: string;
+  paymentStatus: string;
+  customer: {
+    name: string;
+    customerCode: string;
+  };
 }
 
-export default async function SalesOrdersPage() {
-  const { orders, stats } = await getSalesOrders();
+const STAGES = ['PENDING', 'CONFIRMED', 'IN_PROGRESS', 'COMPLETED', 'CANCELLED'];
+
+export default function SalesOrdersPage() {
+  const [orders, setOrders] = useState<SalesOrder[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [view, setView] = useState<'list' | 'kanban' | 'calendar'>('list');
+
+  useEffect(() => {
+    fetchOrders();
+  }, [searchQuery]);
+
+  const fetchOrders = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/sales-orders');
+      const data = await response.json();
+
+      if (response.ok) {
+        let filtered = data.salesOrders || [];
+        if (searchQuery) {
+          filtered = filtered.filter((o: SalesOrder) =>
+            o.soNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            o.customer.name.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        }
+        setOrders(filtered);
+      } else {
+        setError(data.error || 'Failed to fetch sales orders');
+      }
+    } catch (err) {
+      setError('Failed to fetch sales orders');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const ordersByStatus = useMemo(() => {
+    const grouped: Record<string, SalesOrder[]> = {};
+    STAGES.forEach(status => grouped[status] = []);
+    orders.forEach(order => {
+      if (grouped[order.status]) {
+        grouped[order.status].push(order);
+      } else {
+        if (!grouped['PENDING']) grouped['PENDING'] = [];
+        grouped['PENDING'].push(order);
+      }
+    });
+    return grouped;
+  }, [orders]);
+
+  const formatCurrency = (value: string) => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency: 'INR',
+      maximumFractionDigits: 0,
+    }).format(parseFloat(value));
+  };
+
+  const kanbanColumns = STAGES.map(status => {
+    const stageOrders = ordersByStatus[status] || [];
+    const totalValue = stageOrders.reduce((sum, o) => sum + parseFloat(o.total), 0);
+    return {
+      id: status,
+      title: status.replace('_', ' '),
+      count: stageOrders.length,
+      aggregate: totalValue > 0 ? formatCurrency(totalValue.toString()) : ''
+    };
+  });
 
   return (
-    <div>
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 font-open-sans">Sales Orders</h1>
-          <p className="text-gray-600 font-inter font-light">Manage customer sales orders and track fulfillment</p>
-        </div>
-        <Link
-          href="/admin/erp/sales-orders/create"
-          className="group relative inline-flex items-center gap-2 px-6 py-3 bg-[#2563EB] text-white overflow-hidden font-inter"
-        >
-          <span className="relative z-10 text-sm tracking-wide">+ New Sales Order</span>
-          <div className="absolute inset-0 bg-gray-900 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-        </Link>
-      </div>
+    <div className="flex flex-col flex-1 min-h-0 bg-[#f5f5f7]">
+      <FilterBar
+        onSearch={setSearchQuery}
+        filters={searchQuery ? [{ id: 'search', label: 'Search', value: searchQuery }] : []}
+        onRemoveFilter={() => setSearchQuery('')}
+        view={view}
+        onViewChange={setView}
+        actions={
+          <Link
+            href="/admin/erp/sales-orders/create"
+            className="admin-btn admin-btn-primary"
+          >
+            + Create New Order
+          </Link>
+        }
+      />
 
-      {/* Stats */}
-      <div className="grid grid-cols-2 md:grid-cols-6 gap-4 mb-6">
-        <div className="bg-white shadow-sm border border-gray-100 p-5">
-          <p className="text-sm text-gray-600 font-inter">Total Orders</p>
-          <p className="text-2xl font-bold text-gray-900 font-open-sans">{stats.total}</p>
-        </div>
-        <div className="bg-white shadow-sm border border-gray-100 p-5">
-          <p className="text-sm text-gray-600 font-inter">Pending</p>
-          <p className="text-2xl font-bold text-amber-600 font-open-sans">{stats.pending}</p>
-        </div>
-        <div className="bg-white shadow-sm border border-gray-100 p-5">
-          <p className="text-sm text-gray-600 font-inter">Confirmed</p>
-          <p className="text-2xl font-bold text-indigo-600 font-open-sans">{stats.confirmed}</p>
-        </div>
-        <div className="bg-white shadow-sm border border-gray-100 p-5">
-          <p className="text-sm text-gray-600 font-inter">In Progress</p>
-          <p className="text-2xl font-bold text-blue-600 font-open-sans">{stats.inProgress}</p>
-        </div>
-        <div className="bg-white shadow-sm border border-gray-100 p-5">
-          <p className="text-sm text-gray-600 font-inter">Total Value</p>
-          <p className="text-2xl font-bold text-gray-900 font-open-sans">
-            {stats.totalValue > 0 ? '₹' + (stats.totalValue / 100000).toFixed(1) + 'L' : '₹0'}
-          </p>
-        </div>
-        <div className="bg-white shadow-sm border border-gray-100 p-5">
-          <p className="text-sm text-gray-600 font-inter">Unpaid Value</p>
-          <p className="text-2xl font-bold text-red-600 font-open-sans">
-            {stats.unpaidValue > 0 ? '₹' + (stats.unpaidValue / 100000).toFixed(1) + 'L' : '₹0'}
-          </p>
-        </div>
-      </div>
-
-      {/* Sales Orders Table */}
-      <div className="admin-table-container">
-        {orders.length === 0 ? (
-          <div className="admin-empty-state">
-            <svg className="admin-empty-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-            </svg>
-            <h3 className="admin-empty-title">No sales orders yet</h3>
-            <p className="admin-empty-description">Create your first sales order to start tracking customer orders</p>
-            <Link
-              href="/admin/erp/sales-orders/create"
-              className="group relative inline-flex items-center gap-2 px-6 py-3 bg-[#2563EB] text-white overflow-hidden font-inter mt-4"
-            >
-              <span className="relative z-10 text-sm tracking-wide">Create Sales Order</span>
-              <div className="absolute inset-0 bg-gray-900 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-            </Link>
+      <div className="flex-1 overflow-auto">
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#E03B12]"></div>
           </div>
+        ) : error ? (
+          <div className="p-8 text-center text-red-600 font-medium">{error}</div>
+        ) : orders.length === 0 ? (
+          <div className="p-12 text-center text-gray-500">No sales orders found.</div>
+        ) : view === 'kanban' ? (
+          <KanbanBoard columns={kanbanColumns}>
+            {STAGES.map(status => (
+              <div key={status} className="flex flex-col gap-2">
+                {ordersByStatus[status]?.map(order => (
+                  <Link href={`/admin/erp/sales-orders/${order.id}`} key={order.id} className="no-underline">
+                    <KanbanCard
+                      title={order.soNumber}
+                      subtitle={order.customer.name}
+                      amount={formatCurrency(order.total)}
+                      initials={order.customer.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                      priority={order.paymentStatus === 'OVERDUE' ? 3 : 0}
+                      tags={[
+                        { label: order.paymentStatus, color: order.paymentStatus === 'PAID' ? '#10B981' : order.paymentStatus === 'OVERDUE' ? '#EF4444' : '#F59E0B' }
+                      ]}
+                    />
+                  </Link>
+                ))}
+              </div>
+            ))}
+          </KanbanBoard>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="admin-table">
-              <thead>
+          <div className="p-4 overflow-x-auto">
+            <table className="min-w-full bg-white rounded-lg overflow-hidden border border-gray-200">
+              <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th>SO #</th>
-                  <th>Customer</th>
-                  <th>Order Date</th>
-                  <th>Delivery Date</th>
-                  <th>Items</th>
-                  <th>Total</th>
-                  <th>Status</th>
-                  <th>Payment Status</th>
-                  <th>Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Order #</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Customer</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Total</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Payment</th>
                 </tr>
               </thead>
-              <tbody>
+              <tbody className="divide-y divide-gray-100">
                 {orders.map((order) => (
-                  <tr key={order.id}>
-                    <td className="primary">
-                      <Link href={`/admin/erp/sales-orders/${order.id}`} className="admin-table-link">
+                  <tr key={order.id} className="hover:bg-[#fbfbfb] transition-colors">
+                    <td className="px-6 py-4 text-sm font-bold">
+                      <Link href={`/admin/erp/sales-orders/${order.id}`} className="text-[#E03B12] hover:underline">
                         {order.soNumber}
                       </Link>
                     </td>
-                    <td>
-                      <div className="text-sm font-medium text-gray-900 font-inter">{order.customer.name}</div>
-                      <div className="text-xs text-gray-500 font-inter">{order.customer.customerCode}</div>
+                    <td className="px-6 py-4 text-sm text-gray-600 font-medium">{order.customer.name}</td>
+                    <td className="px-6 py-4 text-sm text-gray-500">
+                      {new Date(order.orderDate).toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
                     </td>
-                    <td>
-                      {order.orderDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
-                    </td>
-                    <td>
-                      {order.deliveryDate?.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) || '-'}
-                    </td>
-                    <td>{order.items.length} items</td>
-                    <td className="font-medium text-gray-900">
-                      ₹{Number(order.total).toLocaleString('en-IN')}
-                    </td>
-                    <td>
-                      <span className={statusBadgeClass[order.status] || 'admin-badge'}>
+                    <td className="px-6 py-4 text-sm font-bold text-gray-900">{formatCurrency(order.total)}</td>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase ${order.status === 'COMPLETED' ? 'bg-green-50 text-green-700' :
+                          order.status === 'CANCELLED' ? 'bg-red-50 text-red-700' : 'bg-gray-50 text-gray-600'
+                        }`}>
                         {order.status.replace('_', ' ')}
                       </span>
                     </td>
-                    <td>
-                      <span className={paymentBadgeClass[order.paymentStatus] || 'admin-badge'}>
+                    <td className="px-6 py-4">
+                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold uppercase border ${order.paymentStatus === 'PAID' ? 'bg-green-50 text-green-700 border-green-200' :
+                          order.paymentStatus === 'OVERDUE' ? 'bg-red-50 text-red-700 border-red-200' : 'bg-amber-50 text-amber-700 border-amber-200'
+                        }`}>
                         {order.paymentStatus}
                       </span>
-                    </td>
-                    <td className="space-x-3">
-                      <Link
-                        href={`/admin/erp/sales-orders/${order.id}`}
-                        className="text-blue-600 hover:text-blue-700 font-medium font-inter text-sm"
-                      >
-                        View
-                      </Link>
-                      {order.status === 'PENDING' && (
-                        <Link
-                          href={`/admin/erp/sales-orders/${order.id}/edit`}
-                          className="text-gray-600 hover:text-gray-700 font-medium font-inter text-sm"
-                        >
-                          Edit
-                        </Link>
-                      )}
-                      {['CONFIRMED', 'IN_PROGRESS'].includes(order.status) && (
-                        <Link
-                          href={`/admin/erp/sales-orders/${order.id}`}
-                          className="text-green-600 hover:text-green-700 font-medium font-inter text-sm"
-                        >
-                          Convert to Invoice
-                        </Link>
-                      )}
                     </td>
                   </tr>
                 ))}

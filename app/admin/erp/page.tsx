@@ -90,7 +90,7 @@ export default async function ERPOverview() {
   ];
 
   return (
-    <div>
+    <div className="flex-1 overflow-y-auto p-4 md:p-6">
       <div className="admin-page-header">
         <h1 className="admin-page-title">ERP Overview</h1>
         <p className="admin-page-description">Manage inventory, invoicing, and operations</p>

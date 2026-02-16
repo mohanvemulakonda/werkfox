@@ -1,6 +1,4 @@
-import AdminHeader from './components/AdminHeader';
-import MainSidebar from './components/MainSidebar';
-import Image from 'next/image';
+import TopBar from './components/TopBar';
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 
@@ -16,29 +14,15 @@ export default async function AdminLayout({
   }
 
   return (
-    <div className="admin-layout">
-      {/* Background Logo Watermark */}
-      <div className="admin-watermark">
-        <Image
-          src="/logo.png"
-          alt=""
-          width={600}
-          height={600}
-          className="select-none"
-          priority={false}
-        />
-      </div>
-
-      {/* Content */}
-      <div className="admin-content">
-        <AdminHeader user={session.user} organizations={session.organizations} currentOrg={session.currentOrg} />
-        <div className="flex">
-          <MainSidebar />
-          <main className="flex-1 p-8">
-            {children}
-          </main>
-        </div>
-      </div>
+    <div className="admin-layout-v2">
+      <TopBar
+        user={session.user}
+        organizations={session.organizations}
+        currentOrg={session.currentOrg}
+      />
+      <main className="admin-main">
+        {children}
+      </main>
     </div>
   );
 }

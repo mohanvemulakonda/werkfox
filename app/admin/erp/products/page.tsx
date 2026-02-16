@@ -1,118 +1,183 @@
+'use client';
+
+import { useEffect, useState, useMemo } from 'react';
 import Link from 'next/link';
-import prisma from '@/lib/prisma';
+import FilterBar from '../../components/FilterBar';
+import KanbanBoard from '../../components/KanbanBoard';
+import KanbanCard from '../../components/KanbanCard';
 
-async function getProducts() {
-  const products = await prisma.products.findMany({
-    orderBy: { createdAt: 'desc' },
-    include: { categoryRef: { select: { name: true } } },
-  });
-
-  const total = products.length;
-  const active = products.filter(p => p.isActive).length;
-  const categories = new Set(products.map(p => p.productType || (p.categoryRef as any)?.name).filter(Boolean)).size;
-
-  return { products, stats: { total, active, categories } };
+interface Product {
+  id: number;
+  sku: string;
+  name: string;
+  description?: string;
+  productType?: string;
+  hsnCode?: string;
+  basePrice: string;
+  currency: string;
+  unit: string;
+  gstRate: string;
+  stockQuantity: number;
+  isActive: boolean;
+  categoryRef?: { name: string };
 }
 
-export default async function ProductsPage() {
-  const { products, stats } = await getProducts();
+export default function ProductsPage() {
+  const [products, setProducts] = useState<Product[]>([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [view, setView] = useState<'list' | 'kanban' | 'calendar'>('kanban');
+
+  useEffect(() => {
+    fetchProducts();
+  }, [searchQuery]);
+
+  const fetchProducts = async () => {
+    try {
+      setLoading(true);
+      const response = await fetch('/api/products'); // Note: Assuming standard API endpoint
+      const data = await response.json();
+
+      if (response.ok) {
+        let filtered = data.products || [];
+        if (searchQuery) {
+          filtered = filtered.filter((p: Product) =>
+            p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            p.sku.toLowerCase().includes(searchQuery.toLowerCase())
+          );
+        }
+        setProducts(filtered);
+      } else {
+        setError(data.error || 'Failed to fetch products');
+      }
+    } catch (err) {
+      setError('Failed to fetch products');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const categories = useMemo(() => {
+    const cats = new Set<string>();
+    products.forEach(p => {
+      const cat = p.productType || p.categoryRef?.name || 'Uncategorized';
+      cats.add(cat);
+    });
+    return Array.from(cats).sort();
+  }, [products]);
+
+  const productsByCategory = useMemo(() => {
+    const grouped: Record<string, Product[]> = {};
+    categories.forEach(cat => grouped[cat] = []);
+    products.forEach(p => {
+      const cat = p.productType || p.categoryRef?.name || 'Uncategorized';
+      if (!grouped[cat]) grouped[cat] = [];
+      grouped[cat].push(p);
+    });
+    return grouped;
+  }, [products, categories]);
+
+  const kanbanColumns = categories.map(cat => ({
+    id: cat,
+    title: cat,
+    count: productsByCategory[cat]?.length || 0,
+    aggregate: '' // Dynamic aggregates (e.g., total stock value) could be added
+  }));
+
+  const formatCurrency = (value: string, currency: string = 'INR') => {
+    return new Intl.NumberFormat('en-IN', {
+      style: 'currency',
+      currency,
+      maximumFractionDigits: 0,
+    }).format(parseFloat(value));
+  };
 
   return (
-    <div>
-      <div className="mb-8 flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-gray-900 mb-2 font-open-sans">Product Catalog</h1>
-          <p className="text-gray-600 font-inter font-light">Manage your products and services with HSN codes and GST rates</p>
-        </div>
-        <Link
-          href="/admin/erp/products/create"
-          className="group relative inline-flex items-center gap-2 px-6 py-3 bg-[#2563EB] text-white overflow-hidden font-inter"
-        >
-          <span className="relative z-10 text-sm tracking-wide">+ Add Product</span>
-          <div className="absolute inset-0 bg-gray-900 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-        </Link>
-      </div>
+    <div className="flex flex-col flex-1 min-h-0 bg-[#f5f5f7]">
+      <FilterBar
+        onSearch={setSearchQuery}
+        filters={searchQuery ? [{ id: 'search', label: 'Search', value: searchQuery }] : []}
+        onRemoveFilter={() => setSearchQuery('')}
+        view={view}
+        onViewChange={setView}
+        actions={
+          <Link
+            href="/admin/erp/products/create"
+            className="admin-btn admin-btn-primary"
+          >
+            + Add Product
+          </Link>
+        }
+      />
 
-      {/* Stats */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
-        <div className="bg-white shadow-sm border border-gray-100 p-6">
-          <p className="text-sm text-gray-600 font-inter">Total Products</p>
-          <p className="text-3xl font-bold text-gray-900 font-open-sans">{stats.total}</p>
-        </div>
-        <div className="bg-white shadow-sm border border-gray-100 p-6">
-          <p className="text-sm text-gray-600 font-inter">Active Products</p>
-          <p className="text-3xl font-bold text-green-600 font-open-sans">{stats.active}</p>
-        </div>
-        <div className="bg-white shadow-sm border border-gray-100 p-6">
-          <p className="text-sm text-gray-600 font-inter">Categories</p>
-          <p className="text-3xl font-bold text-blue-600 font-open-sans">{stats.categories}</p>
-        </div>
-      </div>
-
-      {/* Products Table */}
-      <div className="bg-white shadow-sm border border-gray-100">
-        {products.length === 0 ? (
-          <div className="p-12 text-center">
-            <svg className="w-16 h-16 mx-auto text-gray-400 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
-            </svg>
-            <h3 className="text-lg font-medium text-gray-900 mb-2 font-open-sans">No products yet</h3>
-            <p className="text-gray-600 mb-6 font-inter font-light">Add your first product to get started</p>
-            <Link
-              href="/admin/erp/products/create"
-              className="group relative inline-flex items-center gap-2 px-6 py-3 bg-[#2563EB] text-white overflow-hidden font-inter"
-            >
-              <span className="relative z-10 text-sm tracking-wide">Add Product</span>
-              <div className="absolute inset-0 bg-gray-900 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-            </Link>
+      <div className="flex-1 overflow-auto">
+        {loading ? (
+          <div className="flex items-center justify-center h-64">
+            <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#E03B12]"></div>
           </div>
+        ) : error ? (
+          <div className="p-8 text-center text-red-600 font-medium">{error}</div>
+        ) : products.length === 0 ? (
+          <div className="p-12 text-center text-gray-500">No products found.</div>
+        ) : view === 'kanban' ? (
+          <KanbanBoard columns={kanbanColumns}>
+            {categories.map(cat => (
+              <div key={cat} className="flex flex-col gap-2">
+                {productsByCategory[cat]?.map(product => (
+                  <Link href={`/admin/erp/products/${product.id}`} key={product.id} className="no-underline">
+                    <KanbanCard
+                      title={product.name}
+                      subtitle={product.sku}
+                      amount={formatCurrency(product.basePrice, product.currency)}
+                      initials={product.name.split(' ').map(n => n[0]).join('').toUpperCase().slice(0, 2)}
+                      priority={product.stockQuantity < 10 ? 3 : 0} // High priority if low stock
+                      tags={[
+                        { label: `${product.stockQuantity} ${product.unit}`, color: product.stockQuantity < 10 ? '#EF4444' : '#6B7280' },
+                        { label: `${product.gstRate}% GST`, color: '#3B82F6' }
+                      ]}
+                    />
+                  </Link>
+                ))}
+              </div>
+            ))}
+          </KanbanBoard>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full">
-              <thead className="bg-gray-50">
+          <div className="p-4 overflow-x-auto">
+            <table className="min-w-full bg-white rounded-lg overflow-hidden border border-gray-200">
+              <thead className="bg-gray-50 border-b border-gray-200">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">SKU</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Product Name</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Category</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">HSN Code</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Price</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">GST Rate</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Stock</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">SKU</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Product</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Category</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Price</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">Stock</th>
+                  <th className="px-6 py-3 text-left text-xs font-bold text-gray-400 uppercase tracking-widest">GST</th>
                 </tr>
               </thead>
-              <tbody className="bg-white divide-y divide-gray-200">
+              <tbody className="divide-y divide-gray-100">
                 {products.map((product) => (
-                  <tr key={product.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">
-                      {product.sku}
-                    </td>
+                  <tr key={product.id} className="hover:bg-[#fbfbfb] transition-colors">
+                    <td className="px-6 py-4 text-sm font-mono text-gray-500">{product.sku}</td>
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900 font-inter">{product.name}</div>
-                      {product.description && (
-                        <div className="text-sm text-gray-500 font-inter truncate max-w-xs">{product.description}</div>
-                      )}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">{product.productType || (product.categoryRef as any)?.name || '-'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">{product.hsnCode || '-'}</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">
-                      {product.currency} {Number(product.basePrice).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">{Number(product.gstRate)}%</td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
-                      {product.stockQuantity || 0} {product.unit}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium bg-gray-100 border border-gray-900 font-inter ${product.isActive ? 'text-gray-900' : 'text-gray-500'}`}>
-                        {product.isActive ? 'Active' : 'Inactive'}
-                      </span>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <Link href={`/admin/erp/products/${product.id}`} className="text-blue-600 hover:text-blue-700 font-medium font-inter mr-4">
-                        Edit
+                      <Link href={`/admin/erp/products/${product.id}`} className="text-sm font-bold text-[#E03B12] hover:underline">
+                        {product.name}
                       </Link>
                     </td>
+                    <td className="px-6 py-4 text-sm text-gray-600 font-medium">
+                      {product.productType || product.categoryRef?.name || '—'}
+                    </td>
+                    <td className="px-6 py-4 text-sm font-bold text-gray-900">
+                      {formatCurrency(product.basePrice, product.currency)}
+                    </td>
+                    <td className="px-6 py-4">
+                      <div className="flex items-center gap-2">
+                        <span className={`text-sm font-bold ${product.stockQuantity < 10 ? 'text-red-500' : 'text-gray-700'}`}>
+                          {product.stockQuantity} {product.unit}
+                        </span>
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-sm text-gray-500 font-medium">{product.gstRate}%</td>
                   </tr>
                 ))}
               </tbody>

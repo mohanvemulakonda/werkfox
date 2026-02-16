@@ -1,8 +1,11 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
+import StatusBar from '../../../components/StatusBar';
+import Sheet from '../../../components/Sheet';
+import Chatter from '../../../components/Chatter';
 
 interface Lead {
   id: number;
@@ -30,25 +33,10 @@ interface Lead {
   lastContacted?: string;
   createdAt: string;
   updatedAt: string;
-  convertedAt?: string;
   activities: any[];
-  opportunities: any[];
-  invoices: any[];
-  contact?: any;
 }
 
-const stages = ['NEW', 'CONTACTED', 'QUALIFIED', 'PROPOSAL_SENT', 'NEGOTIATION', 'WON', 'LOST'];
-const statuses = ['ACTIVE', 'INACTIVE', 'CONVERTED', 'DISQUALIFIED'];
-
-const stageColors: Record<string, string> = {
-  NEW: 'bg-gray-100 text-gray-800',
-  CONTACTED: 'bg-blue-100 text-blue-800',
-  QUALIFIED: 'bg-green-100 text-green-800',
-  PROPOSAL_SENT: 'bg-purple-100 text-purple-800',
-  NEGOTIATION: 'bg-yellow-100 text-yellow-800',
-  WON: 'bg-emerald-100 text-emerald-800',
-  LOST: 'bg-red-100 text-red-800',
-};
+const STAGES = ['NEW', 'CONTACTED', 'QUALIFIED', 'PROPOSAL_SENT', 'NEGOTIATION', 'WON', 'LOST'];
 
 export default function LeadDetailPage() {
   const params = useParams();
@@ -72,7 +60,6 @@ export default function LeadDetailPage() {
       setLoading(true);
       const response = await fetch(`/api/leads/${leadId}`);
       const data = await response.json();
-
       if (response.ok) {
         setLead(data);
         setFormData(data);
@@ -91,15 +78,12 @@ export default function LeadDetailPage() {
     try {
       setSaving(true);
       setError('');
-
       const response = await fetch(`/api/leads/${leadId}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(formData),
       });
-
       const data = await response.json();
-
       if (response.ok) {
         setLead(data);
         setFormData(data);
@@ -113,33 +97,6 @@ export default function LeadDetailPage() {
     } finally {
       setSaving(false);
     }
-  };
-
-  const handleDelete = async () => {
-    if (!confirm('Are you sure you want to delete this lead? This action cannot be undone.')) {
-      return;
-    }
-
-    try {
-      const response = await fetch(`/api/leads/${leadId}`, {
-        method: 'DELETE',
-      });
-
-      if (response.ok) {
-        router.push('/admin/crm/leads');
-      } else {
-        const data = await response.json();
-        setError(data.error || 'Failed to delete lead');
-      }
-    } catch (err) {
-      setError('Failed to delete lead');
-      console.error(err);
-    }
-  };
-
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({ ...prev, [name]: value }));
   };
 
   const handleConvertToOpportunity = async () => {
@@ -160,368 +117,180 @@ export default function LeadDetailPage() {
     }
   };
 
-  const formatDate = (dateString?: string) => {
-    if (!dateString) return 'N/A';
-    return new Date(dateString).toLocaleString('en-IN', {
-      year: 'numeric',
-      month: 'short',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-    });
+  const handleDelete = async () => {
+    if (!confirm('Are you sure you want to delete this lead?')) return;
+    try {
+      const response = await fetch(`/api/leads/${leadId}`, { method: 'DELETE' });
+      if (response.ok) router.push('/admin/crm/leads');
+      else setError('Failed to delete lead');
+    } catch (err) {
+      setError('Failed to delete lead');
+    }
   };
 
-  if (loading) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
-  if (error && !lead) {
-    return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-red-600 mb-4">{error}</p>
-          <Link href="/admin/crm/leads" className="text-blue-600 hover:underline">
-            ← Back to Leads
-          </Link>
-        </div>
-      </div>
-    );
-  }
+  const statusSteps = useMemo(() => {
+    return STAGES.map(stage => ({
+      id: stage,
+      label: stage.replace('_', ' '),
+      status: lead?.stage === stage ? 'current' as const :
+        STAGES.indexOf(lead?.stage || '') > STAGES.indexOf(stage) ? 'completed' as const : 'pending' as const
+    }));
+  }, [lead?.stage]);
 
-  if (!lead) return null;
+  const chatterActivities = useMemo(() => {
+    return (lead?.activities || []).map((a: any) => ({
+      id: a.id.toString(),
+      author: a.user?.name || 'System',
+      initials: (a.user?.name || 'SY').split(' ').map((n: any) => n[0]).join('').toUpperCase().slice(0, 2),
+      time: new Date(a.createdAt).toLocaleString(),
+      text: a.subject || a.description || 'Activity logged',
+      type: a.type === 'EMAIL' ? 'email' as const : a.type === 'NOTE' ? 'note' as const : 'system' as const
+    })).reverse();
+  }, [lead?.activities]);
+
+  if (loading) return <div className="flex h-64 items-center justify-center"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#E03B12]"></div></div>;
+  if (!lead) return <div className="p-8 text-center text-red-600">{error || 'Lead not found'}</div>;
 
   return (
-    <div className="min-h-screen bg-gray-50">
-      {/* Header */}
-      <div className="bg-white shadow">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex justify-between items-start">
-            <div>
-              <div className="flex items-center gap-3 mb-2">
-                <h1 className="text-3xl font-bold text-gray-900">{lead.name}</h1>
-                <span className={`px-3 py-1 text-sm font-semibold rounded-full ${stageColors[lead.stage]}`}>
-                  {lead.stage.replace('_', ' ')}
-                </span>
-              </div>
-              <p className="text-sm text-gray-500">{lead.company || 'No company'}</p>
-              <div className="flex items-center gap-4 mt-2">
-                <span className="text-sm text-gray-600">Lead Score: {lead.leadScore || 0}/100</span>
-                <span className="text-sm text-gray-600">Created: {formatDate(lead.createdAt)}</span>
-              </div>
-            </div>
-            <div className="flex gap-2">
-              <Link
-                href="/admin/crm/leads"
-                className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-              >
-                ← Back
-              </Link>
-              {!editing ? (
-                <>
-                  {lead.stage !== 'NEW' && lead.stage !== 'LOST' && lead.status !== 'CONVERTED' && lead.status !== 'DISQUALIFIED' && (
-                    <button
-                      onClick={handleConvertToOpportunity}
-                      disabled={converting}
-                      className="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 disabled:opacity-50"
-                    >
-                      {converting ? 'Converting...' : 'Convert to Opportunity'}
-                    </button>
-                  )}
+    <div className="flex flex-col flex-1 min-h-0 bg-[#f5f5f7]">
+      <StatusBar
+        actions={
+          <div className="flex gap-2">
+            {!editing ? (
+              <>
+                {lead.status !== 'CONVERTED' && lead.stage !== 'WON' && lead.stage !== 'LOST' && (
                   <button
-                    onClick={() => setEditing(true)}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
+                    onClick={handleConvertToOpportunity}
+                    disabled={converting}
+                    className="admin-btn admin-btn-primary"
                   >
-                    Edit
+                    {converting ? 'Converting...' : 'Convert to Opportunity'}
                   </button>
-                  <button
-                    onClick={handleDelete}
-                    className="px-4 py-2 bg-red-600 text-white rounded-md text-sm font-medium hover:bg-red-700"
-                  >
-                    Delete
-                  </button>
-                </>
-              ) : (
-                <>
-                  <button
-                    onClick={() => {
-                      setEditing(false);
-                      setFormData(lead);
-                    }}
-                    className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
-                  >
-                    Cancel
-                  </button>
-                  <button
-                    onClick={handleUpdate}
-                    disabled={saving}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
-                  >
-                    {saving ? 'Saving...' : 'Save Changes'}
-                  </button>
-                </>
-              )}
-            </div>
+                )}
+                <button onClick={() => setEditing(true)} className="admin-btn admin-btn-secondary">Edit</button>
+                <button onClick={handleDelete} className="admin-btn admin-btn-danger">Delete</button>
+              </>
+            ) : (
+              <>
+                <button onClick={handleUpdate} disabled={saving} className="admin-btn admin-btn-primary">{saving ? 'Saving...' : 'Save'}</button>
+                <button onClick={() => { setEditing(false); setFormData(lead); }} className="admin-btn admin-btn-secondary">Cancel</button>
+              </>
+            )}
+            <Link href="/admin/crm/leads" className="admin-btn admin-btn-ghost">← Back</Link>
           </div>
-        </div>
-      </div>
+        }
+        steps={statusSteps}
+      />
 
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
-            {error}
-          </div>
-        )}
-
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* Main Content */}
-          <div className="lg:col-span-2 space-y-6">
-            {/* Contact Information */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Contact Information</h2>
+      <div className="flex-1 overflow-auto py-8 px-4">
+        <Sheet>
+          <div className="mb-8">
+            <h1 className="text-3xl font-bold text-gray-900 leading-tight">
               {editing ? (
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
-                    <input
-                      type="text"
-                      name="name"
-                      value={formData.name || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
-                    <input
-                      type="email"
-                      name="email"
-                      value={formData.email || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
-                    <input
-                      type="tel"
-                      name="phone"
-                      value={formData.phone || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Company</label>
-                    <input
-                      type="text"
-                      name="company"
-                      value={formData.company || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Designation</label>
-                    <input
-                      type="text"
-                      name="designation"
-                      value={formData.designation || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Industry</label>
-                    <input
-                      type="text"
-                      name="industry"
-                      value={formData.industry || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <dl className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Email</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{lead.email}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Phone</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{lead.phone || 'N/A'}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Designation</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{lead.designation || 'N/A'}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Industry</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{lead.industry || 'N/A'}</dd>
-                  </div>
-                </dl>
-              )}
-            </div>
-
-            {/* Activities */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Recent Activities</h2>
-                <span className="text-sm text-gray-500">{lead.activities.length} total</span>
-              </div>
-              {lead.activities.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">No activities yet</p>
-              ) : (
-                <div className="space-y-3">
-                  {lead.activities.slice(0, 5).map((activity: any) => (
-                    <div key={activity.id} className="border-l-4 border-blue-500 pl-4 py-2">
-                      <div className="flex justify-between">
-                        <span className="font-medium text-gray-900">{activity.type}</span>
-                        <span className="text-sm text-gray-500">{formatDate(activity.createdAt)}</span>
-                      </div>
-                      <p className="text-sm text-gray-600 mt-1">{activity.subject}</p>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-
-            {/* Opportunities */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <div className="flex justify-between items-center mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">Opportunities</h2>
-                <span className="text-sm text-gray-500">{lead.opportunities.length} total</span>
-              </div>
-              {lead.opportunities.length === 0 ? (
-                <p className="text-gray-500 text-center py-4">No opportunities yet</p>
-              ) : (
-                <div className="space-y-3">
-                  {lead.opportunities.map((opp: any) => (
-                    <div key={opp.id} className="border rounded-lg p-4">
-                      <div className="flex justify-between items-start">
-                        <div>
-                          <h3 className="font-medium text-gray-900">{opp.name}</h3>
-                          <p className="text-sm text-gray-600 mt-1">
-                            Value: ₹{parseFloat(opp.value).toLocaleString('en-IN')}
-                          </p>
-                        </div>
-                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">
-                          {opp.stage}
-                        </span>
-                      </div>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
-          </div>
-
-          {/* Sidebar */}
-          <div className="space-y-6">
-            {/* Lead Management */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Lead Management</h2>
-              {editing ? (
-                <div className="space-y-4">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Stage</label>
-                    <select
-                      name="stage"
-                      value={formData.stage || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    >
-                      {stages.map(stage => (
-                        <option key={stage} value={stage}>{stage.replace('_', ' ')}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Status</label>
-                    <select
-                      name="status"
-                      value={formData.status || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    >
-                      {statuses.map(status => (
-                        <option key={status} value={status}>{status}</option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Lead Score</label>
-                    <input
-                      type="number"
-                      name="leadScore"
-                      value={formData.leadScore || 0}
-                      onChange={handleChange}
-                      min="0"
-                      max="100"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1">Assigned To</label>
-                    <input
-                      type="text"
-                      name="assignedTo"
-                      value={formData.assignedTo || ''}
-                      onChange={handleChange}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                    />
-                  </div>
-                </div>
-              ) : (
-                <dl className="space-y-3">
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Status</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{lead.status}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Source</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{lead.source || 'N/A'}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Assigned To</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{lead.assignedTo || 'Unassigned'}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Next Follow Up</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{formatDate(lead.nextFollowUp)}</dd>
-                  </div>
-                  <div>
-                    <dt className="text-sm font-medium text-gray-500">Last Contacted</dt>
-                    <dd className="mt-1 text-sm text-gray-900">{formatDate(lead.lastContacted)}</dd>
-                  </div>
-                </dl>
-              )}
-            </div>
-
-            {/* Notes */}
-            <div className="bg-white shadow rounded-lg p-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">Notes</h2>
-              {editing ? (
-                <textarea
-                  name="notes"
-                  value={formData.notes || ''}
+                <input
+                  name="name"
+                  value={formData.name || ''}
                   onChange={handleChange}
-                  rows={6}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-md"
-                  placeholder="Add notes about this lead..."
+                  className="w-full bg-transparent border-b-2 border-[#E03B12] focus:outline-none"
+                  placeholder="Lead Name"
                 />
-              ) : (
-                <p className="text-sm text-gray-600 whitespace-pre-wrap">
-                  {lead.notes || 'No notes yet'}
-                </p>
-              )}
+              ) : lead.name}
+            </h1>
+            <p className="text-lg text-[#E03B12] font-medium mt-1">
+              {editing ? (
+                <input
+                  name="company"
+                  value={formData.company || ''}
+                  onChange={handleChange}
+                  className="w-full bg-transparent border-b border-gray-300 focus:outline-none text-sm py-1"
+                  placeholder="Company Name"
+                />
+              ) : lead.company || 'Private Lead'}
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-x-12 gap-y-6">
+            <div className="space-y-6">
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Email Address</label>
+                {editing ? (
+                  <input name="email" value={formData.email || ''} onChange={handleChange} className="w-full p-2 border border-gray-200 rounded text-sm" />
+                ) : (
+                  <a href={`mailto:${lead.email}`} className="text-sm font-semibold text-[#E03B12] hover:underline underline-offset-4">{lead.email}</a>
+                )}
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Phone Number</label>
+                {editing ? (
+                  <input name="phone" value={formData.phone || ''} onChange={handleChange} className="w-full p-2 border border-gray-200 rounded text-sm" />
+                ) : (
+                  <div className="text-sm font-semibold">{lead.phone || '—'}</div>
+                )}
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Office Location</label>
+                {editing ? (
+                  <div className="flex gap-2">
+                    <input name="city" placeholder="City" value={formData.city || ''} onChange={handleChange} className="w-1/2 p-2 border border-gray-200 rounded text-sm" />
+                    <input name="state" placeholder="State" value={formData.state || ''} onChange={handleChange} className="w-1/2 p-2 border border-gray-200 rounded text-sm" />
+                  </div>
+                ) : (
+                  <div className="text-sm font-semibold">{lead.city && lead.state ? `${lead.city}, ${lead.state}` : lead.city || lead.state || '—'}</div>
+                )}
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Sales Stage</label>
+                {editing ? (
+                  <select name="stage" value={formData.stage} onChange={handleChange} className="w-full p-2 border border-gray-200 rounded text-sm">
+                    {STAGES.map(s => <option key={s} value={s}>{s.replace('_', ' ')}</option>)}
+                  </select>
+                ) : (
+                  <div className="text-sm font-bold">{lead.stage.replace('_', ' ')}</div>
+                )}
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-2">Lead Score (0-100)</label>
+                {editing ? (
+                  <input name="leadScore" type="number" value={formData.leadScore || 0} onChange={handleChange} className="w-full p-2 border border-gray-200 rounded text-sm" />
+                ) : (
+                  <div className="flex items-center gap-2">
+                    <div className="text-sm font-bold">{lead.leadScore || 0}%</div>
+                    <div className="flex-1 bg-gray-100 rounded-full h-1.5 max-w-[100px]">
+                      <div className="bg-[#E03B12] h-1.5 rounded-full" style={{ width: `${lead.leadScore || 0}%` }}></div>
+                    </div>
+                  </div>
+                )}
+              </div>
+              <div>
+                <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-1">Industry</label>
+                {editing ? (
+                  <input name="industry" value={formData.industry || ''} onChange={handleChange} className="w-full p-2 border border-gray-200 rounded text-sm" />
+                ) : (
+                  <div className="text-sm font-semibold">{lead.industry || '—'}</div>
+                )}
+              </div>
             </div>
           </div>
-        </div>
+
+          <div className="mt-12 pt-8 border-t border-gray-100">
+            <label className="text-[10px] font-bold text-gray-400 uppercase tracking-widest block mb-4">Internal Notes</label>
+            {editing ? (
+              <textarea name="notes" value={formData.notes || ''} onChange={handleChange} rows={4} className="w-full p-3 border border-gray-200 rounded text-sm focus:ring-1 focus:ring-[#E03B12] outline-none" placeholder="Add detailed notes about the customer requirements..." />
+            ) : (
+              <div className="text-sm text-gray-600 leading-relaxed whitespace-pre-wrap">{lead.notes || 'No specialized requirements recorded yet.'}</div>
+            )}
+          </div>
+        </Sheet>
+
+        <Chatter activities={chatterActivities} />
       </div>
     </div>
   );
