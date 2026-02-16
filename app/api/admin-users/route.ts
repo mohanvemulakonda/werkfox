@@ -13,7 +13,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Only SUPER_ADMIN and ADMIN can view users
-    const currentUser = await prisma.adminUser.findUnique({
+    const currentUser = await prisma.admin_users.findUnique({
       where: { email: session.user.email },
     });
 
@@ -46,7 +46,7 @@ export async function GET(request: NextRequest) {
     }
 
     // Get admin users (exclude password from response)
-    const users = await prisma.adminUser.findMany({
+    const users = await prisma.admin_users.findMany({
       where,
       select: {
         id: true,
@@ -63,8 +63,8 @@ export async function GET(request: NextRequest) {
         canDeleteLeads: true,
         canEditLeads: true,
         canViewAllLeads: true,
-        monthlySalesTarget: true,
-        quarterlySalesTarget: true,
+        monthlyTarget: true,
+        quarterlyTarget: true,
         managerId: true,
         lastLogin: true,
         createdAt: true,
@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Only SUPER_ADMIN can create users
-    const currentUser = await prisma.adminUser.findUnique({
+    const currentUser = await prisma.admin_users.findUnique({
       where: { email: session.user.email },
     });
 
@@ -119,8 +119,8 @@ export async function POST(request: NextRequest) {
       canDeleteLeads,
       canEditLeads,
       canViewAllLeads,
-      monthlySalesTarget,
-      quarterlySalesTarget,
+      monthlyTarget,
+      quarterlyTarget,
       managerId,
     } = body;
 
@@ -133,7 +133,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if user already exists
-    const existingUser = await prisma.adminUser.findUnique({
+    const existingUser = await prisma.admin_users.findUnique({
       where: { email },
     });
 
@@ -148,7 +148,7 @@ export async function POST(request: NextRequest) {
     const hashedPassword = await bcrypt.hash(password, 10);
 
     // Create user
-    const user = await prisma.adminUser.create({
+    const user = await prisma.admin_users.create({
       data: {
         email,
         password: hashedPassword,
@@ -163,11 +163,11 @@ export async function POST(request: NextRequest) {
         canDeleteLeads: canDeleteLeads || false,
         canEditLeads: canEditLeads || false,
         canViewAllLeads: canViewAllLeads || false,
-        monthlySalesTarget: monthlySalesTarget
-          ? parseFloat(monthlySalesTarget)
+        monthlyTarget: monthlyTarget
+          ? parseFloat(monthlyTarget)
           : null,
-        quarterlySalesTarget: quarterlySalesTarget
-          ? parseFloat(quarterlySalesTarget)
+        quarterlyTarget: quarterlyTarget
+          ? parseFloat(quarterlyTarget)
           : null,
         managerId: managerId ? parseInt(managerId) : null,
         isActive: true,

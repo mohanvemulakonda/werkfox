@@ -5,7 +5,7 @@ import { auth } from '@/lib/auth';
 // GET /api/opportunities/[id] - Get single opportunity
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check authentication
@@ -17,7 +17,8 @@ export async function GET(
       return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
     }
 
-    const opportunityId = parseInt(params.id);
+    const { id } = await params;
+    const opportunityId = parseInt(id);
 
     if (isNaN(opportunityId)) {
       return NextResponse.json(
@@ -61,7 +62,7 @@ export async function GET(
 // PUT /api/opportunities/[id] - Update opportunity
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check authentication
@@ -73,7 +74,8 @@ export async function PUT(
       return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
     }
 
-    const opportunityId = parseInt(params.id);
+    const { id } = await params;
+    const opportunityId = parseInt(id);
 
     if (isNaN(opportunityId)) {
       return NextResponse.json(
@@ -188,7 +190,7 @@ export async function PUT(
 // DELETE /api/opportunities/[id] - Delete opportunity
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check authentication
@@ -200,7 +202,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
     }
 
-    const opportunityId = parseInt(params.id);
+    const { id } = await params;
+    const opportunityId = parseInt(id);
 
     if (isNaN(opportunityId)) {
       return NextResponse.json(

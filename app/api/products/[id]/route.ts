@@ -13,7 +13,7 @@ export async function GET(
     }
 
     const { id } = await params;
-    const product = await prisma.product.findUnique({
+    const product = await prisma.products.findUnique({
       where: { id: parseInt(id) }
     });
 
@@ -46,7 +46,7 @@ export async function PUT(
     const productId = parseInt(id);
 
     // Check if product exists
-    const existing = await prisma.product.findUnique({
+    const existing = await prisma.products.findUnique({
       where: { id: productId }
     });
 
@@ -56,7 +56,7 @@ export async function PUT(
 
     // If SKU is being changed, check if new SKU already exists
     if (body.sku && body.sku !== existing.sku) {
-      const skuExists = await prisma.product.findUnique({
+      const skuExists = await prisma.products.findUnique({
         where: { sku: body.sku }
       });
 
@@ -68,7 +68,7 @@ export async function PUT(
       }
     }
 
-    const product = await prisma.product.update({
+    const product = await prisma.products.update({
       where: { id: productId },
       data: {
         sku: body.sku,
@@ -126,7 +126,7 @@ export async function PUT(
 
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     const session = await auth();
@@ -134,10 +134,11 @@ export async function DELETE(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const productId = parseInt(params.id);
+    const { id } = await params;
+    const productId = parseInt(id);
 
     // Check if product exists
-    const existing = await prisma.product.findUnique({
+    const existing = await prisma.products.findUnique({
       where: { id: productId }
     });
 
@@ -147,10 +148,10 @@ export async function DELETE(
 
     // Check if product is used in any opportunities or invoices
     const [opportunityCount, invoiceCount] = await Promise.all([
-      prisma.opportunityProduct.count({
+      prisma.opportunity_products.count({
         where: { productId }
       }),
-      prisma.invoiceItem.count({
+      prisma.invoice_items.count({
         where: { productId }
       })
     ]);
@@ -162,7 +163,7 @@ export async function DELETE(
       );
     }
 
-    await prisma.product.delete({
+    await prisma.products.delete({
       where: { id: productId }
     });
 

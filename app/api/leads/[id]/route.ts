@@ -5,7 +5,7 @@ import { auth } from '@/lib/auth';
 // GET /api/leads/[id] - Get single lead
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check authentication
@@ -17,7 +17,8 @@ export async function GET(
       return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
     }
 
-    const leadId = parseInt(params.id);
+    const { id } = await params;
+    const leadId = parseInt(id);
 
     if (isNaN(leadId)) {
       return NextResponse.json({ error: 'Invalid lead ID' }, { status: 400 });
@@ -59,7 +60,7 @@ export async function GET(
 // PUT /api/leads/[id] - Update lead
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check authentication
@@ -71,7 +72,8 @@ export async function PUT(
       return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
     }
 
-    const leadId = parseInt(params.id);
+    const { id } = await params;
+    const leadId = parseInt(id);
 
     if (isNaN(leadId)) {
       return NextResponse.json({ error: 'Invalid lead ID' }, { status: 400 });
@@ -131,7 +133,7 @@ export async function PUT(
         ...(gstType !== undefined && { gstType }),
         ...(source !== undefined && { source }),
         ...(industry !== undefined && { industry }),
-        ...(leadScore !== undefined && { leadScore }),
+        ...(leadScore !== undefined && { leadScore: leadScore !== null ? parseInt(String(leadScore)) : null }),
         ...(stage !== undefined && { stage }),
         ...(status !== undefined && { status }),
         ...(assignedTo !== undefined && { assignedTo }),
@@ -180,7 +182,7 @@ export async function PUT(
 // DELETE /api/leads/[id] - Delete lead
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check authentication
@@ -192,7 +194,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
     }
 
-    const leadId = parseInt(params.id);
+    const { id } = await params;
+    const leadId = parseInt(id);
 
     if (isNaN(leadId)) {
       return NextResponse.json({ error: 'Invalid lead ID' }, { status: 400 });

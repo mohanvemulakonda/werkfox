@@ -6,7 +6,7 @@ import bcrypt from 'bcryptjs';
 // GET /api/admin-users/[id] - Get single admin user
 export async function GET(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check authentication
@@ -15,13 +15,14 @@ export async function GET(
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    const userId = parseInt(params.id);
+    const { id } = await params;
+    const userId = parseInt(id);
 
     if (isNaN(userId)) {
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
     }
 
-    const user = await prisma.adminUser.findUnique({
+    const user = await prisma.admin_users.findUnique({
       where: { id: userId },
       select: {
         id: true,
@@ -38,8 +39,8 @@ export async function GET(
         canDeleteLeads: true,
         canEditLeads: true,
         canViewAllLeads: true,
-        monthlySalesTarget: true,
-        quarterlySalesTarget: true,
+        monthlyTarget: true,
+        quarterlyTarget: true,
         managerId: true,
         lastLogin: true,
         createdAt: true,
@@ -64,7 +65,7 @@ export async function GET(
 // PUT /api/admin-users/[id] - Update admin user
 export async function PUT(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check authentication
@@ -74,7 +75,7 @@ export async function PUT(
     }
 
     // Only SUPER_ADMIN can update users
-    const currentUser = await prisma.adminUser.findUnique({
+    const currentUser = await prisma.admin_users.findUnique({
       where: { email: session.user.email },
     });
 
@@ -85,7 +86,8 @@ export async function PUT(
       );
     }
 
-    const userId = parseInt(params.id);
+    const { id } = await params;
+    const userId = parseInt(id);
 
     if (isNaN(userId)) {
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
@@ -105,14 +107,14 @@ export async function PUT(
       canDeleteLeads,
       canEditLeads,
       canViewAllLeads,
-      monthlySalesTarget,
-      quarterlySalesTarget,
+      monthlyTarget,
+      quarterlyTarget,
       managerId,
       password, // Optional password update
     } = body;
 
     // Check if user exists
-    const existingUser = await prisma.adminUser.findUnique({
+    const existingUser = await prisma.admin_users.findUnique({
       where: { id: userId },
     });
 
@@ -134,14 +136,14 @@ export async function PUT(
       ...(canDeleteLeads !== undefined && { canDeleteLeads }),
       ...(canEditLeads !== undefined && { canEditLeads }),
       ...(canViewAllLeads !== undefined && { canViewAllLeads }),
-      ...(monthlySalesTarget !== undefined && {
-        monthlySalesTarget: monthlySalesTarget
-          ? parseFloat(monthlySalesTarget)
+      ...(monthlyTarget !== undefined && {
+        monthlyTarget: monthlyTarget
+          ? parseFloat(monthlyTarget)
           : null,
       }),
-      ...(quarterlySalesTarget !== undefined && {
-        quarterlySalesTarget: quarterlySalesTarget
-          ? parseFloat(quarterlySalesTarget)
+      ...(quarterlyTarget !== undefined && {
+        quarterlyTarget: quarterlyTarget
+          ? parseFloat(quarterlyTarget)
           : null,
       }),
       ...(managerId !== undefined && {
@@ -155,7 +157,7 @@ export async function PUT(
     }
 
     // Update user
-    const user = await prisma.adminUser.update({
+    const user = await prisma.admin_users.update({
       where: { id: userId },
       data: updateData,
       select: {
@@ -173,8 +175,8 @@ export async function PUT(
         canDeleteLeads: true,
         canEditLeads: true,
         canViewAllLeads: true,
-        monthlySalesTarget: true,
-        quarterlySalesTarget: true,
+        monthlyTarget: true,
+        quarterlyTarget: true,
         managerId: true,
         lastLogin: true,
         createdAt: true,
@@ -195,7 +197,7 @@ export async function PUT(
 // DELETE /api/admin-users/[id] - Delete admin user
 export async function DELETE(
   request: NextRequest,
-  { params }: { params: { id: string } }
+  { params }: { params: Promise<{ id: string }> }
 ) {
   try {
     // Check authentication
@@ -205,7 +207,7 @@ export async function DELETE(
     }
 
     // Only SUPER_ADMIN can delete users
-    const currentUser = await prisma.adminUser.findUnique({
+    const currentUser = await prisma.admin_users.findUnique({
       where: { email: session.user.email },
     });
 
@@ -216,7 +218,8 @@ export async function DELETE(
       );
     }
 
-    const userId = parseInt(params.id);
+    const { id } = await params;
+    const userId = parseInt(id);
 
     if (isNaN(userId)) {
       return NextResponse.json({ error: 'Invalid user ID' }, { status: 400 });
@@ -231,7 +234,7 @@ export async function DELETE(
     }
 
     // Check if user exists
-    const existingUser = await prisma.adminUser.findUnique({
+    const existingUser = await prisma.admin_users.findUnique({
       where: { id: userId },
     });
 
@@ -240,7 +243,7 @@ export async function DELETE(
     }
 
     // Delete user
-    await prisma.adminUser.delete({
+    await prisma.admin_users.delete({
       where: { id: userId },
     });
 

@@ -21,7 +21,7 @@ export async function GET(request: NextRequest) {
       where.category = category;
     }
 
-    const products = await prisma.product.findMany({
+    const products = await prisma.products.findMany({
       where,
       orderBy: { createdAt: 'desc' }
     });
@@ -54,7 +54,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Check if SKU already exists
-    const existing = await prisma.product.findUnique({
+    const existing = await prisma.products.findUnique({
       where: { sku: body.sku }
     });
 
@@ -65,7 +65,7 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    const product = await prisma.product.create({
+    const product = await prisma.products.create({
       data: {
         sku: body.sku,
         name: body.name,

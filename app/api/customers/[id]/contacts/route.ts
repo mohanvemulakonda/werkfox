@@ -18,7 +18,7 @@ export async function GET(
     }
 
     // Get contacts for this customer
-    const contacts = await prisma.customerContact.findMany({
+    const contacts = await prisma.customer_contacts.findMany({
       where: {
         customerId,
         isActive: true,
@@ -31,7 +31,7 @@ export async function GET(
 
     // Also get the default contact from Customer record if no contacts exist
     if (contacts.length === 0) {
-      const customer = await prisma.customer.findUnique({
+      const customer = await prisma.customers.findUnique({
         where: { id: customerId },
         select: {
           contactPerson: true,
@@ -96,13 +96,13 @@ export async function POST(
 
     // If this is being set as primary, unset other primary contacts
     if (body.isPrimary) {
-      await prisma.customerContact.updateMany({
+      await prisma.customer_contacts.updateMany({
         where: { customerId, isPrimary: true },
         data: { isPrimary: false },
       });
     }
 
-    const contact = await prisma.customerContact.create({
+    const contact = await prisma.customer_contacts.create({
       data: {
         customerId,
         name: body.name,
