@@ -2,6 +2,7 @@ import jsPDF from 'jspdf';
 import autoTable from 'jspdf-autotable';
 import fs from 'fs';
 import path from 'path';
+import { getCompanySettings } from './company-settings-cache';
 
 // Currency configuration - maps currency codes to display formats
 const CURRENCY_CONFIG: Record<string, { symbol: string; name: string }> = {
@@ -46,7 +47,8 @@ interface InvoiceData {
   // Separate shipping contact for delivery
   shippingContactName?: string | null;
   shippingContactPhone?: string | null;
-  customerGstNumber: string | null;
+  customerGstNumber?: string | null;
+  customerGst?: string | null;
   placeOfSupply: string | null;
   paymentTerms?: string | null;
   poReference?: string | null;
@@ -107,7 +109,7 @@ function numberToWordsIndian(num: number): string {
   return result.trim();
 }
 
-export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
+export async function generateInvoicePDF(invoice: InvoiceData): Promise<Uint8Array> {
   const doc = new jsPDF({
     orientation: 'portrait',
     unit: 'mm',
@@ -118,6 +120,19 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
 
   // Get currency configuration for this invoice
   const currency = getCurrency(invoice.currency);
+
+  // Get company settings from DB
+  const company = await getCompanySettings();
+  const companyName = company.companyName || 'My Company';
+  const companyAddress = [
+    company.companyAddress,
+    [company.companyCity, company.companyState, company.companyPincode].filter(Boolean).join(' '),
+  ].filter(Boolean).join(', ');
+  const companyCountry = company.companyCountry || 'India';
+  const companyGst = company.companyGstNumber;
+  const companyPhone = company.companyPhone;
+  const companyEmail = company.companyEmail;
+  const companyWebsite = company.companyWebsite;
 
   const pageWidth = doc.internal.pageSize.getWidth();
   const pageHeight = doc.internal.pageSize.getHeight();
@@ -133,16 +148,28 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
   doc.setLineWidth(0.3);
   doc.rect(15, 15, pageWidth - 30, pageHeight - 30);
 
-  // Try to add logo (if it exists)
-  const logoPath = path.join(process.cwd(), 'public', 'Livato Logo.png');
+  // Try to add logo
   let logoAdded = false;
 
   try {
-    if (fs.existsSync(logoPath)) {
-      const logoData = fs.readFileSync(logoPath);
-      const base64Logo = `data:image/png;base64,${logoData.toString('base64')}`;
-      doc.addImage(base64Logo, 'PNG', 20, yPos, 25, 25);
-      logoAdded = true;
+    if (company.logoUrl) {
+      // Fetch logo from URL
+      const logoRes = await fetch(company.logoUrl);
+      if (logoRes.ok) {
+        const logoBuffer = await logoRes.arrayBuffer();
+        const base64Logo = `data:image/png;base64,${Buffer.from(logoBuffer).toString('base64')}`;
+        doc.addImage(base64Logo, 'PNG', 20, yPos, 25, 25);
+        logoAdded = true;
+      }
+    } else {
+      // Fallback to local file
+      const logoPath = path.join(process.cwd(), 'public', 'Livato Logo.png');
+      if (fs.existsSync(logoPath)) {
+        const logoData = fs.readFileSync(logoPath);
+        const base64Logo = `data:image/png;base64,${logoData.toString('base64')}`;
+        doc.addImage(base64Logo, 'PNG', 20, yPos, 25, 25);
+        logoAdded = true;
+      }
     }
   } catch (error) {
     console.log('Could not add logo to PDF');
@@ -152,16 +179,16 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
   const companyX = logoAdded ? 50 : 20;
   doc.setFontSize(16);
   doc.setFont('helvetica', 'bold');
-  doc.text('Livato Solutions', companyX, yPos + 5);
+  doc.text(companyName, companyX, yPos + 5);
 
   doc.setFontSize(8);
   doc.setFont('helvetica', 'normal');
-  doc.text('Hyderabad Telangana 500098', companyX, yPos + 10);
-  doc.text('India', companyX, yPos + 14);
-  doc.text('GSTIN: 36AAIFL5524C1ZJ', companyX, yPos + 18);
-  doc.text('Phone: 8008413800', companyX, yPos + 22);
-  doc.text('Email: livatosolutions@gmail.com', companyX, yPos + 26);
-  doc.text('www.livatosolutions.com', companyX, yPos + 30);
+  if (companyAddress) doc.text(companyAddress, companyX, yPos + 10);
+  doc.text(companyCountry, companyX, yPos + 14);
+  if (companyGst) doc.text(`GSTIN: ${companyGst}`, companyX, yPos + 18);
+  if (companyPhone) doc.text(`Phone: ${companyPhone}`, companyX, yPos + 22);
+  if (companyEmail) doc.text(`Email: ${companyEmail}`, companyX, yPos + 26);
+  if (companyWebsite) doc.text(companyWebsite, companyX, yPos + 30);
 
   // Document Type on right
   doc.setFontSize(20);
@@ -564,5 +591,5 @@ export function generateInvoicePDF(invoice: InvoiceData): Uint8Array {
   doc.setFont('helvetica', 'normal');
   doc.text('Authorized Signature', pageWidth - 60, pageHeight - 25);
 
-  return doc.output('arraybuffer') as Uint8Array;
+  return new Uint8Array(doc.output('arraybuffer'));
 }

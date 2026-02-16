@@ -2,6 +2,51 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 
+export async function GET(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const invoiceId = parseInt(id);
+
+    if (isNaN(invoiceId)) {
+      return NextResponse.json({ error: 'Invalid invoice ID' }, { status: 400 });
+    }
+
+    const invoice = await prisma.invoices.findUnique({
+      where: { id: invoiceId },
+      include: {
+        items: {
+          include: {
+            product: {
+              select: { name: true, sku: true },
+            },
+          },
+        },
+        customer: true,
+      },
+    });
+
+    if (!invoice) {
+      return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
+    }
+
+    return NextResponse.json(invoice);
+  } catch (error: any) {
+    console.error('Error fetching invoice:', error);
+    return NextResponse.json(
+      { error: 'Failed to fetch invoice' },
+      { status: 500 }
+    );
+  }
+}
+
 export async function PATCH(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
@@ -15,13 +60,10 @@ export async function PATCH(
     const { id } = await params;
     const body = await request.json();
 
-    // Update invoice
-    const invoice = await prisma.invoice.update({
+    const invoice = await prisma.invoices.update({
       where: { id: parseInt(id) },
       data: {
         status: body.status,
-        ...(body.status === 'PAID' && !body.paidAt ? { paidAt: new Date() } : {}),
-        ...(body.status === 'SENT' && !body.sentAt ? { sentAt: new Date() } : {})
       }
     });
 
@@ -46,53 +88,72 @@ export async function PUT(
     }
 
     const { id } = await params;
+    const invoiceId = parseInt(id);
     const body = await request.json();
 
     // Delete existing items
-    await prisma.invoiceItem.deleteMany({
-      where: { invoiceId: parseInt(id) }
+    await prisma.invoice_items.deleteMany({
+      where: { invoiceId }
     });
 
+    const totalAmount = parseFloat(body.total || 0);
+    const paidAmount = parseFloat(body.amountPaid || 0);
+
     // Update invoice with new items
-    const invoice = await prisma.invoice.update({
-      where: { id: parseInt(id) },
+    const invoice = await prisma.invoices.update({
+      where: { id: invoiceId },
       data: {
         type: body.type,
         customerName: body.customerName,
         customerEmail: body.customerEmail || null,
         customerPhone: body.customerPhone || null,
+        customerCompany: body.customerCompany || null,
+        customerGst: body.customerGstNumber || body.customerGst || null,
+        customerState: body.customerState || null,
         billingAddress: body.billingAddress || null,
         shippingAddress: body.shippingAddress || null,
-        customerGstNumber: body.customerGstNumber || null,
-        customerState: body.customerState || null,
+        shippingContactName: body.shippingContactName || null,
+        shippingContactPhone: body.shippingContactPhone || null,
         placeOfSupply: body.placeOfSupply || null,
+        companyGstNumber: body.companyGstNumber || null,
         companyState: body.companyState || null,
         paymentTerms: body.paymentTerms || 'Due on Receipt',
+        poReference: body.poReference || null,
         notes: body.notes || null,
-        subtotal: body.subtotal,
-        discountAmount: body.discountAmount || 0,
-        cgstAmount: body.cgstAmount,
-        sgstAmount: body.sgstAmount,
-        igstAmount: body.igstAmount,
-        totalTax: body.totalTax,
-        total: body.total,
+        termsAndConditions: body.termsAndConditions || null,
+        subtotal: parseFloat(body.subtotal || 0),
+        discountAmount: parseFloat(body.discountAmount || 0),
+        discount: parseFloat(body.discount || 0),
+        cgstAmount: parseFloat(body.cgstAmount || 0),
+        sgstAmount: parseFloat(body.sgstAmount || 0),
+        igstAmount: parseFloat(body.igstAmount || 0),
+        cgst: parseFloat(body.cgstAmount || body.cgst || 0),
+        sgst: parseFloat(body.sgstAmount || body.sgst || 0),
+        igst: parseFloat(body.igstAmount || body.igst || 0),
+        totalTax: parseFloat(body.totalTax || 0),
+        taxAmount: parseFloat(body.totalTax || body.taxAmount || 0),
+        total: totalAmount,
+        amountPaid: paidAmount,
+        balanceDue: totalAmount - paidAmount,
         items: {
           create: body.items.map((item: any) => ({
-            productId: item.productId || null,
-            itemName: item.itemName,
+            productId: item.productId ? parseInt(item.productId) : null,
+            productName: item.productName || item.itemName || 'Unnamed Item',
+            productSku: item.productSku || item.sku || null,
+            itemName: item.itemName || item.productName || 'Unnamed Item',
             description: item.description || null,
-            hsnCode: item.hsnCode,
-            quantity: item.quantity,
-            unit: item.unit,
-            unitPrice: item.unitPrice,
-            discount: item.discount || 0,
-            discountType: 'AMOUNT',
-            taxableAmount: item.amount,
-            gstRate: item.gstRate,
-            cgst: body.cgstAmount > 0 ? (item.amount * item.gstRate / 100) / 2 : 0,
-            sgst: body.sgstAmount > 0 ? (item.amount * item.gstRate / 100) / 2 : 0,
-            igst: body.igstAmount > 0 ? (item.amount * item.gstRate / 100) : 0,
-            total: item.amount + (item.amount * item.gstRate / 100)
+            hsnCode: item.hsnCode || null,
+            quantity: parseFloat(item.quantity || 1),
+            unit: item.unit || 'Nos',
+            unitPrice: parseFloat(item.unitPrice || 0),
+            discount: parseFloat(item.discount || 0),
+            taxRate: parseFloat(item.gstRate || item.taxRate || 0),
+            gstRate: parseFloat(item.gstRate || item.taxRate || 0),
+            taxableAmount: parseFloat(item.taxableAmount || item.amount || 0),
+            cgst: parseFloat(item.cgst || 0),
+            sgst: parseFloat(item.sgst || 0),
+            igst: parseFloat(item.igst || 0),
+            total: parseFloat(item.total || item.amount || 0),
           }))
         }
       },
@@ -104,6 +165,31 @@ export async function PUT(
     console.error('Error updating invoice:', error);
     return NextResponse.json(
       { error: error.message || 'Failed to update invoice' },
+      { status: 500 }
+    );
+  }
+}
+
+export async function DELETE(
+  request: NextRequest,
+  { params }: { params: Promise<{ id: string }> }
+) {
+  try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+
+    const { id } = await params;
+    const invoiceId = parseInt(id);
+
+    await prisma.invoices.delete({ where: { id: invoiceId } });
+
+    return NextResponse.json({ success: true });
+  } catch (error: any) {
+    console.error('Error deleting invoice:', error);
+    return NextResponse.json(
+      { error: 'Failed to delete invoice' },
       { status: 500 }
     );
   }

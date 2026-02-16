@@ -1,75 +1,7 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-
-// Demo invoices data
-const demoInvoices = [
-  {
-    id: 1,
-    invoiceNumber: 'INV-2026-001',
-    type: 'INVOICE',
-    status: 'PAID',
-    customerName: 'Tech Manufacturing Pvt Ltd',
-    customerEmail: 'accounts@techmanufacturing.com',
-    customerPhone: '+91 98765 43210',
-    customerCompany: 'Tech Manufacturing Pvt Ltd',
-    customerGstNumber: '27AABCT1234F1ZH',
-    billingAddress: 'Plot No. 45, MIDC Industrial Area\nAndheri East, Mumbai 400093\nMaharashtra, India',
-    shippingAddress: 'Plot No. 45, MIDC Industrial Area\nAndheri East, Mumbai 400093\nMaharashtra, India',
-    shippingContactName: 'Rahul Sharma',
-    shippingContactPhone: '+91 98765 43210',
-    placeOfSupply: 'Maharashtra (27)',
-    paymentTerms: 'Net 30',
-    poReference: 'PO-2026-001',
-    dueDate: new Date('2026-02-25'),
-    createdAt: new Date('2026-01-25'),
-    subtotal: 105932,
-    totalTax: 19068,
-    igstAmount: 0,
-    cgstAmount: 9534,
-    sgstAmount: 9534,
-    total: 125000,
-    notes: 'Thank you for your business!',
-    termsAndConditions: '1. Goods once sold will not be taken back.\n2. Subject to Hyderabad jurisdiction.',
-    items: [
-      {
-        id: 1,
-        itemName: 'Thermal Barcode Labels (50x25mm)',
-        description: 'Premium quality thermal labels',
-        hsnCode: '48211010',
-        quantity: 100,
-        unit: 'Rolls',
-        unitPrice: 450,
-        discount: 0,
-        gstRate: 18,
-        taxableAmount: 45000,
-      },
-      {
-        id: 2,
-        itemName: 'Desktop Barcode Printer',
-        description: 'High-speed desktop label printer',
-        hsnCode: '84433210',
-        quantity: 2,
-        unit: 'Pcs',
-        unitPrice: 12500,
-        discount: 0,
-        gstRate: 18,
-        taxableAmount: 25000,
-      },
-      {
-        id: 3,
-        itemName: 'Ribbon Wax 110mm x 300m',
-        description: 'Wax ribbon for label printers',
-        hsnCode: '59119090',
-        quantity: 50,
-        unit: 'Rolls',
-        unitPrice: 280,
-        discount: 0,
-        gstRate: 18,
-        taxableAmount: 14000,
-      },
-    ],
-  },
-];
+import prisma from '@/lib/prisma';
+import { getCompanySettings } from '@/lib/company-settings-cache';
 
 // Helper function to convert number to words (Indian style)
 function numberToWordsIndian(num: number): string {
@@ -112,19 +44,55 @@ function numberToWordsIndian(num: number): string {
   return result.trim();
 }
 
+async function getInvoice(id: number) {
+  return prisma.invoices.findUnique({
+    where: { id },
+    include: {
+      items: {
+        include: {
+          product: {
+            select: { name: true, sku: true },
+          },
+        },
+      },
+      customer: true,
+    },
+  });
+}
+
 interface PageProps {
   params: Promise<{ id: string }>;
 }
 
 export default async function InvoiceDetailPage({ params }: PageProps) {
   const { id } = await params;
-  const invoice = demoInvoices.find(inv => inv.id === parseInt(id));
+  const invoiceId = parseInt(id);
+
+  if (isNaN(invoiceId)) {
+    notFound();
+  }
+
+  const [invoice, company] = await Promise.all([
+    getInvoice(invoiceId),
+    getCompanySettings(),
+  ]);
 
   if (!invoice) {
     notFound();
   }
 
-  const totalInWords = `Indian Rupee ${numberToWordsIndian(invoice.total)} Only`;
+  const total = Number(invoice.total);
+  const totalInWords = `Indian Rupee ${numberToWordsIndian(total)} Only`;
+  const invoiceType = (invoice as any).type || 'INVOICE';
+  const cgstAmount = Number((invoice as any).cgstAmount || invoice.cgst || 0);
+  const sgstAmount = Number((invoice as any).sgstAmount || invoice.sgst || 0);
+  const igstAmount = Number((invoice as any).igstAmount || invoice.igst || 0);
+  const subtotal = Number(invoice.subtotal);
+
+  const companyAddress = [
+    company.companyAddress,
+    [company.companyCity, company.companyState, company.companyPincode].filter(Boolean).join(' '),
+  ].filter(Boolean).join(', ');
 
   return (
     <div className="max-w-5xl mx-auto">
@@ -135,13 +103,13 @@ export default async function InvoiceDetailPage({ params }: PageProps) {
             href="/admin/erp/invoices"
             className="text-sm text-blue-600 hover:text-blue-700 mb-2 inline-block font-inter"
           >
-            ← Back to Documents
+            &larr; Back to Documents
           </Link>
           <h1 className="text-3xl font-bold text-gray-900 font-open-sans">
-            {invoice.type === 'QUOTE' ? 'Quotation' : invoice.type === 'PROFORMA' ? 'Proforma Invoice' : 'Tax Invoice'} {invoice.invoiceNumber}
+            {invoiceType === 'QUOTE' ? 'Quotation' : invoiceType === 'PROFORMA' ? 'Proforma Invoice' : 'Tax Invoice'} {invoice.invoiceNumber}
           </h1>
           <p className="text-gray-600 font-inter">
-            {invoice.type === 'QUOTE' ? 'Quotation' : invoice.type === 'PROFORMA' ? 'Proforma Invoice' : 'Tax Invoice'}
+            {invoiceType === 'QUOTE' ? 'Quotation' : invoiceType === 'PROFORMA' ? 'Proforma Invoice' : 'Tax Invoice'}
           </p>
         </div>
         <div className="flex gap-2">
@@ -176,17 +144,26 @@ export default async function InvoiceDetailPage({ params }: PageProps) {
             <div className="p-8">
               {/* Company Header */}
               <div className="flex justify-between items-start mb-8 pb-6 border-b-2 border-gray-200">
-                <div>
-                  <h2 className="text-2xl font-bold text-gray-900 font-open-sans mb-2">Livato Solutions</h2>
-                  <p className="text-xs text-gray-600 font-inter">Hyderabad Telangana 500098</p>
-                  <p className="text-xs text-gray-600 font-inter">India</p>
-                  <p className="text-xs text-gray-600 font-inter">GSTIN: 36AAIFL5524C1ZJ</p>
-                  <p className="text-xs text-gray-600 font-inter">Phone: 8008413800</p>
+                <div className="flex items-start gap-4">
+                  {company.logoUrl && (
+                    <img
+                      src={company.logoUrl}
+                      alt={company.companyName}
+                      className="w-16 h-16 object-contain"
+                    />
+                  )}
+                  <div>
+                    <h2 className="text-2xl font-bold text-gray-900 font-open-sans mb-2">{company.companyName}</h2>
+                    {companyAddress && <p className="text-xs text-gray-600 font-inter">{companyAddress}</p>}
+                    {company.companyCountry && <p className="text-xs text-gray-600 font-inter">{company.companyCountry}</p>}
+                    {company.companyGstNumber && <p className="text-xs text-gray-600 font-inter">GSTIN: {company.companyGstNumber}</p>}
+                    {company.companyPhone && <p className="text-xs text-gray-600 font-inter">Phone: {company.companyPhone}</p>}
+                  </div>
                 </div>
                 <div className="text-right">
                   <h3 className="text-3xl font-bold text-blue-600 font-open-sans mb-4">
-                    {invoice.type === 'QUOTE' ? 'QUOTATION' :
-                     invoice.type === 'PROFORMA' ? 'PROFORMA INVOICE' :
+                    {invoiceType === 'QUOTE' ? 'QUOTATION' :
+                     invoiceType === 'PROFORMA' ? 'PROFORMA INVOICE' :
                      'TAX INVOICE'}
                   </h3>
                 </div>
@@ -201,26 +178,26 @@ export default async function InvoiceDetailPage({ params }: PageProps) {
                   </div>
                   <div className="flex text-xs font-inter">
                     <span className="font-semibold text-gray-900 w-28">Invoice Date</span>
-                    <span className="text-gray-600">: {invoice.createdAt.toLocaleDateString('en-GB')}</span>
+                    <span className="text-gray-600">: {invoice.invoiceDate.toLocaleDateString('en-GB')}</span>
                   </div>
                   <div className="flex text-xs font-inter">
                     <span className="font-semibold text-gray-900 w-28">Terms</span>
-                    <span className="text-gray-600">: {invoice.paymentTerms}</span>
+                    <span className="text-gray-600">: {(invoice as any).paymentTerms || 'Due on Receipt'}</span>
                   </div>
                   <div className="flex text-xs font-inter">
                     <span className="font-semibold text-gray-900 w-28">Due Date</span>
-                    <span className="text-gray-600">: {invoice.dueDate.toLocaleDateString('en-GB')}</span>
+                    <span className="text-gray-600">: {invoice.dueDate ? invoice.dueDate.toLocaleDateString('en-GB') : 'N/A'}</span>
                   </div>
                 </div>
                 <div className="space-y-2">
                   <div className="flex text-xs font-inter">
                     <span className="font-semibold text-gray-900 w-32">Place Of Supply</span>
-                    <span className="text-gray-600">: {invoice.placeOfSupply}</span>
+                    <span className="text-gray-600">: {(invoice as any).placeOfSupply || 'N/A'}</span>
                   </div>
-                  {invoice.poReference && (
+                  {(invoice as any).poReference && (
                     <div className="flex text-xs font-inter">
                       <span className="font-semibold text-gray-900 w-32">PO Reference</span>
-                      <span className="text-gray-600">: {invoice.poReference}</span>
+                      <span className="text-gray-600">: {(invoice as any).poReference}</span>
                     </div>
                   )}
                 </div>
@@ -232,20 +209,24 @@ export default async function InvoiceDetailPage({ params }: PageProps) {
                   <div className="bg-gray-100 px-3 py-2 mb-2">
                     <h4 className="text-sm font-bold text-gray-700 font-inter">BILL TO</h4>
                   </div>
-                  <p className="text-sm font-bold text-gray-900 font-inter">{invoice.customerCompany}</p>
-                  <p className="text-xs text-gray-600 font-inter">Phone: {invoice.customerPhone}</p>
-                  <p className="text-xs text-gray-600 font-inter">Email: {invoice.customerEmail}</p>
-                  <p className="text-xs text-gray-600 whitespace-pre-line font-inter mt-1">{invoice.billingAddress}</p>
-                  <p className="text-xs font-semibold text-gray-900 font-inter mt-1">GSTIN: {invoice.customerGstNumber}</p>
+                  <p className="text-sm font-bold text-gray-900 font-inter">{(invoice as any).customerCompany || invoice.customerName}</p>
+                  {(invoice as any).customerPhone && <p className="text-xs text-gray-600 font-inter">Phone: {(invoice as any).customerPhone}</p>}
+                  {invoice.customerEmail && <p className="text-xs text-gray-600 font-inter">Email: {invoice.customerEmail}</p>}
+                  {(invoice as any).billingAddress && <p className="text-xs text-gray-600 whitespace-pre-line font-inter mt-1">{(invoice as any).billingAddress}</p>}
+                  {invoice.customerGst && <p className="text-xs font-semibold text-gray-900 font-inter mt-1">GSTIN: {invoice.customerGst}</p>}
                 </div>
                 <div>
                   <div className="bg-gray-100 px-3 py-2 mb-2">
                     <h4 className="text-sm font-bold text-gray-700 font-inter">SHIP TO</h4>
                   </div>
-                  <p className="text-sm font-bold text-gray-900 font-inter">{invoice.customerCompany}</p>
-                  <p className="text-sm font-semibold text-blue-600 font-inter">Contact: {invoice.shippingContactName}</p>
-                  <p className="text-xs font-semibold text-gray-900 font-inter">Phone: {invoice.shippingContactPhone}</p>
-                  <p className="text-xs text-gray-600 whitespace-pre-line font-inter mt-1">{invoice.shippingAddress}</p>
+                  <p className="text-sm font-bold text-gray-900 font-inter">{(invoice as any).customerCompany || invoice.customerName}</p>
+                  {(invoice as any).shippingContactName && (
+                    <p className="text-sm font-semibold text-blue-600 font-inter">Contact: {(invoice as any).shippingContactName}</p>
+                  )}
+                  {(invoice as any).shippingContactPhone && (
+                    <p className="text-xs font-semibold text-gray-900 font-inter">Phone: {(invoice as any).shippingContactPhone}</p>
+                  )}
+                  {(invoice as any).shippingAddress && <p className="text-xs text-gray-600 whitespace-pre-line font-inter mt-1">{(invoice as any).shippingAddress}</p>}
                 </div>
               </div>
 
@@ -269,18 +250,18 @@ export default async function InvoiceDetailPage({ params }: PageProps) {
                       <tr key={item.id} className="border-b border-gray-100">
                         <td className="py-3 px-2 text-xs text-gray-500 font-inter">{index + 1}</td>
                         <td className="py-3 px-2 text-xs font-inter">
-                          <div className="font-semibold text-gray-900">{item.itemName}</div>
-                          {item.description && (
-                            <div className="text-[10px] text-gray-500 mt-0.5">{item.description}</div>
+                          <div className="font-semibold text-gray-900">{(item as any).itemName || item.productName}</div>
+                          {(item as any).description && (
+                            <div className="text-[10px] text-gray-500 mt-0.5">{(item as any).description}</div>
                           )}
                         </td>
-                        <td className="py-3 px-2 text-xs text-gray-600 font-inter">{item.hsnCode}</td>
-                        <td className="py-3 px-2 text-xs text-gray-600 text-right font-inter">{item.quantity.toLocaleString('en-IN')}</td>
-                        <td className="py-3 px-2 text-xs text-gray-600 font-inter">{item.unit}</td>
-                        <td className="py-3 px-2 text-xs text-gray-600 text-right font-inter">INR {item.unitPrice.toFixed(2)}</td>
-                        <td className="py-3 px-2 text-xs text-gray-600 text-right font-inter">{item.gstRate}%</td>
+                        <td className="py-3 px-2 text-xs text-gray-600 font-inter">{item.hsnCode || '-'}</td>
+                        <td className="py-3 px-2 text-xs text-gray-600 text-right font-inter">{Number(item.quantity).toLocaleString('en-IN')}</td>
+                        <td className="py-3 px-2 text-xs text-gray-600 font-inter">{(item as any).unit || 'Nos'}</td>
+                        <td className="py-3 px-2 text-xs text-gray-600 text-right font-inter">INR {Number(item.unitPrice).toFixed(2)}</td>
+                        <td className="py-3 px-2 text-xs text-gray-600 text-right font-inter">{Number((item as any).gstRate || item.taxRate)}%</td>
                         <td className="py-3 px-2 text-xs font-semibold text-gray-900 text-right font-inter">
-                          INR {item.taxableAmount.toLocaleString('en-IN', { minimumFractionDigits: 2 })}
+                          INR {Number((item as any).taxableAmount || item.total).toLocaleString('en-IN', { minimumFractionDigits: 2 })}
                         </td>
                       </tr>
                     ))}
@@ -293,29 +274,29 @@ export default async function InvoiceDetailPage({ params }: PageProps) {
                 <div className="w-80">
                   <div className="flex justify-between py-2 text-sm font-inter">
                     <span className="text-gray-600">Subtotal</span>
-                    <span className="text-gray-900 font-semibold">INR {invoice.subtotal.toLocaleString('en-IN')}</span>
+                    <span className="text-gray-900 font-semibold">INR {subtotal.toLocaleString('en-IN')}</span>
                   </div>
-                  {invoice.cgstAmount > 0 && (
+                  {cgstAmount > 0 && (
                     <div className="flex justify-between py-2 text-sm font-inter">
                       <span className="text-gray-600">CGST (9%)</span>
-                      <span className="text-gray-900 font-semibold">INR {invoice.cgstAmount.toLocaleString('en-IN')}</span>
+                      <span className="text-gray-900 font-semibold">INR {cgstAmount.toLocaleString('en-IN')}</span>
                     </div>
                   )}
-                  {invoice.sgstAmount > 0 && (
+                  {sgstAmount > 0 && (
                     <div className="flex justify-between py-2 text-sm font-inter">
                       <span className="text-gray-600">SGST (9%)</span>
-                      <span className="text-gray-900 font-semibold">INR {invoice.sgstAmount.toLocaleString('en-IN')}</span>
+                      <span className="text-gray-900 font-semibold">INR {sgstAmount.toLocaleString('en-IN')}</span>
                     </div>
                   )}
-                  {invoice.igstAmount > 0 && (
+                  {igstAmount > 0 && (
                     <div className="flex justify-between py-2 text-sm font-inter">
                       <span className="text-gray-600">IGST (18%)</span>
-                      <span className="text-gray-900 font-semibold">INR {invoice.igstAmount.toLocaleString('en-IN')}</span>
+                      <span className="text-gray-900 font-semibold">INR {igstAmount.toLocaleString('en-IN')}</span>
                     </div>
                   )}
                   <div className="flex justify-between py-3 text-base font-bold border-t border-gray-200 mt-2 font-inter">
                     <span className="text-gray-900">Total</span>
-                    <span className="text-gray-900">INR {invoice.total.toLocaleString('en-IN')}</span>
+                    <span className="text-gray-900">INR {total.toLocaleString('en-IN')}</span>
                   </div>
                 </div>
               </div>
@@ -327,7 +308,7 @@ export default async function InvoiceDetailPage({ params }: PageProps) {
               </div>
 
               {/* Notes & Terms */}
-              {(invoice.notes || invoice.termsAndConditions) && (
+              {(invoice.notes || (invoice as any).termsAndConditions) && (
                 <div className="mt-8 pt-8 border-t border-gray-200">
                   {invoice.notes && (
                     <div className="mb-4">
@@ -335,10 +316,10 @@ export default async function InvoiceDetailPage({ params }: PageProps) {
                       <p className="text-sm text-gray-600 whitespace-pre-line font-inter">{invoice.notes}</p>
                     </div>
                   )}
-                  {invoice.termsAndConditions && (
+                  {(invoice as any).termsAndConditions && (
                     <div>
                       <h4 className="text-sm font-semibold text-gray-900 mb-2 font-inter">Terms & Conditions</h4>
-                      <p className="text-sm text-gray-600 whitespace-pre-line font-inter">{invoice.termsAndConditions}</p>
+                      <p className="text-sm text-gray-600 whitespace-pre-line font-inter">{(invoice as any).termsAndConditions}</p>
                     </div>
                   )}
                 </div>

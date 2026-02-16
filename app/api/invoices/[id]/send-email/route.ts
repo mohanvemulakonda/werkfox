@@ -9,7 +9,7 @@ export async function POST(
 ) {
   try {
     const { id } = await params;
-    const invoice = await prisma.invoice.findUnique({
+    const invoice = await prisma.invoices.findUnique({
       where: { id: parseInt(id) },
       include: { items: true }
     });
@@ -32,23 +32,23 @@ export async function POST(
     const invoiceData = {
       ...invoice,
       subtotal: Number(invoice.subtotal),
-      totalTax: Number(invoice.totalTax),
-      igstAmount: Number(invoice.igstAmount),
-      cgstAmount: Number(invoice.cgstAmount),
-      sgstAmount: Number(invoice.sgstAmount),
+      totalTax: Number((invoice as any).totalTax || invoice.taxAmount || 0),
+      igstAmount: Number((invoice as any).igstAmount || invoice.igst || 0),
+      cgstAmount: Number((invoice as any).cgstAmount || invoice.cgst || 0),
+      sgstAmount: Number((invoice as any).sgstAmount || invoice.sgst || 0),
       total: Number(invoice.total),
-      paidAmount: invoice.paidAmount ? Number(invoice.paidAmount) : null,
+      paidAmount: invoice.amountPaid ? Number(invoice.amountPaid) : null,
       items: invoice.items.map(item => ({
         ...item,
         quantity: Number(item.quantity),
         unitPrice: Number(item.unitPrice),
-        taxableAmount: Number(item.taxableAmount),
-        gstRate: Number(item.gstRate)
+        taxableAmount: Number((item as any).taxableAmount || item.total || 0),
+        gstRate: Number((item as any).gstRate || item.taxRate || 0)
       }))
     };
 
     // Generate PDF with professional layout
-    const pdf = generateInvoicePDFPro(invoiceData);
+    const pdf = await generateInvoicePDFPro(invoiceData as any);
 
     // Get PDF as buffer - pdfkit returns a stream
     const chunks: Buffer[] = [];
@@ -78,7 +78,7 @@ export async function POST(
     // Send email with PDF attachment
     const result = await sendEmail({
       to: invoice.customerEmail,
-      subject: `Invoice ${invoice.invoiceNumber} from Livato Solutions`,
+      subject: `Invoice ${invoice.invoiceNumber}`,
       text: textContent,
       html: htmlContent,
       attachments: [
@@ -93,7 +93,7 @@ export async function POST(
     if (result.success) {
       // Update invoice status to SENT if it was DRAFT
       if (invoice.status === 'DRAFT') {
-        await prisma.invoice.update({
+        await prisma.invoices.update({
           where: { id: invoice.id },
           data: { status: 'SENT' }
         });

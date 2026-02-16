@@ -72,6 +72,8 @@ export async function POST(request: NextRequest) {
         contactPhone: body.contactPhone || null,
         contactEmail: body.contactEmail || null,
         address: body.address || null,
+        billingAddress: body.billingAddress || null,
+        shippingAddress: body.shippingAddress || null,
         city: body.city || null,
         state: body.state || null,
         pincode: body.pincode || null,

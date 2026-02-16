@@ -1,6 +1,7 @@
 import PDFDocument from 'pdfkit';
 import fs from 'fs';
 import path from 'path';
+import { getCompanySettings } from './company-settings-cache';
 
 interface InvoiceItem {
   itemName: string;
@@ -24,7 +25,8 @@ interface InvoiceData {
   customerName: string;
   billingAddress: string | null;
   shippingAddress: string | null;
-  customerGstNumber: string | null;
+  customerGstNumber?: string | null;
+  customerGst?: string | null;
   placeOfSupply: string | null;
   subtotal: number;
   totalTax: number;
@@ -82,7 +84,8 @@ function numberToWordsIndian(num: number): string {
   return result.trim();
 }
 
-export function generateInvoicePDFPro(invoice: InvoiceData): PDFDocument {
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export async function generateInvoicePDFPro(invoice: InvoiceData): Promise<any> {
   const doc = new PDFDocument({
     size: 'A4',
     margin: 40,
@@ -91,7 +94,19 @@ export function generateInvoicePDFPro(invoice: InvoiceData): PDFDocument {
     font: 'Helvetica' // Use built-in font
   });
 
-  const logoPath = path.join(process.cwd(), 'public', 'Livato Logo.png');
+  // Get company settings from DB
+  const company = await getCompanySettings();
+  const companyName = company.companyName || 'My Company';
+  const companyAddress = [
+    company.companyAddress,
+    [company.companyCity, company.companyState, company.companyPincode].filter(Boolean).join(' '),
+  ].filter(Boolean).join(', ');
+  const companyCountry = company.companyCountry || 'India';
+  const companyGst = company.companyGstNumber;
+  const companyPhone = company.companyPhone;
+  const companyEmail = company.companyEmail;
+  const companyWebsite = company.companyWebsite;
+
   const pageWidth = 595; // A4 width in points
   const pageHeight = 842; // A4 height in points
   let yPos = 40;
@@ -100,27 +115,38 @@ export function generateInvoicePDFPro(invoice: InvoiceData): PDFDocument {
   doc.rect(30, 30, pageWidth - 60, pageHeight - 60).stroke();
 
   // Logo and Company Header
-  if (fs.existsSync(logoPath)) {
-    doc.image(logoPath, 50, yPos, { width: 80 });
+  try {
+    if (company.logoUrl) {
+      const logoRes = await fetch(company.logoUrl);
+      if (logoRes.ok) {
+        const logoBuffer = Buffer.from(await logoRes.arrayBuffer());
+        doc.image(logoBuffer, 50, yPos, { width: 80 });
+      }
+    } else {
+      const logoPath = path.join(process.cwd(), 'public', 'Livato Logo.png');
+      if (fs.existsSync(logoPath)) {
+        doc.image(logoPath, 50, yPos, { width: 80 });
+      }
+    }
+  } catch {
+    // Logo load failed, continue without it
   }
 
-  doc.fontSize(18).font('Helvetica-Bold').text('Livato Solutions', 140, yPos);
+  doc.fontSize(18).font('Helvetica-Bold').text(companyName, 140, yPos);
   yPos += 20;
   doc.fontSize(9).font('Helvetica');
-  doc.text('Hyderabad Telangana 500098', 140, yPos);
-  yPos += 12;
-  doc.text('India', 140, yPos);
-  yPos += 12;
-  doc.text('GSTIN 36AAIFL5524C1ZJ', 140, yPos);
-  yPos += 12;
-  doc.text('8008413800', 140, yPos);
-  yPos += 12;
-  doc.text('livatosolutions@gmail.com', 140, yPos);
-  yPos += 12;
-  doc.text('www.livatosolutions.com', 140, yPos);
+  if (companyAddress) { doc.text(companyAddress, 140, yPos); yPos += 12; }
+  doc.text(companyCountry, 140, yPos); yPos += 12;
+  if (companyGst) { doc.text(`GSTIN ${companyGst}`, 140, yPos); yPos += 12; }
+  if (companyPhone) { doc.text(companyPhone, 140, yPos); yPos += 12; }
+  if (companyEmail) { doc.text(companyEmail, 140, yPos); yPos += 12; }
+  if (companyWebsite) { doc.text(companyWebsite, 140, yPos); }
 
   // TAX INVOICE header on right
-  doc.fontSize(24).font('Helvetica-Bold').text('TAX INVOICE', 400, 50, { align: 'right', width: 145 });
+  const docTypeLabel = invoice.type === 'QUOTE' ? 'QUOTATION' :
+                       invoice.type === 'PROFORMA' ? 'PROFORMA INVOICE' :
+                       'TAX INVOICE';
+  doc.fontSize(24).font('Helvetica-Bold').text(docTypeLabel, 400, 50, { align: 'right', width: 145 });
 
   // Invoice details table
   yPos = 150;
@@ -303,10 +329,11 @@ export function generateInvoicePDFPro(invoice: InvoiceData): PDFDocument {
   // Authorized Signature
   doc.fontSize(9).font('Helvetica').text('Authorized Signature', 450, pageHeight - 100);
 
-  // Draw a simple circular stamp (since we don't have the actual stamp image)
+  // Draw a simple circular stamp with company name
+  const stampName = companyName.split(' ');
   doc.circle(510, pageHeight - 150, 40).stroke('#4169E1');
-  doc.fontSize(10).font('Helvetica-Bold').fillColor('#4169E1').text('LIVATO', 485, pageHeight - 165);
-  doc.fontSize(7).text('SOLUTIONS', 480, pageHeight - 150);
+  doc.fontSize(10).font('Helvetica-Bold').fillColor('#4169E1').text(stampName[0] || '', 485, pageHeight - 165);
+  if (stampName[1]) doc.fontSize(7).text(stampName[1], 480, pageHeight - 150);
   doc.fillColor('#000');
 
   return doc;

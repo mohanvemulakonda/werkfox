@@ -11,6 +11,8 @@ export default function CreateCustomerPage() {
   const [saving, setSaving] = useState(false);
   const [error, setError] = useState('');
 
+  const [sameAssBilling, setSameAsBilling] = useState(true);
+
   const [formData, setFormData] = useState({
     name: '',
     displayName: '',
@@ -21,6 +23,8 @@ export default function CreateCustomerPage() {
     contactPhone: '',
     contactEmail: '',
     address: '',
+    billingAddress: '',
+    shippingAddress: '',
     city: '',
     state: '',
     pincode: '',
@@ -46,10 +50,14 @@ export default function CreateCustomerPage() {
     setError('');
 
     try {
+      const submitData = {
+        ...formData,
+        shippingAddress: sameAssBilling ? formData.billingAddress : formData.shippingAddress,
+      };
       const response = await fetch('/api/customers', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(formData),
+        body: JSON.stringify(submitData),
       });
 
       if (response.ok) {
@@ -129,12 +137,6 @@ export default function CreateCustomerPage() {
         {/* Address */}
         <div className="admin-form-section">
           <h2 className="admin-form-section-title">Address</h2>
-          <div className="admin-form-row">
-            <div className="admin-form-group" style={{ gridColumn: '1 / -1' }}>
-              <label className="admin-form-label">Address</label>
-              <textarea name="address" value={formData.address} onChange={handleChange} rows={3} className="admin-form-textarea" />
-            </div>
-          </div>
           <div className="admin-form-row cols-4">
             <div className="admin-form-group">
               <label className="admin-form-label">City</label>
@@ -151,6 +153,52 @@ export default function CreateCustomerPage() {
             <div className="admin-form-group">
               <label className="admin-form-label">Country</label>
               <input type="text" name="country" value={formData.country} onChange={handleChange} className="admin-form-input" />
+            </div>
+          </div>
+        </div>
+
+        {/* Billing Address */}
+        <div className="admin-form-section">
+          <h2 className="admin-form-section-title">Billing Address</h2>
+          <div className="admin-form-row">
+            <div className="admin-form-group" style={{ gridColumn: '1 / -1' }}>
+              <label className="admin-form-label">Billing Address</label>
+              <textarea name="billingAddress" value={formData.billingAddress} onChange={handleChange} rows={3} className="admin-form-textarea" placeholder="Full billing address including street, city, state, pincode" />
+            </div>
+          </div>
+        </div>
+
+        {/* Shipping Address */}
+        <div className="admin-form-section">
+          <div className="flex items-center justify-between mb-2">
+            <h2 className="admin-form-section-title">Shipping Address</h2>
+            <label className="flex items-center gap-2 text-sm text-gray-600 cursor-pointer">
+              <input
+                type="checkbox"
+                checked={sameAssBilling}
+                onChange={(e) => {
+                  setSameAsBilling(e.target.checked);
+                  if (e.target.checked) {
+                    setFormData(prev => ({ ...prev, shippingAddress: prev.billingAddress }));
+                  }
+                }}
+                className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+              />
+              Same as billing
+            </label>
+          </div>
+          <div className="admin-form-row">
+            <div className="admin-form-group" style={{ gridColumn: '1 / -1' }}>
+              <label className="admin-form-label">Shipping Address</label>
+              <textarea
+                name="shippingAddress"
+                value={sameAssBilling ? formData.billingAddress : formData.shippingAddress}
+                onChange={handleChange}
+                rows={3}
+                className="admin-form-textarea"
+                disabled={sameAssBilling}
+                placeholder="Full shipping address including street, city, state, pincode"
+              />
             </div>
           </div>
         </div>

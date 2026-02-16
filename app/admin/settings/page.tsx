@@ -1,6 +1,6 @@
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
-import OrgSettingsClient from './OrgSettingsClient';
+import SettingsTabsClient from './SettingsTabsClient';
 
 export const dynamic = 'force-dynamic';
 
@@ -12,15 +12,15 @@ export default async function SettingsPage() {
   }
 
   return (
-    <div className="max-w-4xl">
+    <div className="max-w-5xl">
       <div className="mb-8">
-        <h1 className="text-2xl font-semibold text-gray-900">Organization Settings</h1>
+        <h1 className="text-2xl font-semibold text-gray-900">Settings</h1>
         <p className="mt-1 text-sm text-gray-500">
-          Manage your organization&apos;s package and settings
+          Manage your organization, company profile, and system settings
         </p>
       </div>
 
-      <OrgSettingsClient
+      <SettingsTabsClient
         organizationId={session.currentOrg.id}
         userRole={session.currentOrg.role}
         initialPackageType={session.currentOrg.packageType}

@@ -12,13 +12,19 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Only SUPER_ADMIN and ADMIN can view users
-    const currentUser = await prisma.admin_users.findUnique({
-      where: { email: session.user.email },
-    });
+    // Check authorization: either admin_users table role or organization membership role
+    const orgRole = session.currentOrg?.role;
+    const isOrgAdmin = orgRole && ['SUPER_ADMIN', 'ADMIN', 'OWNER'].includes(orgRole);
 
-    if (!currentUser || !['SUPER_ADMIN', 'ADMIN'].includes(currentUser.role)) {
-      return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+    if (!isOrgAdmin) {
+      // Fallback: check admin_users table
+      const currentUser = await prisma.admin_users.findUnique({
+        where: { email: session.user.email },
+      });
+
+      if (!currentUser || !['SUPER_ADMIN', 'ADMIN'].includes(currentUser.role)) {
+        return NextResponse.json({ error: 'Forbidden' }, { status: 403 });
+      }
     }
 
     const searchParams = request.nextUrl.searchParams;
@@ -92,16 +98,22 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Only SUPER_ADMIN can create users
-    const currentUser = await prisma.admin_users.findUnique({
-      where: { email: session.user.email },
-    });
+    // Check authorization for creating users
+    const orgRole = session.currentOrg?.role;
+    const isOrgSuperAdmin = orgRole && ['SUPER_ADMIN', 'OWNER'].includes(orgRole);
 
-    if (!currentUser || currentUser.role !== 'SUPER_ADMIN') {
-      return NextResponse.json(
-        { error: 'Only Super Admins can create users' },
-        { status: 403 }
-      );
+    if (!isOrgSuperAdmin) {
+      // Fallback: check admin_users table
+      const currentUser = await prisma.admin_users.findUnique({
+        where: { email: session.user.email },
+      });
+
+      if (!currentUser || currentUser.role !== 'SUPER_ADMIN') {
+        return NextResponse.json(
+          { error: 'Only Super Admins can create users' },
+          { status: 403 }
+        );
+      }
     }
 
     const body = await request.json();
@@ -171,6 +183,7 @@ export async function POST(request: NextRequest) {
           : null,
         managerId: managerId ? parseInt(managerId) : null,
         isActive: true,
+        updatedAt: new Date(),
       },
       select: {
         id: true,

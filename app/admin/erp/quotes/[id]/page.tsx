@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
+import { getCompanySettings } from '@/lib/company-settings-cache';
 import QuotationActions from './QuotationActions';
 
 async function getQuotation(id: number) {
@@ -36,11 +37,19 @@ export default async function QuotationDetailPage({
     notFound();
   }
 
-  const quotation = await getQuotation(quotationId);
+  const [quotation, company] = await Promise.all([
+    getQuotation(quotationId),
+    getCompanySettings(),
+  ]);
 
   if (!quotation) {
     notFound();
   }
+
+  const companyAddress = [
+    company.companyAddress,
+    [company.companyCity, company.companyState, company.companyPincode].filter(Boolean).join(' '),
+  ].filter(Boolean).join(', ');
 
   const statusBadgeClass = `admin-badge admin-badge-${quotation.status.toLowerCase()}`;
   const isExpired =
@@ -111,6 +120,24 @@ export default async function QuotationDetailPage({
             )}
           </>
         )}
+
+      {/* Company Header */}
+      <div className="admin-detail-section mb-6">
+        <div className="flex items-start gap-4">
+          {company.logoUrl && (
+            <img src={company.logoUrl} alt={company.companyName} className="w-16 h-16 object-contain" />
+          )}
+          <div>
+            <h2 className="text-xl font-bold text-gray-900">{company.companyName}</h2>
+            {companyAddress && <p className="text-sm text-gray-600">{companyAddress}</p>}
+            {company.companyCountry && <p className="text-sm text-gray-600">{company.companyCountry}</p>}
+            <div className="flex gap-4 mt-1 text-sm text-gray-600">
+              {company.companyGstNumber && <span>GSTIN: {company.companyGstNumber}</span>}
+              {company.companyPhone && <span>Phone: {company.companyPhone}</span>}
+            </div>
+          </div>
+        </div>
+      </div>
 
       {/* Customer Details */}
       <div className="admin-detail-section mb-6">
