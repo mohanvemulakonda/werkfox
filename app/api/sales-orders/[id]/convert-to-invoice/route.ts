@@ -102,6 +102,7 @@ export async function POST(
         data: {
           invoiceNumber,
           customerId: salesOrder.customerId,
+          salesOrderId: salesOrder.id,
           customerName: salesOrder.customerName,
           customerEmail: salesOrder.customerEmail,
           customerGst: salesOrder.customerGst,

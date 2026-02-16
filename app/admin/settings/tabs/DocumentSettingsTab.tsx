@@ -14,17 +14,35 @@ interface DocumentSettings {
   po: DocNumberConfig;
   so: DocNumberConfig;
   grn: DocNumberConfig;
+  wo: DocNumberConfig;
+  prod: DocNumberConfig;
+  mr: DocNumberConfig;
+  dc: DocNumberConfig;
+  pay: DocNumberConfig;
+  ret: DocNumberConfig;
+  cn: DocNumberConfig;
+  qc: DocNumberConfig;
   defaultTermsConditions: string;
 }
 
 const DOC_TYPES = [
-  { key: 'invoice', label: 'Invoice', prefixField: 'invoicePrefix', counterField: 'nextInvoiceNumber' },
-  { key: 'quote', label: 'Quotation', prefixField: 'quotePrefix', counterField: 'nextQuoteNumber' },
-  { key: 'proforma', label: 'Proforma Invoice', prefixField: 'proformaPrefix', counterField: 'nextProformaNumber' },
-  { key: 'po', label: 'Purchase Order', prefixField: 'poPrefix', counterField: 'nextPONumber' },
-  { key: 'so', label: 'Sales Order', prefixField: 'soPrefix', counterField: 'nextSONumber' },
-  { key: 'grn', label: 'Goods Receipt', prefixField: 'grnPrefix', counterField: 'nextGRNNumber' },
+  { key: 'invoice', label: 'Invoice', prefixField: 'invoicePrefix', counterField: 'nextInvoiceNumber', group: 'Sales & Billing' },
+  { key: 'quote', label: 'Quotation', prefixField: 'quotePrefix', counterField: 'nextQuoteNumber', group: 'Sales & Billing' },
+  { key: 'proforma', label: 'Proforma Invoice', prefixField: 'proformaPrefix', counterField: 'nextProformaNumber', group: 'Sales & Billing' },
+  { key: 'so', label: 'Sales Order', prefixField: 'soPrefix', counterField: 'nextSONumber', group: 'Sales & Billing' },
+  { key: 'po', label: 'Purchase Order', prefixField: 'poPrefix', counterField: 'nextPONumber', group: 'Procurement' },
+  { key: 'grn', label: 'Goods Receipt', prefixField: 'grnPrefix', counterField: 'nextGRNNumber', group: 'Procurement' },
+  { key: 'mr', label: 'Material Request', prefixField: 'mrPrefix', counterField: 'nextMRNumber', group: 'Procurement' },
+  { key: 'wo', label: 'Work Order', prefixField: 'woPrefix', counterField: 'nextWONumber', group: 'Manufacturing' },
+  { key: 'prod', label: 'Production Order', prefixField: 'prodPrefix', counterField: 'nextProdNumber', group: 'Manufacturing' },
+  { key: 'dc', label: 'Dispatch Challan', prefixField: 'dcPrefix', counterField: 'nextDCNumber', group: 'Fulfillment' },
+  { key: 'pay', label: 'Payment', prefixField: 'payPrefix', counterField: 'nextPayNumber', group: 'Finance' },
+  { key: 'ret', label: 'Return', prefixField: 'retPrefix', counterField: 'nextRetNumber', group: 'Finance' },
+  { key: 'cn', label: 'Credit Note', prefixField: 'cnPrefix', counterField: 'nextCNNumber', group: 'Finance' },
+  { key: 'qc', label: 'QC Inspection', prefixField: 'qcPrefix', counterField: 'nextQCNumber', group: 'Quality' },
 ] as const;
+
+const GROUPS = ['Sales & Billing', 'Procurement', 'Manufacturing', 'Fulfillment', 'Finance', 'Quality'];
 
 function getPreview(prefix: string, nextNumber: number): string {
   const now = new Date();
@@ -41,6 +59,14 @@ export default function DocumentSettingsTab() {
     po: { prefix: 'PO', nextNumber: 1 },
     so: { prefix: 'SO', nextNumber: 1 },
     grn: { prefix: 'GRN', nextNumber: 1 },
+    wo: { prefix: 'WO', nextNumber: 1 },
+    prod: { prefix: 'PROD', nextNumber: 1 },
+    mr: { prefix: 'MR', nextNumber: 1 },
+    dc: { prefix: 'DC', nextNumber: 1 },
+    pay: { prefix: 'PAY', nextNumber: 1 },
+    ret: { prefix: 'RET', nextNumber: 1 },
+    cn: { prefix: 'CN', nextNumber: 1 },
+    qc: { prefix: 'QC', nextNumber: 1 },
     defaultTermsConditions: '',
   });
   const [loading, setLoading] = useState(true);
@@ -63,6 +89,14 @@ export default function DocumentSettingsTab() {
           po: { prefix: data.poPrefix || 'PO', nextNumber: data.nextPONumber || 1 },
           so: { prefix: data.soPrefix || 'SO', nextNumber: data.nextSONumber || 1 },
           grn: { prefix: data.grnPrefix || 'GRN', nextNumber: data.nextGRNNumber || 1 },
+          wo: { prefix: data.woPrefix || 'WO', nextNumber: data.nextWONumber || 1 },
+          prod: { prefix: data.prodPrefix || 'PROD', nextNumber: data.nextProdNumber || 1 },
+          mr: { prefix: data.mrPrefix || 'MR', nextNumber: data.nextMRNumber || 1 },
+          dc: { prefix: data.dcPrefix || 'DC', nextNumber: data.nextDCNumber || 1 },
+          pay: { prefix: data.payPrefix || 'PAY', nextNumber: data.nextPayNumber || 1 },
+          ret: { prefix: data.retPrefix || 'RET', nextNumber: data.nextRetNumber || 1 },
+          cn: { prefix: data.cnPrefix || 'CN', nextNumber: data.nextCNNumber || 1 },
+          qc: { prefix: data.qcPrefix || 'QC', nextNumber: data.nextQCNumber || 1 },
           defaultTermsConditions: data.defaultTermsConditions || '',
         });
       }
@@ -92,6 +126,22 @@ export default function DocumentSettingsTab() {
           nextSONumber: settings.so.nextNumber,
           grnPrefix: settings.grn.prefix,
           nextGRNNumber: settings.grn.nextNumber,
+          woPrefix: settings.wo.prefix,
+          nextWONumber: settings.wo.nextNumber,
+          prodPrefix: settings.prod.prefix,
+          nextProdNumber: settings.prod.nextNumber,
+          mrPrefix: settings.mr.prefix,
+          nextMRNumber: settings.mr.nextNumber,
+          dcPrefix: settings.dc.prefix,
+          nextDCNumber: settings.dc.nextNumber,
+          payPrefix: settings.pay.prefix,
+          nextPayNumber: settings.pay.nextNumber,
+          retPrefix: settings.ret.prefix,
+          nextRetNumber: settings.ret.nextNumber,
+          cnPrefix: settings.cn.prefix,
+          nextCNNumber: settings.cn.nextNumber,
+          qcPrefix: settings.qc.prefix,
+          nextQCNumber: settings.qc.nextNumber,
           defaultTermsConditions: settings.defaultTermsConditions || null,
         }),
       });
@@ -137,52 +187,58 @@ export default function DocumentSettingsTab() {
         </div>
       )}
 
-      {/* Document Numbering */}
-      <div className="bg-white border border-gray-200 rounded-lg p-6">
-        <h2 className="text-lg font-medium text-gray-900 mb-2">Document Numbering</h2>
-        <p className="text-sm text-gray-500 mb-6">
-          Configure prefixes and numbering sequences for each document type.
-        </p>
+      {/* Document Numbering - Grouped */}
+      {GROUPS.map(group => {
+        const groupDocs = DOC_TYPES.filter(d => d.group === group);
+        if (groupDocs.length === 0) return null;
+        return (
+          <div key={group} className="bg-white border border-gray-200 rounded-lg p-6">
+            <h2 className="text-lg font-medium text-gray-900 mb-2">{group}</h2>
+            <p className="text-sm text-gray-500 mb-4">
+              Configure prefixes and numbering sequences for {group.toLowerCase()} documents.
+            </p>
 
-        <div className="space-y-4">
-          {DOC_TYPES.map(({ key, label }) => {
-            const config = settings[key as keyof typeof settings] as DocNumberConfig;
-            return (
-              <div key={key} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end py-3 border-b border-gray-100 last:border-0">
-                <div>
-                  <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Prefix</label>
-                  <input
-                    type="text"
-                    value={config.prefix}
-                    onChange={e => updateDocConfig(key, 'prefix', e.target.value.toUpperCase())}
-                    maxLength={10}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Next Number</label>
-                  <input
-                    type="number"
-                    value={config.nextNumber}
-                    onChange={e => updateDocConfig(key, 'nextNumber', e.target.value)}
-                    min={1}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                  />
-                </div>
-                <div>
-                  <label className="block text-xs text-gray-500 mb-1">Preview</label>
-                  <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-mono text-gray-600">
-                    {getPreview(config.prefix, config.nextNumber)}
+            <div className="space-y-4">
+              {groupDocs.map(({ key, label }) => {
+                const config = settings[key as keyof typeof settings] as DocNumberConfig;
+                return (
+                  <div key={key} className="grid grid-cols-1 md:grid-cols-4 gap-4 items-end py-3 border-b border-gray-100 last:border-0">
+                    <div>
+                      <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Prefix</label>
+                      <input
+                        type="text"
+                        value={config.prefix}
+                        onChange={e => updateDocConfig(key, 'prefix', e.target.value.toUpperCase())}
+                        maxLength={10}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Next Number</label>
+                      <input
+                        type="number"
+                        value={config.nextNumber}
+                        onChange={e => updateDocConfig(key, 'nextNumber', e.target.value)}
+                        min={1}
+                        className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-gray-500 mb-1">Preview</label>
+                      <div className="px-3 py-2 bg-gray-50 border border-gray-200 rounded-lg text-sm font-mono text-gray-600">
+                        {getPreview(config.prefix, config.nextNumber)}
+                      </div>
+                    </div>
                   </div>
-                </div>
-              </div>
-            );
-          })}
-        </div>
-      </div>
+                );
+              })}
+            </div>
+          </div>
+        );
+      })}
 
       {/* Default Terms & Conditions */}
       <div className="bg-white border border-gray-200 rounded-lg p-6">

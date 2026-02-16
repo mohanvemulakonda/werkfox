@@ -61,6 +61,7 @@ export default function LeadDetailPage() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<Partial<Lead>>({});
+  const [converting, setConverting] = useState(false);
 
   useEffect(() => {
     fetchLead();
@@ -141,6 +142,24 @@ export default function LeadDetailPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleConvertToOpportunity = async () => {
+    setConverting(true);
+    setError('');
+    try {
+      const response = await fetch(`/api/leads/${leadId}/convert-to-opportunity`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Conversion failed');
+      router.push(`/admin/crm/opportunities/${data.id}`);
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setConverting(false);
+    }
+  };
+
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleString('en-IN', {
@@ -203,6 +222,15 @@ export default function LeadDetailPage() {
               </Link>
               {!editing ? (
                 <>
+                  {lead.stage !== 'NEW' && lead.stage !== 'LOST' && lead.status !== 'CONVERTED' && lead.status !== 'DISQUALIFIED' && (
+                    <button
+                      onClick={handleConvertToOpportunity}
+                      disabled={converting}
+                      className="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 disabled:opacity-50"
+                    >
+                      {converting ? 'Converting...' : 'Convert to Opportunity'}
+                    </button>
+                  )}
                   <button
                     onClick={() => setEditing(true)}
                     className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"

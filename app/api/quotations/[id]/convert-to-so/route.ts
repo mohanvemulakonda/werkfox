@@ -49,6 +49,7 @@ export async function POST(
         data: {
           soNumber,
           customerId: quotation.customerId,
+          quotationId: quotation.id,
           customerName: quotation.customerName,
           customerEmail: quotation.customerEmail,
           customerGst: quotation.customerGst,

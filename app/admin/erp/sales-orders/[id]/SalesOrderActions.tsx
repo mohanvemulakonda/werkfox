@@ -38,24 +38,20 @@ export default function SalesOrderActions({ salesOrderId, status }: SalesOrderAc
     }
   };
 
-  const handleConvertToInvoice = async () => {
+  const handleConversion = async (endpoint: string, redirectPath: string) => {
     setIsLoading(true);
     setError('');
-
     try {
-      const res = await fetch(`/api/sales-orders/${salesOrderId}/convert-to-invoice`, {
+      const res = await fetch(`/api/sales-orders/${salesOrderId}/${endpoint}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
       });
-
       if (!res.ok) {
         const data = await res.json();
-        throw new Error(data.error || 'Failed to convert to invoice');
+        throw new Error(data.error || 'Failed');
       }
-
-      const invoice = await res.json();
-      router.push(`/admin/erp/invoices/${invoice.id}`);
-      router.refresh();
+      const result = await res.json();
+      router.push(`${redirectPath}/${result.id}`);
     } catch (err: any) {
       setError(err.message);
     } finally {
@@ -117,12 +113,28 @@ export default function SalesOrderActions({ salesOrderId, status }: SalesOrderAc
               {isLoading ? 'Processing...' : 'Start Processing'}
             </button>
             <button
-              onClick={handleConvertToInvoice}
+              onClick={() => handleConversion('convert-to-invoice', '/admin/erp/invoices')}
               disabled={isLoading}
               className="admin-btn admin-btn-primary"
               style={{ backgroundColor: '#059669' }}
             >
               {isLoading ? 'Converting...' : 'Convert to Invoice'}
+            </button>
+            <button
+              onClick={() => handleConversion('create-production-order', '/admin/erp/production')}
+              disabled={isLoading}
+              className="admin-btn admin-btn-primary"
+              style={{ backgroundColor: '#d97706' }}
+            >
+              {isLoading ? 'Creating...' : 'Create Production Order'}
+            </button>
+            <button
+              onClick={() => handleConversion('create-dispatch', '/admin/erp/dispatch')}
+              disabled={isLoading}
+              className="admin-btn admin-btn-primary"
+              style={{ backgroundColor: '#0d9488' }}
+            >
+              {isLoading ? 'Creating...' : 'Create Dispatch'}
             </button>
             <button
               onClick={() => handleStatusChange('ON_HOLD')}
@@ -153,7 +165,7 @@ export default function SalesOrderActions({ salesOrderId, status }: SalesOrderAc
               {isLoading ? 'Processing...' : 'Complete'}
             </button>
             <button
-              onClick={handleConvertToInvoice}
+              onClick={() => handleConversion('convert-to-invoice', '/admin/erp/invoices')}
               disabled={isLoading}
               className="admin-btn admin-btn-primary"
               style={{ backgroundColor: '#059669' }}
@@ -161,11 +173,41 @@ export default function SalesOrderActions({ salesOrderId, status }: SalesOrderAc
               {isLoading ? 'Converting...' : 'Convert to Invoice'}
             </button>
             <button
+              onClick={() => handleConversion('create-production-order', '/admin/erp/production')}
+              disabled={isLoading}
+              className="admin-btn admin-btn-primary"
+              style={{ backgroundColor: '#d97706' }}
+            >
+              {isLoading ? 'Creating...' : 'Create Production Order'}
+            </button>
+            <button
+              onClick={() => handleConversion('create-dispatch', '/admin/erp/dispatch')}
+              disabled={isLoading}
+              className="admin-btn admin-btn-primary"
+              style={{ backgroundColor: '#0d9488' }}
+            >
+              {isLoading ? 'Creating...' : 'Create Dispatch'}
+            </button>
+            <button
               onClick={() => handleStatusChange('ON_HOLD')}
               disabled={isLoading}
               className="admin-btn admin-btn-secondary"
             >
               Put On Hold
+            </button>
+          </>
+        )}
+
+        {/* COMPLETED actions */}
+        {status === 'COMPLETED' && (
+          <>
+            <button
+              onClick={() => handleConversion('create-dispatch', '/admin/erp/dispatch')}
+              disabled={isLoading}
+              className="admin-btn admin-btn-primary"
+              style={{ backgroundColor: '#0d9488' }}
+            >
+              {isLoading ? 'Creating...' : 'Create Dispatch'}
             </button>
           </>
         )}

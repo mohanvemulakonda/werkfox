@@ -40,6 +40,7 @@ async function getSalesOrder(id: number) {
     where: { id },
     include: {
       customer: true,
+      quotation: { select: { id: true, quoteNumber: true } },
       items: {
         include: {
           product: { select: { name: true, sku: true } },
@@ -127,6 +128,19 @@ export default async function SalesOrderDetailPage({
 
       {/* Action Buttons */}
       <SalesOrderActions salesOrderId={salesOrder.id} status={salesOrder.status} />
+
+      {/* Source Document */}
+      {salesOrder.quotation && (
+        <div className="admin-detail-section mb-6">
+          <h3 className="admin-form-section-title">Source Document</h3>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">Created from Quotation:</span>
+            <Link href={`/admin/erp/quotes/${salesOrder.quotation.id}`} className="text-sm font-medium text-blue-600 hover:text-blue-800">
+              {salesOrder.quotation.quoteNumber}
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Customer Details */}
       <div className="admin-detail-section">

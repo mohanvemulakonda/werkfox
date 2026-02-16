@@ -6,6 +6,7 @@ import OrgSettingsClient from './OrgSettingsClient';
 import CompanyProfileTab from './tabs/CompanyProfileTab';
 import TaxBankingTab from './tabs/TaxBankingTab';
 import DocumentSettingsTab from './tabs/DocumentSettingsTab';
+import ModuleTogglesTab from './tabs/ModuleTogglesTab';
 import TeamOverviewTab from './tabs/TeamOverviewTab';
 import { type PackageType } from '@/lib/modules';
 
@@ -14,6 +15,7 @@ const TABS = [
   { id: 'company', label: 'Company Profile' },
   { id: 'tax', label: 'Tax & Banking' },
   { id: 'documents', label: 'Documents' },
+  { id: 'modules', label: 'Modules' },
   { id: 'team', label: 'Team' },
 ] as const;
 
@@ -71,6 +73,7 @@ export default function SettingsTabsClient({ organizationId, userRole, initialPa
         {activeTab === 'company' && <CompanyProfileTab />}
         {activeTab === 'tax' && <TaxBankingTab />}
         {activeTab === 'documents' && <DocumentSettingsTab />}
+        {activeTab === 'modules' && <ModuleTogglesTab />}
         {activeTab === 'team' && <TeamOverviewTab />}
       </div>
     </div>

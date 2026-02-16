@@ -42,6 +42,8 @@ interface Opportunity {
   }>;
   activities: any[];
   invoices: any[];
+  customerId?: number;
+  customer?: { id: number; name: string; };
 }
 
 const stages = ['QUALIFICATION', 'NEEDS_ANALYSIS', 'PROPOSAL', 'NEGOTIATION', 'CLOSED_WON', 'CLOSED_LOST'];
@@ -67,6 +69,7 @@ export default function OpportunityDetailPage() {
   const [editing, setEditing] = useState(false);
   const [saving, setSaving] = useState(false);
   const [formData, setFormData] = useState<Partial<Opportunity>>({});
+  const [converting, setConverting] = useState(false);
 
   useEffect(() => {
     fetchOpportunity();
@@ -151,6 +154,28 @@ export default function OpportunityDetailPage() {
     setFormData(prev => ({ ...prev, [name]: value }));
   };
 
+  const handleConversion = async (endpoint: string, redirectPath?: string) => {
+    setConverting(true);
+    setError('');
+    try {
+      const response = await fetch(`/api/opportunities/${opportunityId}/${endpoint}`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+      });
+      const data = await response.json();
+      if (!response.ok) throw new Error(data.error || 'Conversion failed');
+      if (redirectPath) {
+        router.push(`${redirectPath}/${data.id}`);
+      } else {
+        fetchOpportunity();
+      }
+    } catch (err: any) {
+      setError(err.message);
+    } finally {
+      setConverting(false);
+    }
+  };
+
   const formatDate = (dateString?: string) => {
     if (!dateString) return 'N/A';
     return new Date(dateString).toLocaleDateString('en-IN', {
@@ -225,6 +250,33 @@ export default function OpportunityDetailPage() {
               </Link>
               {!editing ? (
                 <>
+                  {opportunity.status === 'WON' && !opportunity.customerId && (
+                    <button
+                      onClick={() => handleConversion('convert-to-customer')}
+                      disabled={converting}
+                      className="px-4 py-2 bg-green-600 text-white rounded-md text-sm font-medium hover:bg-green-700 disabled:opacity-50"
+                    >
+                      {converting ? 'Converting...' : 'Convert to Customer'}
+                    </button>
+                  )}
+                  {(opportunity.status === 'WON' || opportunity.status === 'OPEN') && opportunity.customerId && (
+                    <button
+                      onClick={() => handleConversion('convert-to-quotation', '/admin/erp/quotations')}
+                      disabled={converting}
+                      className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
+                    >
+                      {converting ? 'Creating...' : 'Create Quotation'}
+                    </button>
+                  )}
+                  {(opportunity.status === 'WON' || opportunity.status === 'OPEN') && (
+                    <button
+                      onClick={() => handleConversion('convert-to-work-order', '/admin/erp/work-orders')}
+                      disabled={converting}
+                      className="px-4 py-2 bg-purple-600 text-white rounded-md text-sm font-medium hover:bg-purple-700 disabled:opacity-50"
+                    >
+                      {converting ? 'Creating...' : 'Create Work Order'}
+                    </button>
+                  )}
                   <button
                     onClick={() => setEditing(true)}
                     className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700"
@@ -456,6 +508,22 @@ export default function OpportunityDetailPage() {
 
           {/* Sidebar */}
           <div className="space-y-6">
+            {/* Linked Customer */}
+            {opportunity.customerId && opportunity.customer && (
+              <div className="bg-white shadow rounded-lg p-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">Linked Customer</h2>
+                <div className="flex items-center justify-between">
+                  <span className="text-sm text-gray-900">{opportunity.customer.name}</span>
+                  <Link
+                    href="/admin/customers"
+                    className="text-blue-600 hover:text-blue-800 text-sm font-medium"
+                  >
+                    View Customer →
+                  </Link>
+                </div>
+              </div>
+            )}
+
             {/* Stage & Status Management */}
             <div className="bg-white shadow rounded-lg p-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">Stage & Status</h2>

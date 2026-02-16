@@ -1,6 +1,6 @@
 import prisma from './prisma';
 
-type DocumentType = 'PO' | 'SO' | 'GRN' | 'QT' | 'INV';
+type DocumentType = 'PO' | 'SO' | 'GRN' | 'QT' | 'INV' | 'WO' | 'PROD' | 'MR' | 'DC' | 'PAY' | 'RET' | 'CN' | 'QC';
 
 const fieldMap: Record<DocumentType, { prefixField: string; counterField: string; defaultPrefix: string }> = {
   PO: { prefixField: 'poPrefix', counterField: 'nextPONumber', defaultPrefix: 'PO' },
@@ -8,6 +8,14 @@ const fieldMap: Record<DocumentType, { prefixField: string; counterField: string
   GRN: { prefixField: 'grnPrefix', counterField: 'nextGRNNumber', defaultPrefix: 'GRN' },
   QT: { prefixField: 'quotePrefix', counterField: 'nextQuoteNumber', defaultPrefix: 'QT' },
   INV: { prefixField: 'invoicePrefix', counterField: 'nextInvoiceNumber', defaultPrefix: 'INV' },
+  WO: { prefixField: 'woPrefix', counterField: 'nextWONumber', defaultPrefix: 'WO' },
+  PROD: { prefixField: 'prodPrefix', counterField: 'nextProdNumber', defaultPrefix: 'PROD' },
+  MR: { prefixField: 'mrPrefix', counterField: 'nextMRNumber', defaultPrefix: 'MR' },
+  DC: { prefixField: 'dcPrefix', counterField: 'nextDCNumber', defaultPrefix: 'DC' },
+  PAY: { prefixField: 'payPrefix', counterField: 'nextPayNumber', defaultPrefix: 'PAY' },
+  RET: { prefixField: 'retPrefix', counterField: 'nextRetNumber', defaultPrefix: 'RET' },
+  CN: { prefixField: 'cnPrefix', counterField: 'nextCNNumber', defaultPrefix: 'CN' },
+  QC: { prefixField: 'qcPrefix', counterField: 'nextQCNumber', defaultPrefix: 'QC' },
 };
 
 export async function generateDocumentNumber(type: DocumentType): Promise<string> {

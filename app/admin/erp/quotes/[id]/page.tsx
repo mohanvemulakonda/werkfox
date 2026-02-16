@@ -9,6 +9,7 @@ async function getQuotation(id: number) {
     where: { id },
     include: {
       customer: true,
+      opportunity: { select: { id: true, name: true } },
       items: {
         include: {
           product: {
@@ -120,6 +121,19 @@ export default async function QuotationDetailPage({
             )}
           </>
         )}
+
+      {/* Source Document */}
+      {quotation.opportunity && (
+        <div className="admin-detail-section mb-6">
+          <h3 className="admin-form-section-title">Source Document</h3>
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-gray-600">Created from Opportunity:</span>
+            <Link href={`/admin/crm/opportunities/${quotation.opportunity.id}`} className="text-sm font-medium text-blue-600 hover:text-blue-800">
+              {quotation.opportunity.name}
+            </Link>
+          </div>
+        </div>
+      )}
 
       {/* Company Header */}
       <div className="admin-detail-section mb-6">

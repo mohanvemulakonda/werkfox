@@ -2,6 +2,7 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
 import { getCompanySettings } from '@/lib/company-settings-cache';
+import InvoiceActions from './InvoiceActions';
 
 // Helper function to convert number to words (Indian style)
 function numberToWordsIndian(num: number): string {
@@ -56,6 +57,7 @@ async function getInvoice(id: number) {
         },
       },
       customer: true,
+      salesOrder: { select: { id: true, soNumber: true } },
     },
   });
 }
@@ -137,6 +139,31 @@ export default async function InvoiceDetailPage({ params }: PageProps) {
         </span>
       </div>
 
+      {/* Invoice Actions - Record Payment */}
+      <InvoiceActions
+        invoiceId={invoice.id}
+        currentStatus={invoice.status}
+        currentType={invoiceType}
+        balanceDue={Number((invoice as any).balanceDue || invoice.total)}
+        currency="INR"
+      />
+
+      {/* Payment Info */}
+      {Number((invoice as any).amountPaid || 0) > 0 && (
+        <div className="mb-6 bg-green-50 border border-green-200 rounded-lg p-4">
+          <div className="flex justify-between items-center">
+            <div>
+              <span className="text-sm font-medium text-green-800">Amount Paid: </span>
+              <span className="text-sm font-bold text-green-900">INR {Number((invoice as any).amountPaid).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+            </div>
+            <div>
+              <span className="text-sm font-medium text-gray-600">Balance Due: </span>
+              <span className="text-sm font-bold text-gray-900">INR {Number((invoice as any).balanceDue || 0).toLocaleString('en-IN', { minimumFractionDigits: 2 })}</span>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* Invoice Preview */}
       <div className="bg-white shadow-lg border-2 border-gray-300 rounded-lg overflow-hidden">
         <div className="p-4">
@@ -198,6 +225,12 @@ export default async function InvoiceDetailPage({ params }: PageProps) {
                     <div className="flex text-xs font-inter">
                       <span className="font-semibold text-gray-900 w-32">PO Reference</span>
                       <span className="text-gray-600">: {(invoice as any).poReference}</span>
+                    </div>
+                  )}
+                  {invoice.salesOrder && (
+                    <div className="flex text-xs font-inter">
+                      <span className="font-semibold text-gray-900 w-32">Sales Order</span>
+                      <span className="text-gray-600">: <Link href={`/admin/erp/sales-orders/${invoice.salesOrder.id}`} className="text-blue-600 hover:text-blue-800">{invoice.salesOrder.soNumber}</Link></span>
                     </div>
                   )}
                 </div>
