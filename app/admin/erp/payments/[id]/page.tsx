@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
+import PaymentActions from './PaymentActions';
 
 const statusBadgeClass: Record<string, string> = {
   DRAFT: 'admin-badge admin-badge-draft',
@@ -50,6 +51,8 @@ export default async function PaymentDetailPage({ params }: { params: Promise<{ 
         </div>
         <Link href="/admin/erp/payments" className="admin-btn admin-btn-secondary">Back to Payments</Link>
       </div>
+
+      <PaymentActions paymentId={payment.id} status={payment.status} />
 
       <div className="admin-detail-section">
         <h3 className="admin-form-section-title">Payment Details</h3>

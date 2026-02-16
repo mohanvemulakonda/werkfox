@@ -66,6 +66,7 @@ export default function MaterialRequestActions({ materialRequestId, status }: Pr
       <div className="flex flex-wrap gap-3">
         {status === 'DRAFT' && (
           <>
+            <button onClick={() => router.push(`/admin/erp/material-requests/${materialRequestId}/edit`)} className="admin-btn admin-btn-secondary" disabled={loading}>Edit</button>
             <button onClick={() => handleStatusChange('SUBMITTED')} className="admin-btn admin-btn-primary" disabled={loading}>Submit for Approval</button>
           </>
         )}
