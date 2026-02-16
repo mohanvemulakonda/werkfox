@@ -19,7 +19,7 @@ async function getInventory() {
   const inventory = await prisma.inventory.findMany({
     orderBy: { updatedAt: 'desc' },
     include: {
-      product: { select: { name: true, sku: true, reorderLevel: true, costPrice: true, category: { select: { name: true } } } },
+      product: { select: { name: true, sku: true, reorderLevel: true, costPrice: true, categoryRef: { select: { name: true } } } },
       location: { select: { name: true } },
     },
   });
@@ -134,7 +134,7 @@ export default async function InventoryPage() {
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter font-mono">{item.product.sku}</td>
                       <td className="px-6 py-4">
                         <div className="text-sm font-medium text-gray-900 font-inter">{item.product.name}</div>
-                        <div className="text-xs text-gray-500 font-inter">{item.product.category?.name || ''}</div>
+                        <div className="text-xs text-gray-500 font-inter">{item.product.categoryRef?.name || ''}</div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">{item.location?.name || '-'}</td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">

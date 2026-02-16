@@ -45,7 +45,6 @@ export async function PUT(
     const { id } = await params;
     const productId = parseInt(id);
 
-    // Check if product exists
     const existing = await prisma.products.findUnique({
       where: { id: productId }
     });
@@ -54,12 +53,11 @@ export async function PUT(
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
-    // If SKU is being changed, check if new SKU already exists
+    // If SKU is being changed, check uniqueness
     if (body.sku && body.sku !== existing.sku) {
       const skuExists = await prisma.products.findUnique({
         where: { sku: body.sku }
       });
-
       if (skuExists) {
         return NextResponse.json(
           { error: 'A product with this SKU already exists' },
@@ -74,43 +72,21 @@ export async function PUT(
         sku: body.sku,
         name: body.name,
         description: body.description || null,
-        category: body.category || null,
-        subCategory: body.subCategory || null,
-        basePrice: body.basePrice,
+        productType: body.productType || null,
+        subType: body.subType || null,
+        basePrice: parseFloat(body.basePrice),
+        costPrice: body.costPrice ? parseFloat(body.costPrice) : null,
+        mrp: body.mrp ? parseFloat(body.mrp) : null,
         currency: body.currency || 'INR',
         hsnCode: body.hsnCode || null,
-        gstRate: body.gstRate,
-        unit: body.unit || 'Nos',
+        gstRate: parseFloat(body.gstRate),
+        unit: body.unit || 'PCS',
         isActive: body.isActive ?? true,
-        stockQuantity: body.stockQuantity || 0,
-        // Label-specific fields
-        labelMaterial: body.labelMaterial || null,
-        labelSize: body.labelSize || null,
-        labelShape: body.labelShape || null,
-        labelAdhesive: body.labelAdhesive || null,
-        labelFinish: body.labelFinish || null,
-        printMethod: body.printMethod || null,
-        coreSize: body.coreSize || null,
-        rollSize: body.rollSize || null,
-        // Ribbon-specific fields
-        ribbonType: body.ribbonType || null,
-        ribbonWidth: body.ribbonWidth || null,
-        ribbonLength: body.ribbonLength || null,
-        ribbonColor: body.ribbonColor || null,
-        // Printer-specific fields
-        printerBrand: body.printerBrand || null,
-        printerModel: body.printerModel || null,
-        printerType: body.printerType || null,
-        printTechnology: body.printTechnology || null,
-        printResolution: body.printResolution || null,
-        printSpeed: body.printSpeed || null,
-        maxPrintWidth: body.maxPrintWidth || null,
-        connectivity: body.connectivity || null,
-        // Software/Service-specific fields
-        licenseType: body.licenseType || null,
-        licensePeriod: body.licensePeriod || null,
-        maxUsers: body.maxUsers ? parseInt(body.maxUsers) : null,
-        serviceType: body.serviceType || null,
+        isTaxable: body.isTaxable ?? true,
+        stockQuantity: parseInt(body.stockQuantity) || 0,
+        reorderLevel: body.reorderLevel ? parseInt(body.reorderLevel) : null,
+        specifications: body.specifications || null,
+        imageUrl: body.imageUrl || null,
       }
     });
 
@@ -137,7 +113,6 @@ export async function DELETE(
     const { id } = await params;
     const productId = parseInt(id);
 
-    // Check if product exists
     const existing = await prisma.products.findUnique({
       where: { id: productId }
     });
@@ -146,14 +121,10 @@ export async function DELETE(
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
-    // Check if product is used in any opportunities or invoices
+    // Check if product is used in any documents
     const [opportunityCount, invoiceCount] = await Promise.all([
-      prisma.opportunity_products.count({
-        where: { productId }
-      }),
-      prisma.invoice_items.count({
-        where: { productId }
-      })
+      prisma.opportunity_products.count({ where: { productId } }),
+      prisma.invoice_items.count({ where: { productId } })
     ]);
 
     if (opportunityCount > 0 || invoiceCount > 0) {

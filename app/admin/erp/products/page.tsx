@@ -4,12 +4,12 @@ import prisma from '@/lib/prisma';
 async function getProducts() {
   const products = await prisma.products.findMany({
     orderBy: { createdAt: 'desc' },
-    include: { category: { select: { name: true } } },
+    include: { categoryRef: { select: { name: true } } },
   });
 
   const total = products.length;
   const active = products.filter(p => p.isActive).length;
-  const categories = new Set(products.map(p => p.category?.name).filter(Boolean)).size;
+  const categories = new Set(products.map(p => p.productType || (p.categoryRef as any)?.name).filter(Boolean)).size;
 
   return { products, stats: { total, active, categories } };
 }
@@ -94,7 +94,7 @@ export default async function ProductsPage() {
                         <div className="text-sm text-gray-500 font-inter truncate max-w-xs">{product.description}</div>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">{product.category?.name || '-'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">{product.productType || (product.categoryRef as any)?.name || '-'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">{product.hsnCode || '-'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">
                       {product.currency} {Number(product.basePrice).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}

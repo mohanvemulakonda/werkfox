@@ -461,11 +461,14 @@ model products {
   reorderLevel     Int?     @default(0)
   isActive         Boolean  @default(true)
   isTaxable        Boolean  @default(true)
+  productType      String?  @db.VarChar(100)
+  subType          String?  @db.VarChar(100)
+  specifications   Json?
   imageUrl         String?  @db.VarChar(500)
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  category              categories?             @relation(fields: [categoryId], references: [id])
+  categoryRef           categories?             @relation(fields: [categoryId], references: [id])
   purchaseOrderItems    purchase_order_items[]
   grnItems              grn_items[]
   inventoryRecords      inventory[]

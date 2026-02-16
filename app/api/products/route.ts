@@ -11,14 +11,22 @@ export async function GET(request: NextRequest) {
 
     const { searchParams } = new URL(request.url);
     const isActive = searchParams.get('isActive');
-    const category = searchParams.get('category');
+    const productType = searchParams.get('productType');
+    const search = searchParams.get('search');
 
     const where: any = {};
     if (isActive !== null) {
       where.isActive = isActive === 'true';
     }
-    if (category) {
-      where.category = category;
+    if (productType) {
+      where.productType = productType;
+    }
+    if (search) {
+      where.OR = [
+        { name: { contains: search } },
+        { sku: { contains: search } },
+        { description: { contains: search } },
+      ];
     }
 
     const products = await prisma.products.findMany({
@@ -70,43 +78,21 @@ export async function POST(request: NextRequest) {
         sku: body.sku,
         name: body.name,
         description: body.description || null,
-        category: body.category || null,
-        subCategory: body.subCategory || null,
-        basePrice: body.basePrice,
+        productType: body.productType || null,
+        subType: body.subType || null,
+        basePrice: parseFloat(body.basePrice),
+        costPrice: body.costPrice ? parseFloat(body.costPrice) : null,
+        mrp: body.mrp ? parseFloat(body.mrp) : null,
         currency: body.currency || 'INR',
         hsnCode: body.hsnCode || null,
-        gstRate: body.gstRate,
-        unit: body.unit || 'Nos',
+        gstRate: parseFloat(body.gstRate),
+        unit: body.unit || 'PCS',
         isActive: body.isActive ?? true,
-        stockQuantity: body.stockQuantity || 0,
-        // Label-specific fields
-        labelMaterial: body.labelMaterial || null,
-        labelSize: body.labelSize || null,
-        labelShape: body.labelShape || null,
-        labelAdhesive: body.labelAdhesive || null,
-        labelFinish: body.labelFinish || null,
-        printMethod: body.printMethod || null,
-        coreSize: body.coreSize || null,
-        rollSize: body.rollSize || null,
-        // Ribbon-specific fields
-        ribbonType: body.ribbonType || null,
-        ribbonWidth: body.ribbonWidth || null,
-        ribbonLength: body.ribbonLength || null,
-        ribbonColor: body.ribbonColor || null,
-        // Printer-specific fields
-        printerBrand: body.printerBrand || null,
-        printerModel: body.printerModel || null,
-        printerType: body.printerType || null,
-        printTechnology: body.printTechnology || null,
-        printResolution: body.printResolution || null,
-        printSpeed: body.printSpeed || null,
-        maxPrintWidth: body.maxPrintWidth || null,
-        connectivity: body.connectivity || null,
-        // Software/Service-specific fields
-        licenseType: body.licenseType || null,
-        licensePeriod: body.licensePeriod || null,
-        maxUsers: body.maxUsers ? parseInt(body.maxUsers) : null,
-        serviceType: body.serviceType || null,
+        isTaxable: body.isTaxable ?? true,
+        stockQuantity: parseInt(body.stockQuantity) || 0,
+        reorderLevel: body.reorderLevel ? parseInt(body.reorderLevel) : null,
+        specifications: body.specifications || null,
+        imageUrl: body.imageUrl || null,
       }
     });
 
