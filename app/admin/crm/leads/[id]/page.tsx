@@ -125,7 +125,7 @@ export default function LeadDetailPage() {
       });
 
       if (response.ok) {
-        router.push('/admin/leads');
+        router.push('/admin/crm/leads');
       } else {
         const data = await response.json();
         setError(data.error || 'Failed to delete lead');
@@ -165,7 +165,7 @@ export default function LeadDetailPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">{error}</p>
-          <Link href="/admin/leads" className="text-blue-600 hover:underline">
+          <Link href="/admin/crm/leads" className="text-blue-600 hover:underline">
             ← Back to Leads
           </Link>
         </div>
@@ -196,7 +196,7 @@ export default function LeadDetailPage() {
             </div>
             <div className="flex gap-2">
               <Link
-                href="/admin/leads"
+                href="/admin/crm/leads"
                 className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 ← Back

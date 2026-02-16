@@ -3,6 +3,8 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 interface Activity {
   id: number;
   type: string;
@@ -129,6 +131,12 @@ export default function ActivitiesPage() {
               >
                 ← Back to Dashboard
               </Link>
+              <Link
+                href="/admin/crm/activities/create"
+                className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
+              >
+                + Log Activity
+              </Link>
             </div>
           </div>
         </div>
@@ -238,9 +246,8 @@ export default function ActivitiesPage() {
               {filteredActivities.map((activity) => (
                 <div
                   key={activity.id}
-                  className={`p-6 hover:bg-gray-50 ${
-                    isPastDue(activity) ? 'bg-red-50 border-l-4 border-red-500' : ''
-                  }`}
+                  className={`p-6 hover:bg-gray-50 ${isPastDue(activity) ? 'bg-red-50 border-l-4 border-red-500' : ''
+                    }`}
                 >
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -257,7 +264,11 @@ export default function ActivitiesPage() {
                           </span>
                         )}
                       </div>
-                      <h3 className="text-lg font-medium text-gray-900 mb-1">{activity.subject}</h3>
+                      <h3 className="text-lg font-medium text-gray-900 mb-1">
+                        <Link href={`/admin/crm/activities/${activity.id}`} className="hover:text-blue-600">
+                          {activity.subject}
+                        </Link>
+                      </h3>
                       {activity.description && (
                         <p className="text-sm text-gray-600 mb-2">{activity.description}</p>
                       )}
@@ -289,7 +300,7 @@ export default function ActivitiesPage() {
                       <div className="mt-3 flex items-center gap-4 text-sm">
                         {activity.lead && (
                           <Link
-                            href={`/admin/leads/${activity.lead.id}`}
+                            href={`/admin/crm/leads/${activity.lead.id}`}
                             className="text-blue-600 hover:text-blue-800"
                           >
                             Lead: {activity.lead.name}
@@ -297,7 +308,7 @@ export default function ActivitiesPage() {
                         )}
                         {activity.opportunity && (
                           <Link
-                            href={`/admin/opportunities/${activity.opportunity.id}`}
+                            href={`/admin/crm/opportunities/${activity.opportunity.id}`}
                             className="text-purple-600 hover:text-purple-800"
                           >
                             Opportunity: {activity.opportunity.name}

@@ -1,16 +1,13 @@
-import Link from 'next/link';
+import prisma from '@/lib/prisma';
 
-// Demo subscribers data
-const demoSubscribers = [
-  { id: 1, email: 'john.doe@techcorp.com', isActive: true, subscribedAt: new Date('2026-01-15') },
-  { id: 2, email: 'priya.sharma@manufacturing.in', isActive: true, subscribedAt: new Date('2026-01-12') },
-  { id: 3, email: 'amit.patel@gmail.com', isActive: true, subscribedAt: new Date('2026-01-10') },
-  { id: 4, email: 'sales@industrialparts.com', isActive: false, subscribedAt: new Date('2025-12-28') },
-  { id: 5, email: 'purchasing@sharmasteel.in', isActive: true, subscribedAt: new Date('2025-12-20') },
-];
+async function getSubscribers() {
+  return prisma.subscribers.findMany({
+    orderBy: { subscribedAt: 'desc' },
+  });
+}
 
-export default function SubscribersPage() {
-  const subscribers = demoSubscribers;
+export default async function SubscribersPage() {
+  const subscribers = await getSubscribers();
   const activeCount = subscribers.filter(s => s.isActive).length;
 
   return (
@@ -51,23 +48,15 @@ export default function SubscribersPage() {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Email
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Subscribed Date
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Email</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Subscribed Date</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {subscribers.map((subscriber) => (
                   <tr key={subscriber.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-inter">
-                      {subscriber.email}
-                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900 font-inter">{subscriber.email}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 text-xs font-medium bg-gray-100 border border-gray-900 font-inter ${subscriber.isActive ? 'text-gray-900' : 'text-gray-500'}`}>
                         {subscriber.isActive ? 'Active' : 'Inactive'}

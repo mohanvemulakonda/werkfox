@@ -1,29 +1,19 @@
 import AdminHeader from './components/AdminHeader';
 import MainSidebar from './components/MainSidebar';
 import Image from 'next/image';
-
-// Demo user for testing without auth
-const demoSession = {
-  user: {
-    name: 'Demo User',
-    email: 'demo@werkfox.com'
-  },
-  organizations: [
-    { id: 'demo-org', name: 'WerkFox Demo', slug: 'werkfox-demo', role: 'admin' }
-  ],
-  currentOrg: {
-    id: 'demo-org',
-    name: 'WerkFox Demo',
-    enabledModules: ['leads', 'opportunities', 'activities', 'contacts', 'customers', 'products', 'invoices', 'subscribers', 'downloads', 'team', 'settings']
-  }
-};
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 export default async function AdminLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const session = demoSession;
+  const session = await auth();
+
+  if (!session) {
+    redirect('/sign-in');
+  }
 
   return (
     <div className="admin-layout">

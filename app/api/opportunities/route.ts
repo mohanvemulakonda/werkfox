@@ -10,6 +10,9 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
+    }
 
     const searchParams = request.nextUrl.searchParams;
     const stage = searchParams.get('stage');
@@ -20,8 +23,8 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    // Build filter conditions
-    const where: any = {};
+    // Build filter conditions — always scoped to organization
+    const where: any = { organizationId: session.currentOrg.id };
 
     if (stage) {
       where.stage = stage;
@@ -48,7 +51,7 @@ export async function GET(request: NextRequest) {
 
     // Get opportunities with pagination
     const [opportunities, total] = await Promise.all([
-      prisma.opportunity.findMany({
+      prisma.opportunities.findMany({
         where,
         include: {
           lead: {
@@ -69,16 +72,12 @@ export async function GET(request: NextRequest) {
             orderBy: { createdAt: 'desc' },
             take: 5,
           },
-          invoices: {
-            orderBy: { createdAt: 'desc' },
-            take: 5,
-          },
         },
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip: offset,
       }),
-      prisma.opportunity.count({ where }),
+      prisma.opportunities.count({ where }),
     ]);
 
     return NextResponse.json({
@@ -103,6 +102,9 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
     }
 
     const body = await request.json();
@@ -129,9 +131,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if lead exists
-    const lead = await prisma.lead.findUnique({
-      where: { id: parseInt(leadId) },
+    // Check if lead exists and belongs to this org
+    const lead = await prisma.leads.findFirst({
+      where: { id: parseInt(leadId), organizationId: session.currentOrg.id },
     });
 
     if (!lead) {
@@ -139,8 +141,9 @@ export async function POST(request: NextRequest) {
     }
 
     // Create opportunity with products
-    const opportunity = await prisma.opportunity.create({
+    const opportunity = await prisma.opportunities.create({
       data: {
+        organizationId: session.currentOrg.id,
         name,
         description,
         leadId: parseInt(leadId),
@@ -156,15 +159,15 @@ export async function POST(request: NextRequest) {
         notes,
         ...(products &&
           products.length > 0 && {
-            products: {
-              create: products.map((p: any) => ({
-                productId: parseInt(p.productId),
-                quantity: parseFloat(p.quantity),
-                unitPrice: parseFloat(p.unitPrice),
-                discount: parseFloat(p.discount || 0),
-              })),
-            },
-          }),
+          products: {
+            create: products.map((p: any) => ({
+              productId: parseInt(p.productId),
+              quantity: parseFloat(p.quantity),
+              unitPrice: parseFloat(p.unitPrice),
+              discount: parseFloat(p.discount || 0),
+            })),
+          },
+        }),
       },
       include: {
         lead: true,
@@ -174,7 +177,6 @@ export async function POST(request: NextRequest) {
           },
         },
         activities: true,
-        invoices: true,
       },
     });
 

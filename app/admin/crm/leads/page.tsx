@@ -132,7 +132,7 @@ export default function LeadsPage() {
                 ← Back to Dashboard
               </Link>
               <Link
-                href="/admin/leads/create"
+                href="/admin/crm/leads/create"
                 className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
               >
                 + Create New Lead
@@ -246,7 +246,7 @@ export default function LeadsPage() {
           <div className="bg-white shadow rounded-lg p-12 text-center">
             <p className="text-gray-500">No leads found</p>
             <Link
-              href="/admin/leads/create"
+              href="/admin/crm/leads/create"
               className="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
               Create Your First Lead
@@ -325,7 +325,7 @@ export default function LeadsPage() {
                     </td>
                     <td className="px-6 py-4 text-sm font-medium">
                       <Link
-                        href={`/admin/leads/${lead.id}`}
+                        href={`/admin/crm/leads/${lead.id}`}
                         className="text-blue-600 hover:text-blue-900 mr-4"
                       >
                         View

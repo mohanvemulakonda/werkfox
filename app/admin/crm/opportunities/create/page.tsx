@@ -80,7 +80,7 @@ export default function CreateOpportunityPage() {
       const data = await response.json();
 
       if (response.ok) {
-        router.push(`/admin/opportunities/${data.id}`);
+        router.push(`/admin/crm/opportunities/${data.id}`);
       } else {
         setError(data.error || 'Failed to create opportunity');
       }
@@ -105,7 +105,7 @@ export default function CreateOpportunityPage() {
               </p>
             </div>
             <Link
-              href="/admin/opportunities"
+              href="/admin/crm/opportunities"
               className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
             >
               ← Back to Opportunities
@@ -165,7 +165,7 @@ export default function CreateOpportunityPage() {
                 )}
                 {leads.length === 0 && !loadingLeads && (
                   <p className="mt-1 text-sm text-gray-500">
-                    No active leads found. <Link href="/admin/leads/create" className="text-blue-600 hover:underline">Create a lead first</Link>
+                    No active leads found. <Link href="/admin/crm/leads/create" className="text-blue-600 hover:underline">Create a lead first</Link>
                   </p>
                 )}
               </div>
@@ -334,7 +334,7 @@ export default function CreateOpportunityPage() {
           {/* Submit Button */}
           <div className="flex justify-end gap-3 pt-4 border-t">
             <Link
-              href="/admin/opportunities"
+              href="/admin/crm/opportunities"
               className="px-6 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               Cancel

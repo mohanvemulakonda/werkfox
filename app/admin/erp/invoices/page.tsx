@@ -1,55 +1,15 @@
 import Link from 'next/link';
+import prisma from '@/lib/prisma';
 
-// Demo invoices data
-const demoInvoices = [
-  {
-    id: 1,
-    invoiceNumber: 'INV-2026-001',
-    customerName: 'Tech Manufacturing Pvt Ltd',
-    customerEmail: 'accounts@techmanufacturing.com',
-    type: 'INVOICE',
-    currency: 'INR',
-    total: 125000,
-    status: 'PAID',
-    createdAt: new Date('2026-01-25'),
-  },
-  {
-    id: 2,
-    invoiceNumber: 'INV-2026-002',
-    customerName: 'Sharma Steel Works',
-    customerEmail: 'purchase@sharmasteel.in',
-    type: 'INVOICE',
-    currency: 'INR',
-    total: 87500,
-    status: 'SENT',
-    createdAt: new Date('2026-01-22'),
-  },
-  {
-    id: 3,
-    invoiceNumber: 'QUO-2026-001',
-    customerName: 'Patel Plastics Industries',
-    customerEmail: 'info@patelplastics.com',
-    type: 'QUOTE',
-    currency: 'INR',
-    total: 225000,
-    status: 'DRAFT',
-    createdAt: new Date('2026-01-20'),
-  },
-  {
-    id: 4,
-    invoiceNumber: 'PRO-2026-001',
-    customerName: 'Chennai Enterprises',
-    customerEmail: 'orders@chennaienterprises.co.in',
-    type: 'PROFORMA',
-    currency: 'INR',
-    total: 156000,
-    status: 'SENT',
-    createdAt: new Date('2026-01-18'),
-  },
-];
+async function getInvoices() {
+  return prisma.invoices.findMany({
+    orderBy: { createdAt: 'desc' },
+    include: { customer: { select: { name: true, email: true } } },
+  });
+}
 
-export default function InvoicesPage() {
-  const invoices = demoInvoices;
+export default async function InvoicesPage() {
+  const invoices = await getInvoices();
 
   return (
     <div>
@@ -88,27 +48,12 @@ export default function InvoicesPage() {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Invoice #
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Customer
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Type
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Total
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Actions
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Invoice #</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Customer</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Total</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -119,15 +64,10 @@ export default function InvoicesPage() {
                     </td>
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium text-gray-900 font-inter">{invoice.customerName}</div>
-                      <div className="text-sm text-gray-500 font-inter">{invoice.customerEmail}</div>
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap">
-                      <span className="px-2 py-1 text-xs font-medium bg-gray-100 text-gray-900 border border-gray-900 font-inter">
-                        {invoice.type}
-                      </span>
+                      <div className="text-sm text-gray-500 font-inter">{invoice.customerEmail || ''}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">
-                      {invoice.currency} {invoice.total.toLocaleString('en-IN')}
+                      {invoice.currency} {Number(invoice.total).toLocaleString('en-IN')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2 py-1 text-xs font-medium border font-inter ${
@@ -142,10 +82,7 @@ export default function InvoicesPage() {
                       {invoice.createdAt.toLocaleDateString()}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <Link
-                        href={`/admin/erp/invoices/${invoice.id}`}
-                        className="text-blue-600 hover:text-blue-700 font-medium font-inter"
-                      >
+                      <Link href={`/admin/erp/invoices/${invoice.id}`} className="text-blue-600 hover:text-blue-700 font-medium font-inter">
                         View
                       </Link>
                     </td>

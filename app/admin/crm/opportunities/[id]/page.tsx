@@ -4,6 +4,8 @@ import { useEffect, useState } from 'react';
 import { useRouter, useParams } from 'next/navigation';
 import Link from 'next/link';
 
+export const dynamic = 'force-dynamic';
+
 interface Opportunity {
   id: number;
   name: string;
@@ -133,7 +135,7 @@ export default function OpportunityDetailPage() {
       });
 
       if (response.ok) {
-        router.push('/admin/opportunities');
+        router.push('/admin/crm/opportunities');
       } else {
         const data = await response.json();
         setError(data.error || 'Failed to delete opportunity');
@@ -180,7 +182,7 @@ export default function OpportunityDetailPage() {
       <div className="min-h-screen bg-gray-50 flex items-center justify-center">
         <div className="text-center">
           <p className="text-red-600 mb-4">{error}</p>
-          <Link href="/admin/opportunities" className="text-blue-600 hover:underline">
+          <Link href="/admin/crm/opportunities" className="text-blue-600 hover:underline">
             ← Back to Opportunities
           </Link>
         </div>
@@ -216,7 +218,7 @@ export default function OpportunityDetailPage() {
             </div>
             <div className="flex gap-2">
               <Link
-                href="/admin/opportunities"
+                href="/admin/crm/opportunities"
                 className="px-4 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
               >
                 ← Back
@@ -384,7 +386,7 @@ export default function OpportunityDetailPage() {
               </dl>
               <div className="mt-4">
                 <Link
-                  href={`/admin/leads/${opportunity.lead.id}`}
+                  href={`/admin/crm/leads/${opportunity.lead.id}`}
                   className="text-blue-600 hover:text-blue-800 text-sm font-medium"
                 >
                   View Lead Details →

@@ -10,6 +10,9 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
+    }
 
     const searchParams = request.nextUrl.searchParams;
     const stage = searchParams.get('stage');
@@ -19,8 +22,8 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '50');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    // Build filter conditions
-    const where: any = {};
+    // Build filter conditions — always scoped to organization
+    const where: any = { organizationId: session.currentOrg.id };
 
     if (stage) {
       where.stage = stage;
@@ -45,7 +48,7 @@ export async function GET(request: NextRequest) {
 
     // Get leads with pagination
     const [leads, total] = await Promise.all([
-      prisma.lead.findMany({
+      prisma.leads.findMany({
         where,
         include: {
           activities: {
@@ -55,16 +58,12 @@ export async function GET(request: NextRequest) {
           opportunities: {
             orderBy: { createdAt: 'desc' },
           },
-          invoices: {
-            orderBy: { createdAt: 'desc' },
-            take: 5,
-          },
         },
         orderBy: { createdAt: 'desc' },
         take: limit,
         skip: offset,
       }),
-      prisma.lead.count({ where }),
+      prisma.leads.count({ where }),
     ]);
 
     return NextResponse.json({
@@ -89,6 +88,9 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
     }
 
     const body = await request.json();
@@ -124,9 +126,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create lead
-    const lead = await prisma.lead.create({
+    // Create lead scoped to organization
+    const lead = await prisma.leads.create({
       data: {
+        organizationId: session.currentOrg.id,
         name,
         email,
         phone,
@@ -152,7 +155,6 @@ export async function POST(request: NextRequest) {
       include: {
         activities: true,
         opportunities: true,
-        invoices: true,
       },
     });
 

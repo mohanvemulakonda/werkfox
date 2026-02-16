@@ -13,6 +13,9 @@ export async function GET(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
+    }
 
     const activityId = parseInt(params.id);
 
@@ -23,8 +26,8 @@ export async function GET(
       );
     }
 
-    const activity = await prisma.activity.findUnique({
-      where: { id: activityId },
+    const activity = await prisma.activities.findFirst({
+      where: { id: activityId, organizationId: session.currentOrg.id },
       include: {
         lead: true,
         opportunity: {
@@ -67,6 +70,9 @@ export async function PUT(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
+    }
 
     const activityId = parseInt(params.id);
 
@@ -91,9 +97,9 @@ export async function PUT(
       assignedTo,
     } = body;
 
-    // Check if activity exists
-    const existingActivity = await prisma.activity.findUnique({
-      where: { id: activityId },
+    // Check if activity exists and belongs to this org
+    const existingActivity = await prisma.activities.findFirst({
+      where: { id: activityId, organizationId: session.currentOrg.id },
     });
 
     if (!existingActivity) {
@@ -104,7 +110,7 @@ export async function PUT(
     }
 
     // Update activity
-    const activity = await prisma.activity.update({
+    const activity = await prisma.activities.update({
       where: { id: activityId },
       data: {
         ...(type !== undefined && { type }),
@@ -122,8 +128,8 @@ export async function PUT(
         // Track completion date if status changes to COMPLETED
         ...(status === 'COMPLETED' &&
           existingActivity.status !== 'COMPLETED' && {
-            completedAt: new Date(),
-          }),
+          completedAt: new Date(),
+        }),
       },
       include: {
         lead: {
@@ -166,6 +172,9 @@ export async function DELETE(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
+    }
 
     const activityId = parseInt(params.id);
 
@@ -176,9 +185,9 @@ export async function DELETE(
       );
     }
 
-    // Check if activity exists
-    const existingActivity = await prisma.activity.findUnique({
-      where: { id: activityId },
+    // Check if activity exists and belongs to this org
+    const existingActivity = await prisma.activities.findFirst({
+      where: { id: activityId, organizationId: session.currentOrg.id },
     });
 
     if (!existingActivity) {
@@ -189,7 +198,7 @@ export async function DELETE(
     }
 
     // Delete activity
-    await prisma.activity.delete({
+    await prisma.activities.delete({
       where: { id: activityId },
     });
 

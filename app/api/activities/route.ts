@@ -10,6 +10,9 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
+    }
 
     const searchParams = request.nextUrl.searchParams;
     const type = searchParams.get('type');
@@ -20,8 +23,8 @@ export async function GET(request: NextRequest) {
     const limit = parseInt(searchParams.get('limit') || '100');
     const offset = parseInt(searchParams.get('offset') || '0');
 
-    // Build filter conditions
-    const where: any = {};
+    // Build filter conditions — always scoped to organization
+    const where: any = { organizationId: session.currentOrg.id };
 
     if (type) {
       where.type = type;
@@ -45,7 +48,7 @@ export async function GET(request: NextRequest) {
 
     // Get activities with pagination
     const [activities, total] = await Promise.all([
-      prisma.activity.findMany({
+      prisma.activities.findMany({
         where,
         include: {
           lead: {
@@ -69,7 +72,7 @@ export async function GET(request: NextRequest) {
         take: limit,
         skip: offset,
       }),
-      prisma.activity.count({ where }),
+      prisma.activities.count({ where }),
     ]);
 
     return NextResponse.json({
@@ -94,6 +97,9 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
     }
 
     const body = await request.json();
@@ -128,9 +134,10 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Create activity
-    const activity = await prisma.activity.create({
+    // Create activity scoped to organization
+    const activity = await prisma.activities.create({
       data: {
+        organizationId: session.currentOrg.id,
         type,
         subject,
         description,

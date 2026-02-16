@@ -1,103 +1,21 @@
 import Link from 'next/link';
+import prisma from '@/lib/prisma';
 
-// Demo customers data
-const demoCustomers = [
-  {
-    id: 1,
-    customerCode: 'CUST-001',
-    name: 'Tech Manufacturing Pvt Ltd',
-    displayName: 'Tech Manufacturing',
-    email: 'accounts@techmanufacturing.com',
-    phone: '+91 98765 43210',
-    contactPerson: 'Rahul Sharma',
-    city: 'Mumbai',
-    state: 'Maharashtra',
-    gstNumber: '27AABCT1234F1ZH',
-    gstType: 'REGISTERED',
-    creditLimit: 1000000,
-    currentBalance: 245000,
-    invoiceCount: 12,
-    isActive: true,
-  },
-  {
-    id: 2,
-    customerCode: 'CUST-002',
-    name: 'Sharma Steel Works',
-    displayName: 'Sharma Steel',
-    email: 'purchase@sharmasteel.in',
-    phone: '+91 87654 32109',
-    contactPerson: 'Amit Sharma',
-    city: 'Delhi',
-    state: 'Delhi',
-    gstNumber: '07AABCS5678G2ZI',
-    gstType: 'REGISTERED',
-    creditLimit: 500000,
-    currentBalance: 87500,
-    invoiceCount: 8,
-    isActive: true,
-  },
-  {
-    id: 3,
-    customerCode: 'CUST-003',
-    name: 'Patel Plastics Industries',
-    displayName: 'Patel Plastics',
-    email: 'info@patelplastics.com',
-    phone: '+91 76543 21098',
-    contactPerson: 'Nilesh Patel',
-    city: 'Ahmedabad',
-    state: 'Gujarat',
-    gstNumber: '24AABCP9012H3ZJ',
-    gstType: 'REGISTERED',
-    creditLimit: 750000,
-    currentBalance: 0,
-    invoiceCount: 15,
-    isActive: true,
-  },
-  {
-    id: 4,
-    customerCode: 'CUST-004',
-    name: 'Chennai Enterprises',
-    displayName: null,
-    email: 'orders@chennaienterprises.co.in',
-    phone: '+91 65432 10987',
-    contactPerson: 'Venkat Raman',
-    city: 'Chennai',
-    state: 'Tamil Nadu',
-    gstNumber: '33AABCC3456I4ZK',
-    gstType: 'COMPOSITION',
-    creditLimit: 300000,
-    currentBalance: 156000,
-    invoiceCount: 6,
-    isActive: true,
-  },
-  {
-    id: 5,
-    customerCode: 'CUST-005',
-    name: 'Kolkata Trading Co',
-    displayName: 'KTC',
-    email: 'sales@ktc.in',
-    phone: '+91 54321 09876',
-    contactPerson: 'Sourav Das',
-    city: 'Kolkata',
-    state: 'West Bengal',
-    gstNumber: null,
-    gstType: 'UNREGISTERED',
-    creditLimit: 100000,
-    currentBalance: 45000,
-    invoiceCount: 3,
-    isActive: false,
-  },
-];
+async function getCustomers() {
+  const customers = await prisma.customers.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
 
-export default function CustomersPage() {
-  const customers = demoCustomers;
+  const total = customers.length;
+  const active = customers.filter(c => c.isActive).length;
+  const totalReceivable = customers.reduce((sum, c) => sum + Number(c.currentBalance || 0), 0);
+  const overLimit = customers.filter(c => Number(c.currentBalance || 0) > Number(c.creditLimit || Infinity)).length;
 
-  const stats = {
-    total: customers.length,
-    active: customers.filter(c => c.isActive).length,
-    totalReceivable: customers.reduce((sum, c) => sum + (c.currentBalance || 0), 0),
-    overLimit: customers.filter(c => (c.currentBalance || 0) > (c.creditLimit || Infinity)).length,
-  };
+  return { customers, stats: { total, active, totalReceivable, overLimit } };
+}
+
+export default async function CustomersPage() {
+  const { customers, stats } = await getCustomers();
 
   return (
     <div>
@@ -127,7 +45,7 @@ export default function CustomersPage() {
         </div>
         <div className="bg-white shadow-sm border border-gray-100 p-6">
           <p className="text-sm text-gray-600 font-inter">Total Receivable</p>
-          <p className="text-3xl font-bold text-amber-600 font-open-sans">₹{(stats.totalReceivable / 100000).toFixed(1)}L</p>
+          <p className="text-3xl font-bold text-amber-600 font-open-sans">₹{stats.totalReceivable > 0 ? (stats.totalReceivable / 100000).toFixed(1) + 'L' : '0'}</p>
         </div>
         <div className="bg-white shadow-sm border border-gray-100 p-6">
           <p className="text-sm text-gray-600 font-inter">Over Credit Limit</p>
@@ -157,38 +75,20 @@ export default function CustomersPage() {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Code
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Customer Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Contact
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Location
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    GST
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Balance
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Actions
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Code</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Customer Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Contact</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Location</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">GST</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Balance</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {customers.map((customer) => (
                   <tr key={customer.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">
-                      {customer.customerCode}
-                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">{customer.customerCode}</td>
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium text-gray-900 font-inter">{customer.name}</div>
                       {customer.displayName && customer.displayName !== customer.name && (
@@ -196,50 +96,36 @@ export default function CustomersPage() {
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 font-inter">{customer.contactPerson}</div>
-                      <div className="text-sm text-gray-500 font-inter">{customer.phone}</div>
+                      <div className="text-sm text-gray-900 font-inter">{customer.contactPerson || '-'}</div>
+                      <div className="text-sm text-gray-500 font-inter">{customer.phone || ''}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
-                      {customer.city}, {customer.state}
+                      {[customer.city, customer.state].filter(Boolean).join(', ') || '-'}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <div className="text-sm text-gray-600 font-inter font-mono">
-                        {customer.gstNumber || '-'}
-                      </div>
+                      <div className="text-sm text-gray-600 font-inter font-mono">{customer.gstNumber || '-'}</div>
                       <div className="text-xs text-gray-400">{customer.gstType}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-inter">
                       <span className={`font-medium ${
-                        (customer.currentBalance || 0) > (customer.creditLimit || Infinity)
+                        Number(customer.currentBalance || 0) > Number(customer.creditLimit || Infinity)
                           ? 'text-red-600'
-                          : customer.currentBalance > 0
+                          : Number(customer.currentBalance || 0) > 0
                             ? 'text-amber-600'
                             : 'text-gray-600'
                       }`}>
-                        ₹{customer.currentBalance?.toLocaleString('en-IN') || '0'}
+                        ₹{Number(customer.currentBalance || 0).toLocaleString('en-IN')}
                       </span>
-                      <div className="text-xs text-gray-400">of ₹{(customer.creditLimit / 100000).toFixed(1)}L</div>
+                      <div className="text-xs text-gray-400">of ₹{(Number(customer.creditLimit || 0) / 100000).toFixed(1)}L</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium bg-gray-100 border border-gray-900 font-inter ${
-                        customer.isActive ? 'text-gray-900' : 'text-gray-500'
-                      }`}>
+                      <span className={`px-2 py-1 text-xs font-medium bg-gray-100 border border-gray-900 font-inter ${customer.isActive ? 'text-gray-900' : 'text-gray-500'}`}>
                         {customer.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <Link
-                        href={`/admin/customers/${customer.id}`}
-                        className="text-blue-600 hover:text-blue-700 font-medium font-inter mr-4"
-                      >
-                        View
-                      </Link>
-                      <Link
-                        href={`/admin/erp/invoices/create?customerId=${customer.id}`}
-                        className="text-green-600 hover:text-green-700 font-medium font-inter"
-                      >
-                        Invoice
-                      </Link>
+                      <Link href={`/admin/customers/${customer.id}`} className="text-blue-600 hover:text-blue-700 font-medium font-inter mr-4">View</Link>
+                      <Link href={`/admin/erp/invoices/create?customerId=${customer.id}`} className="text-green-600 hover:text-green-700 font-medium font-inter">Invoice</Link>
                     </td>
                   </tr>
                 ))}

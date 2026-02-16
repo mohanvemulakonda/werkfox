@@ -1,7 +1,6 @@
 import { NextResponse } from 'next/server';
 import { auth } from '@/lib/auth';
 import prisma from '@/lib/prisma';
-import { PackageType } from '@prisma/client';
 
 /**
  * GET /api/admin/organizations/settings
@@ -18,7 +17,7 @@ export async function GET() {
       );
     }
 
-    const organization = await prisma.organization.findUnique({
+    const organization = await prisma.organizations.findUnique({
       where: { id: session.currentOrg.id },
       select: {
         id: true,
@@ -78,14 +77,14 @@ export async function PATCH(req: Request) {
 
     // Build update data
     const updateData: {
-      packageType?: PackageType;
+      packageType?: string;
       name?: string;
       billingInfo?: string;
     } = {};
 
     // Validate and set packageType if provided
     if (packageType !== undefined) {
-      const validPackageTypes: PackageType[] = ['CRM_ONLY', 'ERP_ONLY', 'FULL_SUITE'];
+      const validPackageTypes = ['CRM_ONLY', 'ERP_ONLY', 'FULL_SUITE'];
       if (!validPackageTypes.includes(packageType)) {
         return NextResponse.json(
           { error: 'Invalid package type' },
@@ -119,7 +118,7 @@ export async function PATCH(req: Request) {
       );
     }
 
-    const updatedOrg = await prisma.organization.update({
+    const updatedOrg = await prisma.organizations.update({
       where: { id: session.currentOrg.id },
       data: updateData,
       select: {

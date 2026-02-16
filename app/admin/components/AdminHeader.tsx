@@ -2,12 +2,10 @@
 
 import Image from 'next/image';
 import Link from 'next/link';
+import { useClerk } from '@clerk/nextjs';
 
 export default function AdminHeader({ user, organizations = [], currentOrg = null }: { user?: any; organizations?: any[]; currentOrg?: any }) {
-  const displayUser = user || {
-    name: 'Demo User',
-    email: 'demo@werkfox.com'
-  };
+  const { signOut } = useClerk();
 
   return (
     <header className="admin-header">
@@ -34,7 +32,7 @@ export default function AdminHeader({ user, organizations = [], currentOrg = nul
               </summary>
               <div className="admin-org-dropdown">
                 {organizations && organizations.length > 0 ? (
-                  organizations.map((o) => (
+                  organizations.map((o: any) => (
                     <div key={o.id} className="admin-org-item">
                       <div>
                         <div className="text-sm font-medium">{o.name}</div>
@@ -70,14 +68,15 @@ export default function AdminHeader({ user, organizations = [], currentOrg = nul
 
         <div className="flex items-center gap-4">
           <div className="admin-user-info">
-            <p className="admin-user-name">{displayUser?.name}</p>
-            <p className="admin-user-email">{displayUser?.email}</p>
+            <p className="admin-user-name">{user?.name}</p>
+            <p className="admin-user-email">{user?.email}</p>
           </div>
-          <Link href="/">
-            <button className="admin-btn admin-btn-secondary">
-              Exit Demo
-            </button>
-          </Link>
+          <button
+            onClick={() => signOut({ redirectUrl: '/' })}
+            className="admin-btn admin-btn-secondary"
+          >
+            Sign Out
+          </button>
         </div>
       </div>
     </header>

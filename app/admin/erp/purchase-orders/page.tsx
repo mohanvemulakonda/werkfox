@@ -1,80 +1,5 @@
 import Link from 'next/link';
-
-// Demo purchase orders data
-const demoPurchaseOrders = [
-  {
-    id: '1',
-    poNumber: 'PO-2026-0012',
-    vendorName: 'Rama Industries Pvt Ltd',
-    vendorCode: 'VEN-001',
-    orderDate: new Date('2026-01-20'),
-    expectedDate: new Date('2026-01-27'),
-    subtotal: 150000,
-    taxAmount: 27000,
-    total: 177000,
-    status: 'SENT',
-    paymentStatus: 'UNPAID',
-    itemCount: 5,
-  },
-  {
-    id: '2',
-    poNumber: 'PO-2026-0011',
-    vendorName: 'Sharma Steel Works',
-    vendorCode: 'VEN-002',
-    orderDate: new Date('2026-01-18'),
-    expectedDate: new Date('2026-01-25'),
-    receivedDate: new Date('2026-01-24'),
-    subtotal: 87500,
-    taxAmount: 15750,
-    total: 103250,
-    status: 'RECEIVED',
-    paymentStatus: 'PAID',
-    itemCount: 3,
-  },
-  {
-    id: '3',
-    poNumber: 'PO-2026-0010',
-    vendorName: 'Patel Packaging Solutions',
-    vendorCode: 'VEN-003',
-    orderDate: new Date('2026-01-15'),
-    expectedDate: new Date('2026-01-22'),
-    subtotal: 45000,
-    taxAmount: 8100,
-    total: 53100,
-    status: 'PARTIAL_RECEIVED',
-    paymentStatus: 'PARTIAL',
-    itemCount: 8,
-  },
-  {
-    id: '4',
-    poNumber: 'PO-2026-0009',
-    vendorName: 'Chennai Chemicals Ltd',
-    vendorCode: 'VEN-004',
-    orderDate: new Date('2026-01-10'),
-    expectedDate: new Date('2026-01-17'),
-    subtotal: 320000,
-    taxAmount: 57600,
-    total: 377600,
-    status: 'DRAFT',
-    paymentStatus: 'UNPAID',
-    itemCount: 12,
-  },
-  {
-    id: '5',
-    poNumber: 'PO-2026-0008',
-    vendorName: 'Rama Industries Pvt Ltd',
-    vendorCode: 'VEN-001',
-    orderDate: new Date('2026-01-05'),
-    expectedDate: new Date('2026-01-12'),
-    receivedDate: new Date('2026-01-11'),
-    subtotal: 225000,
-    taxAmount: 40500,
-    total: 265500,
-    status: 'RECEIVED',
-    paymentStatus: 'PAID',
-    itemCount: 7,
-  },
-];
+import prisma from '@/lib/prisma';
 
 const statusColors: Record<string, string> = {
   DRAFT: 'bg-gray-100 text-gray-800 border-gray-300',
@@ -91,16 +16,26 @@ const paymentStatusColors: Record<string, string> = {
   PAID: 'text-green-600',
 };
 
-export default function PurchaseOrdersPage() {
-  const orders = demoPurchaseOrders;
+async function getPurchaseOrders() {
+  const orders = await prisma.purchase_orders.findMany({
+    orderBy: { createdAt: 'desc' },
+    include: {
+      vendor: { select: { name: true, code: true } },
+      items: { select: { id: true } },
+    },
+  });
 
-  const stats = {
-    total: orders.length,
-    draft: orders.filter(o => o.status === 'DRAFT').length,
-    pending: orders.filter(o => ['SENT', 'CONFIRMED', 'PARTIAL_RECEIVED'].includes(o.status)).length,
-    totalValue: orders.reduce((sum, o) => sum + o.total, 0),
-    unpaidValue: orders.filter(o => o.paymentStatus !== 'PAID').reduce((sum, o) => sum + o.total, 0),
-  };
+  const total = orders.length;
+  const draft = orders.filter(o => o.status === 'DRAFT').length;
+  const pending = orders.filter(o => ['SENT', 'CONFIRMED', 'PARTIAL_RECEIVED'].includes(o.status)).length;
+  const totalValue = orders.reduce((sum, o) => sum + Number(o.total), 0);
+  const unpaidValue = orders.filter(o => o.paymentStatus !== 'PAID').reduce((sum, o) => sum + Number(o.total), 0);
+
+  return { orders, stats: { total, draft, pending, totalValue, unpaidValue } };
+}
+
+export default async function PurchaseOrdersPage() {
+  const { orders, stats } = await getPurchaseOrders();
 
   return (
     <div>
@@ -134,11 +69,11 @@ export default function PurchaseOrdersPage() {
         </div>
         <div className="bg-white shadow-sm border border-gray-100 p-5">
           <p className="text-sm text-gray-600 font-inter">Total Value</p>
-          <p className="text-2xl font-bold text-gray-900 font-open-sans">₹{(stats.totalValue / 100000).toFixed(1)}L</p>
+          <p className="text-2xl font-bold text-gray-900 font-open-sans">₹{stats.totalValue > 0 ? (stats.totalValue / 100000).toFixed(1) + 'L' : '0'}</p>
         </div>
         <div className="bg-white shadow-sm border border-gray-100 p-5">
           <p className="text-sm text-gray-600 font-inter">Unpaid Value</p>
-          <p className="text-2xl font-bold text-red-600 font-open-sans">₹{(stats.unpaidValue / 100000).toFixed(1)}L</p>
+          <p className="text-2xl font-bold text-red-600 font-open-sans">₹{stats.unpaidValue > 0 ? (stats.unpaidValue / 100000).toFixed(1) + 'L' : '0'}</p>
         </div>
       </div>
 
@@ -164,46 +99,26 @@ export default function PurchaseOrdersPage() {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    PO Number
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Vendor
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Order Date
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Expected
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Items
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Total
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Payment
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Actions
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">PO Number</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Vendor</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Order Date</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Expected</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Items</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Total</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Payment</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {orders.map((order) => (
                   <tr key={order.id} className="hover:bg-gray-50">
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-blue-600 font-inter">
-                      <Link href={`/admin/erp/purchase-orders/${order.id}`} className="hover:underline">
-                        {order.poNumber}
-                      </Link>
+                      <Link href={`/admin/erp/purchase-orders/${order.id}`} className="hover:underline">{order.poNumber}</Link>
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900 font-inter">{order.vendorName}</div>
-                      <div className="text-xs text-gray-500 font-inter">{order.vendorCode}</div>
+                      <div className="text-sm font-medium text-gray-900 font-inter">{order.vendor.name}</div>
+                      <div className="text-xs text-gray-500 font-inter">{order.vendor.code}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
                       {order.orderDate.toLocaleDateString('en-IN', { day: '2-digit', month: 'short', year: 'numeric' })}
@@ -211,44 +126,23 @@ export default function PurchaseOrdersPage() {
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
                       {order.expectedDate?.toLocaleDateString('en-IN', { day: '2-digit', month: 'short' }) || '-'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
-                      {order.itemCount} items
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">
-                      ₹{order.total.toLocaleString('en-IN')}
-                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">{order.items.length} items</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">₹{Number(order.total).toLocaleString('en-IN')}</td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <span className={`px-2.5 py-1 text-xs font-medium rounded border ${statusColors[order.status] || 'bg-gray-100 text-gray-800'}`}>
                         {order.status.replace('_', ' ')}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`text-sm font-medium ${paymentStatusColors[order.paymentStatus]}`}>
-                        {order.paymentStatus}
-                      </span>
+                      <span className={`text-sm font-medium ${paymentStatusColors[order.paymentStatus] || 'text-gray-600'}`}>{order.paymentStatus}</span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm space-x-3">
-                      <Link
-                        href={`/admin/erp/purchase-orders/${order.id}`}
-                        className="text-blue-600 hover:text-blue-700 font-medium font-inter"
-                      >
-                        View
-                      </Link>
+                      <Link href={`/admin/erp/purchase-orders/${order.id}`} className="text-blue-600 hover:text-blue-700 font-medium font-inter">View</Link>
                       {order.status === 'DRAFT' && (
-                        <Link
-                          href={`/admin/erp/purchase-orders/${order.id}/edit`}
-                          className="text-gray-600 hover:text-gray-700 font-medium font-inter"
-                        >
-                          Edit
-                        </Link>
+                        <Link href={`/admin/erp/purchase-orders/${order.id}/edit`} className="text-gray-600 hover:text-gray-700 font-medium font-inter">Edit</Link>
                       )}
                       {['SENT', 'CONFIRMED', 'PARTIAL_RECEIVED'].includes(order.status) && (
-                        <Link
-                          href={`/admin/erp/grn/create?poId=${order.id}`}
-                          className="text-green-600 hover:text-green-700 font-medium font-inter"
-                        >
-                          Receive
-                        </Link>
+                        <Link href={`/admin/erp/grn/create?poId=${order.id}`} className="text-green-600 hover:text-green-700 font-medium font-inter">Receive</Link>
                       )}
                     </td>
                   </tr>

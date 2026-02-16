@@ -1,158 +1,111 @@
 import Link from 'next/link';
 import SalesChart from './components/SalesChart';
-
-// Demo data for when database is not connected
-const demoStats = {
-  contacts: 156,
-  subscribers: 89,
-  downloads: 234,
-  invoices: 45,
-  newContactsToday: 3,
-  recentContacts: [
-    { id: '1', name: 'Rajesh Kumar', email: 'rajesh@techmanufacturing.in', company: 'Tech Manufacturing Pvt Ltd', source: 'contact_form', createdAt: new Date() },
-    { id: '2', name: 'Priya Sharma', email: 'priya@steelworks.com', company: 'Sharma Steel Works', source: 'website', createdAt: new Date(Date.now() - 86400000) },
-    { id: '3', name: 'Amit Patel', email: 'amit@plasticsind.in', company: 'Patel Plastics Industries', source: 'referral', createdAt: new Date(Date.now() - 172800000) },
-    { id: '4', name: 'Sunita Reddy', email: 'sunita@fabricators.co', company: 'Reddy Fabricators', source: 'contact_form', createdAt: new Date(Date.now() - 259200000) },
-    { id: '5', name: 'Vikram Singh', email: 'vikram@autoparts.in', company: 'Singh Auto Parts', source: 'website', createdAt: new Date(Date.now() - 345600000) },
-  ]
-};
-
-const demoSalesData = [
-  { month: 'Aug 2025', revenue: 125000, invoiceCount: 8 },
-  { month: 'Sep 2025', revenue: 187000, invoiceCount: 12 },
-  { month: 'Oct 2025', revenue: 156000, invoiceCount: 10 },
-  { month: 'Nov 2025', revenue: 234000, invoiceCount: 15 },
-  { month: 'Dec 2025', revenue: 198000, invoiceCount: 13 },
-  { month: 'Jan 2026', revenue: 267000, invoiceCount: 18 },
-];
+import prisma from '@/lib/prisma';
 
 async function getStats() {
-  try {
-    const prisma = (await import('@/lib/prisma')).default;
+  const [leads, contacts, opportunities, activities, customers, invoices] = await Promise.all([
+    prisma.leads.count(),
+    prisma.contacts.count(),
+    prisma.opportunities.count(),
+    prisma.activities.count(),
+    prisma.customers.count(),
+    prisma.invoices.count(),
+  ]);
 
-    const [contacts, subscribers, downloads, invoices] = await Promise.all([
-      prisma.contact.count(),
-      prisma.subscriber.count({ where: { isActive: true } }),
-      prisma.download.count(),
-      prisma.invoice.count()
-    ]);
+  const recentLeads = await prisma.leads.findMany({
+    take: 5,
+    orderBy: { createdAt: 'desc' },
+    select: {
+      id: true,
+      name: true,
+      email: true,
+      company: true,
+      stage: true,
+      status: true,
+      createdAt: true,
+    },
+  });
 
-    const recentContacts = await prisma.contact.findMany({
-      take: 5,
-      orderBy: { createdAt: 'desc' }
-    });
-
-    const newContactsToday = await prisma.contact.count({
-      where: {
-        createdAt: {
-          gte: new Date(new Date().setHours(0, 0, 0, 0))
-        }
-      }
-    });
-
-    return { contacts, subscribers, downloads, invoices, recentContacts, newContactsToday };
-  } catch {
-    return demoStats;
-  }
+  return { leads, contacts, opportunities, activities, customers, invoices, recentLeads };
 }
 
 async function getSalesData() {
-  try {
-    const prisma = (await import('@/lib/prisma')).default;
+  const invoices = await prisma.invoices.findMany({
+    select: {
+      total: true,
+      createdAt: true,
+    },
+    orderBy: { createdAt: 'asc' },
+  });
 
-    const invoices = await prisma.invoice.findMany({
-      where: {
-        type: 'INVOICE'
-      },
-      select: {
-        total: true,
-        createdAt: true,
-        status: true
-      },
-      orderBy: {
-        createdAt: 'asc'
-      }
-    });
+  if (invoices.length === 0) return [];
 
-    const monthlyData: { [key: string]: { revenue: number; count: number } } = {};
+  const monthlyData: { [key: string]: { revenue: number; count: number } } = {};
 
-    invoices.forEach(invoice => {
-      const monthKey = new Intl.DateTimeFormat('en-US', {
-        month: 'short',
-        year: 'numeric'
-      }).format(invoice.createdAt);
+  invoices.forEach(invoice => {
+    const monthKey = new Intl.DateTimeFormat('en-US', {
+      month: 'short',
+      year: 'numeric',
+    }).format(invoice.createdAt);
 
-      if (!monthlyData[monthKey]) {
-        monthlyData[monthKey] = { revenue: 0, count: 0 };
-      }
+    if (!monthlyData[monthKey]) {
+      monthlyData[monthKey] = { revenue: 0, count: 0 };
+    }
 
-      monthlyData[monthKey].revenue += Number(invoice.total);
-      monthlyData[monthKey].count += 1;
-    });
+    monthlyData[monthKey].revenue += Number(invoice.total);
+    monthlyData[monthKey].count += 1;
+  });
 
-    const salesData = Object.entries(monthlyData).map(([month, data]) => ({
+  return Object.entries(monthlyData)
+    .map(([month, data]) => ({
       month,
       revenue: Math.round(data.revenue * 100) / 100,
-      invoiceCount: data.count
-    })).sort((a, b) => {
-      const dateA = new Date(a.month);
-      const dateB = new Date(b.month);
-      return dateA.getTime() - dateB.getTime();
-    });
-
-    return salesData.length > 0 ? salesData : demoSalesData;
-  } catch {
-    return demoSalesData;
-  }
+      invoiceCount: data.count,
+    }))
+    .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
 }
 
 const statCards = [
   {
-    name: 'Total Contacts',
-    key: 'contacts',
-    changeKey: 'newContactsToday',
-    changePrefix: '+',
-    changeSuffix: ' today',
+    name: 'Leads',
+    key: 'leads',
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
       </svg>
     ),
-    href: '/admin/contacts'
+    href: '/admin/crm/leads',
   },
   {
-    name: 'Active Subscribers',
-    key: 'subscribers',
-    change: 'Newsletter list',
+    name: 'Opportunities',
+    key: 'opportunities',
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
       </svg>
     ),
-    href: '/admin/subscribers'
+    href: '/admin/crm/opportunities',
   },
   {
-    name: 'Downloads',
-    key: 'downloads',
-    change: 'Resource downloads',
+    name: 'Customers',
+    key: 'customers',
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 16a4 4 0 01-.88-7.903A5 5 0 1115.9 6L16 6a5 5 0 011 9.9M9 19l3 3m0 0l3-3m-3 3V10" />
+        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
       </svg>
     ),
-    href: '/admin/downloads'
+    href: '/admin/customers',
   },
   {
-    name: 'Invoices & Quotes',
+    name: 'Invoices',
     key: 'invoices',
-    change: 'Total created',
     icon: (
       <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
         <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
       </svg>
     ),
-    href: '/admin/invoices'
-  }
+    href: '/admin/erp/invoices',
+  },
 ];
 
 export default async function AdminDashboard() {
@@ -170,9 +123,6 @@ export default async function AdminDashboard() {
       <div className="admin-stats-grid">
         {statCards.map((stat) => {
           const value = stats[stat.key as keyof typeof stats];
-          const changeText = stat.changeKey
-            ? `${stat.changePrefix}${stats[stat.changeKey as keyof typeof stats]}${stat.changeSuffix}`
-            : stat.change;
 
           return (
             <Link key={stat.name} href={stat.href} className="admin-stat-card">
@@ -180,52 +130,66 @@ export default async function AdminDashboard() {
                 {stat.icon}
               </div>
               <h3 className="admin-stat-label">{stat.name}</h3>
-              <p className="admin-stat-value">{value}</p>
-              <p className="admin-stat-change">{changeText}</p>
+              <p className="admin-stat-value">{typeof value === 'number' ? value : 0}</p>
             </Link>
           );
         })}
       </div>
 
       {/* Sales Chart */}
-      <div className="admin-chart-container">
-        <SalesChart initialData={salesData} />
-      </div>
+      {salesData.length > 0 && (
+        <div className="admin-chart-container">
+          <SalesChart initialData={salesData} />
+        </div>
+      )}
 
-      {/* Recent Contacts Table */}
+      {/* Recent Leads Table */}
       <div className="admin-table-container">
         <div className="admin-table-header">
-          <h2 className="admin-table-title">Recent Contacts</h2>
-          <Link href="/admin/contacts" className="admin-table-link">
+          <h2 className="admin-table-title">Recent Leads</h2>
+          <Link href="/admin/crm/leads" className="admin-table-link">
             View all →
           </Link>
         </div>
-        <div className="overflow-x-auto">
-          <table className="admin-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Company</th>
-                <th>Source</th>
-                <th>Date</th>
-              </tr>
-            </thead>
-            <tbody>
-              {stats.recentContacts.map((contact) => (
-                <tr key={contact.id}>
-                  <td className="primary">{contact.name}</td>
-                  <td>{contact.email}</td>
-                  <td>{contact.company || '-'}</td>
-                  <td>
-                    <span className="admin-badge">{contact.source}</span>
-                  </td>
-                  <td>{new Date(contact.createdAt).toLocaleDateString()}</td>
+        {stats.recentLeads.length === 0 ? (
+          <div className="p-8 text-center text-gray-500">
+            <p>No leads yet.</p>
+            <Link href="/admin/crm/leads/create" className="text-blue-600 hover:underline mt-2 inline-block">
+              Create your first lead →
+            </Link>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <table className="admin-table">
+              <thead>
+                <tr>
+                  <th>Name</th>
+                  <th>Email</th>
+                  <th>Company</th>
+                  <th>Stage</th>
+                  <th>Date</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {stats.recentLeads.map((lead) => (
+                  <tr key={lead.id}>
+                    <td className="primary">
+                      <Link href={`/admin/crm/leads/${lead.id}`} className="hover:underline">
+                        {lead.name}
+                      </Link>
+                    </td>
+                    <td>{lead.email}</td>
+                    <td>{lead.company || '-'}</td>
+                    <td>
+                      <span className="admin-badge">{lead.stage}</span>
+                    </td>
+                    <td>{new Date(lead.createdAt).toLocaleDateString()}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        )}
       </div>
     </div>
   );

@@ -133,7 +133,7 @@ export default function OpportunitiesPage() {
                 ← Back to Dashboard
               </Link>
               <Link
-                href="/admin/opportunities/create"
+                href="/admin/crm/opportunities/create"
                 className="px-4 py-2 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-blue-600 hover:bg-blue-700"
               >
                 + Create New Opportunity
@@ -239,7 +239,7 @@ export default function OpportunitiesPage() {
           <div className="bg-white shadow rounded-lg p-12 text-center">
             <p className="text-gray-500">No opportunities found</p>
             <Link
-              href="/admin/opportunities/create"
+              href="/admin/crm/opportunities/create"
               className="mt-4 inline-block px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
             >
               Create Your First Opportunity
@@ -323,7 +323,7 @@ export default function OpportunitiesPage() {
                     </td>
                     <td className="px-6 py-4 text-sm font-medium">
                       <Link
-                        href={`/admin/opportunities/${opp.id}`}
+                        href={`/admin/crm/opportunities/${opp.id}`}
                         className="text-blue-600 hover:text-blue-900 mr-4"
                       >
                         View

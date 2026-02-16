@@ -65,6 +65,12 @@ model company_settings {
   proformaPrefix         String?  @default("PI") @db.VarChar(20)
   nextInvoiceNumber      Int?     @default(1)
   nextQuoteNumber        Int?     @default(1)
+  poPrefix               String?  @default("PO") @db.VarChar(20)
+  soPrefix               String?  @default("SO") @db.VarChar(20)
+  grnPrefix              String?  @default("GRN") @db.VarChar(20)
+  nextPONumber           Int?     @default(1)
+  nextSONumber           Int?     @default(1)
+  nextGRNNumber          Int?     @default(1)
   createdAt              DateTime @default(now())
   updatedAt              DateTime
 }
@@ -103,22 +109,32 @@ model customer_contacts {
 }
 
 model opportunity_products {
-  id            Int     @id @default(autoincrement())
+  id            Int      @id @default(autoincrement())
   opportunityId Int
   productId     Int
-  quantity      Decimal @db.Decimal(10, 2)
-  unitPrice     Decimal @db.Decimal(10, 2)
-  discount      Decimal @default(0.00) @db.Decimal(10, 2)
+  quantity      Decimal  @default(1) @db.Decimal(12, 2)
+  unitPrice     Decimal  @db.Decimal(12, 2)
+  discount      Decimal  @default(0) @db.Decimal(12, 2)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  opportunity   opportunities @relation(fields: [opportunityId], references: [id])
+  product       products      @relation(fields: [productId], references: [id])
+
+  @@index([opportunityId])
+  @@index([productId])
 }
 
 model organization_members {
   id             Int      @id @default(autoincrement())
   organizationId Int
   clerkUserId    String   @db.VarChar(255)
-  role           String   @default("MEMBER") @db.VarChar(50)
+  role           String   @default("MEMBER") @db.VarChar(50) // SUPER_ADMIN, ADMIN, MANAGER, MEMBER, VIEWER
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())
-  updatedAt      DateTime
+  updatedAt      DateTime @updatedAt
+
+  organization   organizations @relation("OrgMembers", fields: [organizationId], references: [id])
 
   @@index([clerkUserId])
   @@index([organizationId])
@@ -208,6 +224,185 @@ enum quote_requests_status {
 }
 
 // ============================================
+// CRM TABLES
+// ============================================
+
+model organizations {
+  id           Int      @id @default(autoincrement())
+  name         String   @db.VarChar(255)
+  slug         String   @unique @db.VarChar(255)
+  packageType  String   @default("FULL_SUITE") @db.VarChar(50) // CRM_ONLY, ERP_ONLY, FULL_SUITE
+  isActive     Boolean  @default(true)
+  logoUrl      String?  @db.VarChar(500)
+  website      String?  @db.VarChar(500)
+  phone        String?  @db.VarChar(50)
+  email        String?  @db.VarChar(255)
+  address      String?  @db.Text
+  city         String?  @db.VarChar(100)
+  state        String?  @db.VarChar(100)
+  country      String?  @default("India") @db.VarChar(100)
+  pincode      String?  @db.VarChar(20)
+  gstNumber    String?  @db.VarChar(50)
+  billingInfo  String?  @db.Text
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  members      organization_members[] @relation("OrgMembers")
+  leads        leads[]
+  opportunities opportunities[]
+  activities   activities[]
+  contacts     contacts[]
+
+  @@index([slug])
+  @@index([isActive])
+}
+
+model leads {
+  id              Int       @id @default(autoincrement())
+  organizationId  Int
+  name            String    @db.VarChar(255)
+  email           String    @db.VarChar(255)
+  phone           String?   @db.VarChar(50)
+  company         String?   @db.VarChar(255)
+  designation     String?   @db.VarChar(255)
+  billingAddress  String?   @db.Text
+  shippingAddress String?   @db.Text
+  city            String?   @db.VarChar(100)
+  state           String?   @db.VarChar(100)
+  country         String?   @default("India") @db.VarChar(100)
+  pincode         String?   @db.VarChar(20)
+  gstNumber       String?   @db.VarChar(50)
+  gstType         String?   @default("UNREGISTERED") @db.VarChar(50)
+  source          String?   @db.VarChar(100)
+  industry        String?   @db.VarChar(100)
+  leadScore       Int       @default(0)
+  stage           String    @default("NEW") @db.VarChar(50) // NEW, CONTACTED, QUALIFIED, PROPOSAL_SENT, NEGOTIATION, WON, LOST
+  status          String    @default("ACTIVE") @db.VarChar(50) // ACTIVE, INACTIVE, CONVERTED, DISQUALIFIED
+  assignedTo      String?   @db.VarChar(255)
+  notes           String?   @db.Text
+  nextFollowUp    DateTime?
+  lastContacted   DateTime?
+  convertedAt     DateTime?
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  organization    organizations   @relation(fields: [organizationId], references: [id])
+  opportunities   opportunities[]
+  activities      activities[]
+
+  @@index([organizationId])
+  @@index([email])
+  @@index([stage])
+  @@index([status])
+  @@index([assignedTo])
+}
+
+model opportunities {
+  id                Int       @id @default(autoincrement())
+  organizationId    Int
+  name              String    @db.VarChar(255)
+  description       String?   @db.Text
+  leadId            Int
+  value             Decimal   @db.Decimal(12, 2)
+  currency          String    @default("INR") @db.VarChar(10)
+  probability       Int?      @default(50)
+  expectedCloseDate DateTime?
+  actualCloseDate   DateTime?
+  stage             String    @default("QUALIFICATION") @db.VarChar(50) // QUALIFICATION, NEEDS_ANALYSIS, PROPOSAL, NEGOTIATION, CLOSED_WON, CLOSED_LOST
+  status            String    @default("OPEN") @db.VarChar(50) // OPEN, WON, LOST, ABANDONED
+  lostReason        String?   @db.Text
+  assignedTo        String?   @db.VarChar(255)
+  notes             String?   @db.Text
+  createdAt         DateTime  @default(now())
+  updatedAt         DateTime  @updatedAt
+
+  organization      organizations       @relation(fields: [organizationId], references: [id])
+  lead              leads               @relation(fields: [leadId], references: [id])
+  products          opportunity_products[]
+  activities        activities[]
+
+  @@index([organizationId])
+  @@index([leadId])
+  @@index([stage])
+  @@index([status])
+  @@index([assignedTo])
+}
+
+model activities {
+  id              Int       @id @default(autoincrement())
+  organizationId  Int
+  type            String    @db.VarChar(50) // CALL, EMAIL, MEETING, TASK, NOTE, DEMO, FOLLOW_UP
+  subject         String    @db.VarChar(255)
+  description     String?   @db.Text
+  leadId          Int?
+  opportunityId   Int?
+  status          String    @default("PENDING") @db.VarChar(50) // PENDING, COMPLETED, CANCELLED, RESCHEDULED
+  scheduledFor    DateTime?
+  completedAt     DateTime?
+  duration        Int?      // minutes
+  location        String?   @db.VarChar(255)
+  attendees       String?   @db.Text
+  outcome         String?   @db.Text
+  assignedTo      String?   @db.VarChar(255)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  organization    organizations  @relation(fields: [organizationId], references: [id])
+  lead            leads?         @relation(fields: [leadId], references: [id])
+  opportunity     opportunities? @relation(fields: [opportunityId], references: [id])
+
+  @@index([organizationId])
+  @@index([leadId])
+  @@index([opportunityId])
+  @@index([type])
+  @@index([status])
+  @@index([scheduledFor])
+}
+
+model contacts {
+  id              Int      @id @default(autoincrement())
+  organizationId  Int
+  firstName       String   @db.VarChar(255)
+  lastName        String?  @db.VarChar(255)
+  email           String   @db.VarChar(255)
+  phone           String?  @db.VarChar(50)
+  mobile          String?  @db.VarChar(50)
+  company         String?  @db.VarChar(255)
+  designation     String?  @db.VarChar(255)
+  department      String?  @db.VarChar(255)
+  address         String?  @db.Text
+  city            String?  @db.VarChar(100)
+  state           String?  @db.VarChar(100)
+  country         String?  @default("India") @db.VarChar(100)
+  pincode         String?  @db.VarChar(20)
+  notes           String?  @db.Text
+  isActive        Boolean  @default(true)
+  customerId      Int?
+  contactType     String   @default("PRIMARY") @db.VarChar(50) // PRIMARY, BILLING, SHIPPING, TECHNICAL
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  organization    organizations @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
+  @@index([email])
+  @@index([customerId])
+}
+
+model subscribers {
+  id          Int      @id @default(autoincrement())
+  email       String   @unique @db.VarChar(255)
+  name        String?  @db.VarChar(255)
+  source      String?  @db.VarChar(100)
+  isActive    Boolean  @default(true)
+  subscribedAt DateTime @default(now())
+  unsubscribedAt DateTime?
+
+  @@index([email])
+  @@index([isActive])
+}
+
+// ============================================
 // NEW ERP TABLES - Added from NexPOS
 // ============================================
 
@@ -279,6 +474,7 @@ model products {
   salesOrderItems       sales_order_items[]
   quotationItems        quotation_items[]
   invoiceItems          invoice_items[]
+  opportunityProducts   opportunity_products[]
 
   @@index([sku])
   @@index([name])

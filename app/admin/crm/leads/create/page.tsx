@@ -60,7 +60,7 @@ export default function CreateLeadPage() {
       const data = await response.json();
 
       if (response.ok) {
-        router.push(`/admin/leads/${data.id}`);
+        router.push(`/admin/crm/leads/${data.id}`);
       } else {
         setError(data.error || 'Failed to create lead');
       }
@@ -85,7 +85,7 @@ export default function CreateLeadPage() {
               </p>
             </div>
             <Link
-              href="/admin/leads"
+              href="/admin/crm/leads"
               className="px-4 py-2 border border-gray-300 rounded-md shadow-sm text-sm font-medium text-gray-700 bg-white hover:bg-gray-50"
             >
               ← Back to Leads
@@ -406,7 +406,7 @@ export default function CreateLeadPage() {
           {/* Submit Button */}
           <div className="flex justify-end gap-3 pt-4 border-t">
             <Link
-              href="/admin/leads"
+              href="/admin/crm/leads"
               className="px-6 py-2 border border-gray-300 rounded-md text-sm font-medium text-gray-700 hover:bg-gray-50"
             >
               Cancel

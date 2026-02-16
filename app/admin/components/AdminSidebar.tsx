@@ -37,7 +37,7 @@ const navigationSections: NavSection[] = [
     items: [
       {
         name: 'Leads',
-        href: '/admin/leads',
+        href: '/admin/crm/leads',
         moduleId: 'leads',
         icon: (
           <svg className="admin-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -47,7 +47,7 @@ const navigationSections: NavSection[] = [
       },
       {
         name: 'Opportunities',
-        href: '/admin/opportunities',
+        href: '/admin/crm/opportunities',
         moduleId: 'opportunities',
         icon: (
           <svg className="admin-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -57,7 +57,7 @@ const navigationSections: NavSection[] = [
       },
       {
         name: 'Activities',
-        href: '/admin/activities',
+        href: '/admin/crm/activities',
         moduleId: 'activities',
         icon: (
           <svg className="admin-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">
@@ -72,7 +72,7 @@ const navigationSections: NavSection[] = [
     items: [
       {
         name: 'Contacts',
-        href: '/admin/contacts',
+        href: '/admin/crm/contacts',
         moduleId: 'contacts',
         icon: (
           <svg className="admin-nav-icon" fill="none" viewBox="0 0 24 24" stroke="currentColor">

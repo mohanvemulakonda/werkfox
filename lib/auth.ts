@@ -24,18 +24,31 @@ export async function auth() {
   }
 
   // Fetch organization memberships for this Clerk user
-  const memberships = await prisma.organizationMember.findMany({
-    where: { clerkUserId: user.id, isActive: true },
-    include: { organization: true },
-  });
+  let organizations: {
+    id: number;
+    name: string;
+    slug: string;
+    role: string;
+    packageType: PackageType;
+  }[] = [];
 
-  const organizations = memberships.map((m) => ({
-    id: m.organization.id,
-    name: m.organization.name,
-    slug: m.organization.slug,
-    role: m.role,
-    packageType: m.organization.packageType as PackageType,
-  }));
+  try {
+    const memberships = await prisma.organization_members.findMany({
+      where: { clerkUserId: user.id, isActive: true },
+      include: { organization: true },
+    });
+
+    organizations = memberships.map((m) => ({
+      id: m.organization.id,
+      name: m.organization.name,
+      slug: m.organization.slug,
+      role: m.role,
+      packageType: m.organization.packageType as PackageType,
+    }));
+  } catch (e) {
+    // Database not available — continue with empty organizations
+    console.warn('Database not available for org lookup, continuing without orgs');
+  }
 
   // Default currentOrg is first active org
   let currentOrg: {
@@ -46,11 +59,11 @@ export async function auth() {
     packageType: PackageType;
     enabledModules: ModuleId[];
   } | null = organizations.length
-    ? {
+      ? {
         ...organizations[0],
         enabledModules: getEnabledModules(organizations[0].packageType),
       }
-    : null;
+      : null;
 
   // If a cookie exists with a preferred org, and the user is a member of it, honor it
   try {

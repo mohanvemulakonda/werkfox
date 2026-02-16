@@ -13,6 +13,9 @@ export async function GET(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
+    }
 
     const opportunityId = parseInt(params.id);
 
@@ -23,8 +26,8 @@ export async function GET(
       );
     }
 
-    const opportunity = await prisma.opportunity.findUnique({
-      where: { id: opportunityId },
+    const opportunity = await prisma.opportunities.findFirst({
+      where: { id: opportunityId, organizationId: session.currentOrg.id },
       include: {
         lead: true,
         products: {
@@ -33,9 +36,6 @@ export async function GET(
           },
         },
         activities: {
-          orderBy: { createdAt: 'desc' },
-        },
-        invoices: {
           orderBy: { createdAt: 'desc' },
         },
       },
@@ -69,6 +69,9 @@ export async function PUT(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
+    }
 
     const opportunityId = parseInt(params.id);
 
@@ -95,9 +98,9 @@ export async function PUT(
       products, // Array of { id?, productId, quantity, unitPrice, discount }
     } = body;
 
-    // Check if opportunity exists
-    const existingOpportunity = await prisma.opportunity.findUnique({
-      where: { id: opportunityId },
+    // Check if opportunity exists and belongs to this org
+    const existingOpportunity = await prisma.opportunities.findFirst({
+      where: { id: opportunityId, organizationId: session.currentOrg.id },
       include: {
         products: true,
       },
@@ -114,7 +117,7 @@ export async function PUT(
     let productUpdates = {};
     if (products !== undefined) {
       // Delete existing products first
-      await prisma.opportunityProduct.deleteMany({
+      await prisma.opportunity_products.deleteMany({
         where: { opportunityId },
       });
 
@@ -134,7 +137,7 @@ export async function PUT(
     }
 
     // Update opportunity
-    const opportunity = await prisma.opportunity.update({
+    const opportunity = await prisma.opportunities.update({
       where: { id: opportunityId },
       data: {
         ...(name !== undefined && { name }),
@@ -155,8 +158,8 @@ export async function PUT(
         // Track close date if status changes to WON or LOST
         ...((status === 'WON' || status === 'LOST') &&
           existingOpportunity.status === 'OPEN' && {
-            actualCloseDate: new Date(),
-          }),
+          actualCloseDate: new Date(),
+        }),
         ...productUpdates,
       },
       include: {
@@ -167,9 +170,6 @@ export async function PUT(
           },
         },
         activities: {
-          orderBy: { createdAt: 'desc' },
-        },
-        invoices: {
           orderBy: { createdAt: 'desc' },
         },
       },
@@ -196,6 +196,9 @@ export async function DELETE(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
+    }
 
     const opportunityId = parseInt(params.id);
 
@@ -206,9 +209,9 @@ export async function DELETE(
       );
     }
 
-    // Check if opportunity exists
-    const existingOpportunity = await prisma.opportunity.findUnique({
-      where: { id: opportunityId },
+    // Check if opportunity exists and belongs to this org
+    const existingOpportunity = await prisma.opportunities.findFirst({
+      where: { id: opportunityId, organizationId: session.currentOrg.id },
     });
 
     if (!existingOpportunity) {
@@ -219,7 +222,7 @@ export async function DELETE(
     }
 
     // Delete opportunity (cascades to products, activities)
-    await prisma.opportunity.delete({
+    await prisma.opportunities.delete({
       where: { id: opportunityId },
     });
 

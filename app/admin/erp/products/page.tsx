@@ -1,73 +1,21 @@
 import Link from 'next/link';
+import prisma from '@/lib/prisma';
 
-// Demo products data
-const demoProducts = [
-  {
-    id: 1,
-    sku: 'SKU-001',
-    name: 'Thermal Barcode Labels (50x25mm)',
-    description: 'Premium quality thermal labels for barcode printing',
-    category: 'Labels',
-    hsnCode: '48211010',
-    currency: 'INR',
-    basePrice: 450,
-    gstRate: 18,
-    stockQuantity: 5000,
-    unit: 'Rolls',
-    isActive: true,
-  },
-  {
-    id: 2,
-    sku: 'SKU-002',
-    name: 'Desktop Barcode Printer',
-    description: 'High-speed desktop label printer',
-    category: 'Printers',
-    hsnCode: '84433210',
-    currency: 'INR',
-    basePrice: 12500,
-    gstRate: 18,
-    stockQuantity: 25,
-    unit: 'Pcs',
-    isActive: true,
-  },
-  {
-    id: 3,
-    sku: 'SKU-003',
-    name: 'Ribbon Wax 110mm x 300m',
-    description: 'Wax ribbon for label printers',
-    category: 'Ribbons',
-    hsnCode: '59119090',
-    currency: 'INR',
-    basePrice: 280,
-    gstRate: 18,
-    stockQuantity: 1200,
-    unit: 'Rolls',
-    isActive: true,
-  },
-  {
-    id: 4,
-    sku: 'SKU-004',
-    name: 'Industrial Handheld Scanner',
-    description: 'Rugged barcode scanner for warehouse',
-    category: 'Scanners',
-    hsnCode: '84716050',
-    currency: 'INR',
-    basePrice: 8500,
-    gstRate: 18,
-    stockQuantity: 0,
-    unit: 'Pcs',
-    isActive: false,
-  },
-];
+async function getProducts() {
+  const products = await prisma.products.findMany({
+    orderBy: { createdAt: 'desc' },
+    include: { category: { select: { name: true } } },
+  });
 
-export default function ProductsPage() {
-  const products = demoProducts;
+  const total = products.length;
+  const active = products.filter(p => p.isActive).length;
+  const categories = new Set(products.map(p => p.category?.name).filter(Boolean)).size;
 
-  const stats = {
-    total: products.length,
-    active: products.filter(p => p.isActive).length,
-    categories: [...new Set(products.map(p => p.category))].length,
-  };
+  return { products, stats: { total, active, categories } };
+}
+
+export default async function ProductsPage() {
+  const { products, stats } = await getProducts();
 
   return (
     <div>
@@ -123,33 +71,15 @@ export default function ProductsPage() {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    SKU
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Product Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Category
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    HSN Code
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Price
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    GST Rate
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Stock
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Actions
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">SKU</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Product Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Category</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">HSN Code</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Price</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">GST Rate</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Stock</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -161,38 +91,25 @@ export default function ProductsPage() {
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium text-gray-900 font-inter">{product.name}</div>
                       {product.description && (
-                        <div className="text-sm text-gray-500 font-inter truncate max-w-xs">
-                          {product.description}
-                        </div>
+                        <div className="text-sm text-gray-500 font-inter truncate max-w-xs">{product.description}</div>
                       )}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
-                      {product.category || '-'}
-                    </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
-                      {product.hsnCode || '-'}
-                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">{product.category?.name || '-'}</td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">{product.hsnCode || '-'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">
-                      {product.currency} {product.basePrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
+                      {product.currency} {Number(product.basePrice).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
-                      {product.gstRate}%
-                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">{Number(product.gstRate)}%</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
                       {product.stockQuantity || 0} {product.unit}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium bg-gray-100 border border-gray-900 font-inter ${
-                        product.isActive ? 'text-gray-900' : 'text-gray-500'
-                      }`}>
+                      <span className={`px-2 py-1 text-xs font-medium bg-gray-100 border border-gray-900 font-inter ${product.isActive ? 'text-gray-900' : 'text-gray-500'}`}>
                         {product.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <Link
-                        href={`/admin/erp/products/${product.id}`}
-                        className="text-blue-600 hover:text-blue-700 font-medium font-inter mr-4"
-                      >
+                      <Link href={`/admin/erp/products/${product.id}`} className="text-blue-600 hover:text-blue-700 font-medium font-inter mr-4">
                         Edit
                       </Link>
                     </td>

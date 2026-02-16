@@ -1,86 +1,21 @@
 import Link from 'next/link';
+import prisma from '@/lib/prisma';
 
-// Demo vendors data
-const demoVendors = [
-  {
-    id: '1',
-    code: 'VEN-001',
-    name: 'Rama Industries Pvt Ltd',
-    displayName: 'Rama Industries',
-    email: 'sales@ramaindustries.com',
-    phone: '+91 98765 43210',
-    contactPerson: 'Rajesh Kumar',
-    city: 'Mumbai',
-    state: 'Maharashtra',
-    gstNumber: '27AABCR1234F1ZH',
-    creditLimit: 500000,
-    creditDays: 30,
-    currentBalance: 125000,
-    isActive: true,
-    createdAt: new Date('2025-01-15'),
-  },
-  {
-    id: '2',
-    code: 'VEN-002',
-    name: 'Sharma Steel Works',
-    displayName: 'Sharma Steel',
-    email: 'orders@sharmasteel.in',
-    phone: '+91 87654 32109',
-    contactPerson: 'Amit Sharma',
-    city: 'Delhi',
-    state: 'Delhi',
-    gstNumber: '07AABCS5678G2ZI',
-    creditLimit: 300000,
-    creditDays: 15,
-    currentBalance: 45000,
-    isActive: true,
-    createdAt: new Date('2025-02-01'),
-  },
-  {
-    id: '3',
-    code: 'VEN-003',
-    name: 'Patel Packaging Solutions',
-    displayName: 'Patel Packaging',
-    email: 'info@patelpackaging.com',
-    phone: '+91 76543 21098',
-    contactPerson: 'Nilesh Patel',
-    city: 'Ahmedabad',
-    state: 'Gujarat',
-    gstNumber: '24AABCP9012H3ZJ',
-    creditLimit: 200000,
-    creditDays: 7,
-    currentBalance: 0,
-    isActive: true,
-    createdAt: new Date('2025-02-15'),
-  },
-  {
-    id: '4',
-    code: 'VEN-004',
-    name: 'Chennai Chemicals Ltd',
-    displayName: 'Chennai Chemicals',
-    email: 'supply@chennaichem.co.in',
-    phone: '+91 65432 10987',
-    contactPerson: 'Venkat Raman',
-    city: 'Chennai',
-    state: 'Tamil Nadu',
-    gstNumber: '33AABCC3456I4ZK',
-    creditLimit: 750000,
-    creditDays: 45,
-    currentBalance: 320000,
-    isActive: false,
-    createdAt: new Date('2024-11-20'),
-  },
-];
+async function getVendors() {
+  const vendors = await prisma.vendors.findMany({
+    orderBy: { createdAt: 'desc' },
+  });
 
-export default function VendorsPage() {
-  const vendors = demoVendors;
+  const total = vendors.length;
+  const active = vendors.filter(v => v.isActive).length;
+  const totalPayable = vendors.reduce((sum, v) => sum + Number(v.currentBalance || 0), 0);
+  const overLimit = vendors.filter(v => Number(v.currentBalance || 0) > Number(v.creditLimit || Infinity)).length;
 
-  const stats = {
-    total: vendors.length,
-    active: vendors.filter(v => v.isActive).length,
-    totalPayable: vendors.reduce((sum, v) => sum + (v.currentBalance || 0), 0),
-    overLimit: vendors.filter(v => (v.currentBalance || 0) > (v.creditLimit || Infinity)).length,
-  };
+  return { vendors, stats: { total, active, totalPayable, overLimit } };
+}
+
+export default async function VendorsPage() {
+  const { vendors, stats } = await getVendors();
 
   return (
     <div>
@@ -140,41 +75,21 @@ export default function VendorsPage() {
             <table className="w-full">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Code
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Vendor Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Contact
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Location
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    GST Number
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Credit Limit
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Balance
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Status
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">
-                    Actions
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Code</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Vendor Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Contact</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Location</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">GST Number</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Credit Limit</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Balance</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Status</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider font-inter">Actions</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
                 {vendors.map((vendor) => (
                   <tr key={vendor.id} className="hover:bg-gray-50">
-                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">
-                      {vendor.code}
-                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900 font-inter">{vendor.code || '-'}</td>
                     <td className="px-6 py-4">
                       <div className="text-sm font-medium text-gray-900 font-inter">{vendor.name}</div>
                       {vendor.displayName && vendor.displayName !== vendor.name && (
@@ -182,50 +97,33 @@ export default function VendorsPage() {
                       )}
                     </td>
                     <td className="px-6 py-4">
-                      <div className="text-sm text-gray-900 font-inter">{vendor.contactPerson}</div>
-                      <div className="text-sm text-gray-500 font-inter">{vendor.phone}</div>
+                      <div className="text-sm text-gray-900 font-inter">{vendor.contactPerson || '-'}</div>
+                      <div className="text-sm text-gray-500 font-inter">{vendor.phone || ''}</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
-                      {vendor.city}, {vendor.state}
+                      {[vendor.city, vendor.state].filter(Boolean).join(', ') || '-'}
                     </td>
-                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter font-mono">
-                      {vendor.gstNumber || '-'}
-                    </td>
+                    <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter font-mono">{vendor.gstNumber || '-'}</td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600 font-inter">
-                      ₹{vendor.creditLimit?.toLocaleString('en-IN') || '-'}
+                      ₹{Number(vendor.creditLimit || 0).toLocaleString('en-IN')}
                       <div className="text-xs text-gray-400">{vendor.creditDays} days</div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-inter">
                       <span className={`font-medium ${
-                        (vendor.currentBalance || 0) > (vendor.creditLimit || Infinity)
-                          ? 'text-red-600'
-                          : vendor.currentBalance > 0
-                            ? 'text-amber-600'
-                            : 'text-gray-600'
+                        Number(vendor.currentBalance || 0) > Number(vendor.creditLimit || Infinity) ? 'text-red-600' :
+                        Number(vendor.currentBalance || 0) > 0 ? 'text-amber-600' : 'text-gray-600'
                       }`}>
-                        ₹{vendor.currentBalance?.toLocaleString('en-IN') || '0'}
+                        ₹{Number(vendor.currentBalance || 0).toLocaleString('en-IN')}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
-                      <span className={`px-2 py-1 text-xs font-medium bg-gray-100 border border-gray-900 font-inter ${
-                        vendor.isActive ? 'text-gray-900' : 'text-gray-500'
-                      }`}>
+                      <span className={`px-2 py-1 text-xs font-medium bg-gray-100 border border-gray-900 font-inter ${vendor.isActive ? 'text-gray-900' : 'text-gray-500'}`}>
                         {vendor.isActive ? 'Active' : 'Inactive'}
                       </span>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm">
-                      <Link
-                        href={`/admin/erp/vendors/${vendor.id}`}
-                        className="text-blue-600 hover:text-blue-700 font-medium font-inter mr-4"
-                      >
-                        View
-                      </Link>
-                      <Link
-                        href={`/admin/erp/purchase-orders/create?vendorId=${vendor.id}`}
-                        className="text-green-600 hover:text-green-700 font-medium font-inter"
-                      >
-                        New PO
-                      </Link>
+                      <Link href={`/admin/erp/vendors/${vendor.id}`} className="text-blue-600 hover:text-blue-700 font-medium font-inter mr-4">View</Link>
+                      <Link href={`/admin/erp/purchase-orders/create?vendorId=${vendor.id}`} className="text-green-600 hover:text-green-700 font-medium font-inter">New PO</Link>
                     </td>
                   </tr>
                 ))}

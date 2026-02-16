@@ -13,6 +13,9 @@ export async function GET(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
+    }
 
     const leadId = parseInt(params.id);
 
@@ -20,8 +23,8 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid lead ID' }, { status: 400 });
     }
 
-    const lead = await prisma.lead.findUnique({
-      where: { id: leadId },
+    const lead = await prisma.leads.findFirst({
+      where: { id: leadId, organizationId: session.currentOrg.id },
       include: {
         activities: {
           orderBy: { createdAt: 'desc' },
@@ -36,10 +39,6 @@ export async function GET(
           },
           orderBy: { createdAt: 'desc' },
         },
-        invoices: {
-          orderBy: { createdAt: 'desc' },
-        },
-        contact: true,
       },
     });
 
@@ -67,6 +66,9 @@ export async function PUT(
     const session = await auth();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
     }
 
     const leadId = parseInt(params.id);
@@ -101,9 +103,9 @@ export async function PUT(
       lastContacted,
     } = body;
 
-    // Check if lead exists
-    const existingLead = await prisma.lead.findUnique({
-      where: { id: leadId },
+    // Check if lead exists and belongs to this org
+    const existingLead = await prisma.leads.findFirst({
+      where: { id: leadId, organizationId: session.currentOrg.id },
     });
 
     if (!existingLead) {
@@ -111,7 +113,7 @@ export async function PUT(
     }
 
     // Update lead
-    const lead = await prisma.lead.update({
+    const lead = await prisma.leads.update({
       where: { id: leadId },
       data: {
         ...(name && { name }),
@@ -143,17 +145,14 @@ export async function PUT(
         // Track conversion date if status changes to CONVERTED
         ...(status === 'CONVERTED' &&
           existingLead.status !== 'CONVERTED' && {
-            convertedAt: new Date(),
-          }),
+          convertedAt: new Date(),
+        }),
       },
       include: {
         activities: {
           orderBy: { createdAt: 'desc' },
         },
         opportunities: {
-          orderBy: { createdAt: 'desc' },
-        },
-        invoices: {
           orderBy: { createdAt: 'desc' },
         },
       },
@@ -189,6 +188,9 @@ export async function DELETE(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 403 });
+    }
 
     const leadId = parseInt(params.id);
 
@@ -196,9 +198,9 @@ export async function DELETE(
       return NextResponse.json({ error: 'Invalid lead ID' }, { status: 400 });
     }
 
-    // Check if lead exists
-    const existingLead = await prisma.lead.findUnique({
-      where: { id: leadId },
+    // Check if lead exists and belongs to this org
+    const existingLead = await prisma.leads.findFirst({
+      where: { id: leadId, organizationId: session.currentOrg.id },
     });
 
     if (!existingLead) {
@@ -206,7 +208,7 @@ export async function DELETE(
     }
 
     // Delete lead (cascades to activities, opportunities, etc.)
-    await prisma.lead.delete({
+    await prisma.leads.delete({
       where: { id: leadId },
     });
 
