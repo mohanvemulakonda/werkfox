@@ -261,7 +261,7 @@ export default function OpportunityDetailPage() {
                   )}
                   {(opportunity.status === 'WON' || opportunity.status === 'OPEN') && opportunity.customerId && (
                     <button
-                      onClick={() => handleConversion('convert-to-quotation', '/admin/erp/quotations')}
+                      onClick={() => handleConversion('convert-to-quotation', '/admin/erp/quotes')}
                       disabled={converting}
                       className="px-4 py-2 bg-blue-600 text-white rounded-md text-sm font-medium hover:bg-blue-700 disabled:opacity-50"
                     >
