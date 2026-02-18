@@ -82,42 +82,42 @@ export default function About() {
         {/* Hero Section */}
         <section className="py-20 bg-white">
           <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
-            <p className="text-sm text-[var(--werkfox-primary)] font-medium mb-4">About WerkFox</p>
-            <h1 className="text-4xl lg:text-6xl font-semibold text-[#1d1d1f] mb-6 tracking-tight">
+            <p className="text-sm font-medium mb-4" style={{ color: 'var(--werkfox-primary)' }}>About WerkFox</p>
+            <h1 className="text-4xl lg:text-6xl font-semibold mb-6 tracking-tight" style={{ color: 'var(--text-primary)' }}>
               Built for manufacturers.<br />
-              <span className="text-[#86868b]">Designed for growth.</span>
+              <span style={{ color: 'var(--text-secondary)' }}>Designed for <span style={{ fontFamily: 'var(--font-caveat)', fontSize: '115%', background: 'linear-gradient(135deg, #E03B12, #FD9220)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>growth.</span></span>
             </h1>
-            <p className="text-lg lg:text-xl text-[#86868b] max-w-2xl mx-auto leading-relaxed">
+            <p className="text-lg lg:text-xl max-w-2xl mx-auto leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               WerkFox is a product of StackNex.io, created to give manufacturers and distributors a modern, unified platform for running their entire operation.
             </p>
           </div>
         </section>
 
         {/* Mission & Vision */}
-        <section className="py-20 bg-[#f5f5f7]">
+        <section className="py-20" style={{ background: 'var(--surface)' }}>
           <div className="max-w-6xl mx-auto px-6 lg:px-8">
             <div className="grid md:grid-cols-2 gap-8">
-              <div className="bg-white rounded-2xl p-8 lg:p-10">
-                <div className="w-12 h-12 rounded-xl bg-[#1d1d1f] flex items-center justify-center mb-6">
+              <div className="card-glass p-8 lg:p-10">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style={{ background: 'linear-gradient(135deg, #1d1d1f, #3a3a3c)' }}>
                   <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M13 10V3L4 14h7v7l9-11h-7z" />
                   </svg>
                 </div>
-                <h2 className="text-2xl font-semibold text-[#1d1d1f] mb-4">Our Mission</h2>
-                <p className="text-[#86868b] leading-relaxed">
+                <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Our Mission</h2>
+                <p className="leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                   To empower businesses with intuitive, powerful software that transforms how they manage inventory, customers, and production. We believe great tools should feel invisible.
                 </p>
               </div>
 
-              <div className="bg-white rounded-2xl p-8 lg:p-10">
-                <div className="w-12 h-12 rounded-xl bg-gradient-to-br from-[var(--werkfox-primary)] to-[var(--werkfox-accent)] flex items-center justify-center mb-6">
+              <div className="card-glass p-8 lg:p-10">
+                <div className="w-12 h-12 rounded-xl flex items-center justify-center mb-6" style={{ background: 'linear-gradient(135deg, #E03B12, #FD9220)' }}>
                   <svg className="w-6 h-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                   </svg>
                 </div>
-                <h2 className="text-2xl font-semibold text-[#1d1d1f] mb-4">Our Vision</h2>
-                <p className="text-[#86868b] leading-relaxed">
+                <h2 className="text-2xl font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Our Vision</h2>
+                <p className="leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
                   A world where every business, regardless of size, has access to enterprise-grade tools that help them compete, grow, and succeed in the global market.
                 </p>
               </div>
@@ -129,22 +129,22 @@ export default function About() {
         <section className="py-20 bg-white">
           <div className="max-w-6xl mx-auto px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
-                Our values
+              <h2 className="text-4xl lg:text-5xl font-semibold mb-4 tracking-tight" style={{ color: 'var(--text-primary)' }}>
+                Our <span style={{ fontFamily: 'var(--font-caveat)', fontSize: '115%' }}>values</span>
               </h2>
-              <p className="text-lg text-[#86868b] max-w-xl mx-auto">
+              <p className="text-lg max-w-xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
                 The principles that guide everything we build
               </p>
             </div>
 
             <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
               {values.map((value, index) => (
-                <div key={index} className="bg-[#f5f5f7] rounded-2xl p-6 hover:bg-[#e8e8ed] transition-colors">
-                  <div className="w-10 h-10 rounded-lg bg-white flex items-center justify-center mb-4 text-[#1d1d1f]">
+                <div key={index} className="card-glass p-6">
+                  <div className="w-10 h-10 rounded-lg flex items-center justify-center mb-4 text-white" style={{ background: 'linear-gradient(135deg, #E03B12, #FD9220)' }}>
                     {value.icon}
                   </div>
-                  <h3 className="text-lg font-semibold text-[#1d1d1f] mb-2">{value.title}</h3>
-                  <p className="text-sm text-[#86868b] leading-relaxed">{value.description}</p>
+                  <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>{value.title}</h3>
+                  <p className="text-sm leading-relaxed" style={{ color: 'var(--text-secondary)' }}>{value.description}</p>
                 </div>
               ))}
             </div>
@@ -152,13 +152,13 @@ export default function About() {
         </section>
 
         {/* Our Story / Timeline */}
-        <section className="py-20 bg-[#f5f5f7]">
+        <section className="py-20" style={{ background: 'var(--surface)' }}>
           <div className="max-w-4xl mx-auto px-6 lg:px-8">
             <div className="text-center mb-16">
-              <h2 className="text-4xl lg:text-5xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
-                Our journey
+              <h2 className="text-4xl lg:text-5xl font-semibold mb-4 tracking-tight" style={{ color: 'var(--text-primary)' }}>
+                Our <span style={{ fontFamily: 'var(--font-caveat)', fontSize: '115%' }}>journey</span>
               </h2>
-              <p className="text-lg text-[#86868b] max-w-xl mx-auto">
+              <p className="text-lg max-w-xl mx-auto" style={{ color: 'var(--text-secondary)' }}>
                 From a small team with big ideas to serving thousands of businesses worldwide
               </p>
             </div>
@@ -171,14 +171,26 @@ export default function About() {
                     <div className="absolute left-[23px] top-10 bottom-0 w-px bg-[#d2d2d7]" />
                   )}
                   {/* Dot */}
-                  <div className="relative z-10 w-12 h-12 rounded-full bg-white border-2 border-[#d2d2d7] flex items-center justify-center flex-shrink-0">
-                    <span className="text-xs font-semibold text-[#1d1d1f]">{item.year.slice(-2)}</span>
+                  <div
+                    className="relative z-10 w-12 h-12 rounded-full flex items-center justify-center flex-shrink-0"
+                    style={
+                      index === timeline.length - 1
+                        ? { background: 'linear-gradient(135deg, #E03B12, #FD9220)', border: 'none' }
+                        : { background: '#ffffff', border: '2px solid #d2d2d7' }
+                    }
+                  >
+                    <span
+                      className="text-xs font-semibold"
+                      style={{ color: index === timeline.length - 1 ? '#ffffff' : 'var(--text-primary)' }}
+                    >
+                      {item.year.slice(-2)}
+                    </span>
                   </div>
                   {/* Content */}
-                  <div className="flex-1 bg-white rounded-xl p-5">
-                    <p className="text-xs text-[var(--werkfox-primary)] font-medium mb-1">{item.year}</p>
-                    <h3 className="text-base font-semibold text-[#1d1d1f] mb-1">{item.title}</h3>
-                    <p className="text-sm text-[#86868b]">{item.description}</p>
+                  <div className="flex-1 card-glass p-5">
+                    <p className="text-xs font-medium mb-1" style={{ color: 'var(--werkfox-primary)' }}>{item.year}</p>
+                    <h3 className="text-base font-semibold mb-1" style={{ color: 'var(--text-primary)' }}>{item.title}</h3>
+                    <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>{item.description}</p>
                   </div>
                 </div>
               ))}
@@ -189,35 +201,35 @@ export default function About() {
         {/* StackNex Section */}
         <section className="py-20 bg-white">
           <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
-            <div className="inline-flex items-center gap-2 bg-[#f5f5f7] rounded-full px-4 py-2 mb-8">
-              <span className="text-sm text-[#86868b]">A product of</span>
-              <span className="text-sm font-semibold text-[#1d1d1f]">StackNex.io</span>
+            <div className="inline-flex items-center gap-2 rounded-full px-4 py-2 mb-8" style={{ background: 'var(--surface)' }}>
+              <span className="text-sm" style={{ color: 'var(--text-secondary)' }}>A product of</span>
+              <span className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>StackNex.io</span>
             </div>
 
-            <h2 className="text-3xl lg:text-4xl font-semibold text-[#1d1d1f] mb-6 tracking-tight">
+            <h2 className="text-3xl lg:text-4xl font-semibold mb-6 tracking-tight" style={{ color: 'var(--text-primary)' }}>
               Backed by StackNex
             </h2>
-            <p className="text-lg text-[#86868b] max-w-2xl mx-auto mb-8 leading-relaxed">
+            <p className="text-lg max-w-2xl mx-auto mb-8 leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
               StackNex is a technology company focused on building intuitive business software.
               WerkFox is our flagship ERP solution, purpose-built for manufacturers and distributors
               who need powerful tools without the complexity.
             </p>
 
-            <div className="flex flex-wrap justify-center gap-8 text-sm text-[#86868b]">
+            <div className="flex flex-wrap justify-center gap-8 text-sm" style={{ color: 'var(--text-secondary)' }}>
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-[var(--werkfox-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ color: 'var(--werkfox-primary)' }}>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span>Founded 2019</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-[var(--werkfox-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ color: 'var(--werkfox-primary)' }}>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
                 </svg>
                 <span>HQ: Hyderabad, India</span>
               </div>
               <div className="flex items-center gap-2">
-                <svg className="w-5 h-5 text-[var(--werkfox-primary)]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor" style={{ color: 'var(--werkfox-primary)' }}>
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
                 <span>5 Global Offices</span>
@@ -227,7 +239,7 @@ export default function About() {
         </section>
 
         {/* CTA */}
-        <section className="py-20 bg-[#1d1d1f]">
+        <section className="py-20" style={{ background: 'linear-gradient(135deg, var(--werkfox-primary) 0%, var(--werkfox-accent) 100%)' }}>
           <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
             <h2 className="text-3xl lg:text-4xl font-semibold text-white mb-4 tracking-tight">
               Ready to streamline your operations?
@@ -238,13 +250,13 @@ export default function About() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-6 py-3 bg-white text-[#1d1d1f] rounded-xl text-sm font-medium hover:bg-white/90 transition-colors"
+                className="inline-flex items-center justify-center px-6 py-3 bg-white text-[#1d1d1f] rounded-full text-sm font-medium hover:bg-white/90 transition-colors"
               >
                 Get in touch
               </Link>
               <Link
                 href="/#pricing"
-                className="inline-flex items-center justify-center px-6 py-3 border border-white/20 text-white rounded-xl text-sm font-medium hover:bg-white/10 transition-colors"
+                className="inline-flex items-center justify-center px-6 py-3 border border-white/20 text-white rounded-full text-sm font-medium hover:bg-white/10 transition-colors"
               >
                 View pricing
               </Link>

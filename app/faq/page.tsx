@@ -1,240 +1,361 @@
 'use client';
 
 import { useState } from 'react';
+import AnnouncementBar from '../components/AnnouncementBar';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Link from 'next/link';
 
+/* ═══════════════════════════════════════════════════════════════════════
+   FAQ ACCORDION ITEM
+   ═══════════════════════════════════════════════════════════════════════ */
+function FAQItem({ question, answer, isOpen, onClick }: { question: string; answer: string; isOpen: boolean; onClick: () => void }) {
+  return (
+    <div className="border-b border-[var(--border)]">
+      <button
+        onClick={onClick}
+        className="w-full flex items-center justify-between py-5 text-left group"
+      >
+        <span className="text-base sm:text-lg font-semibold pr-4" style={{ color: 'var(--text-primary)' }}>
+          {question}
+        </span>
+        <svg
+          className={`w-5 h-5 flex-shrink-0 transition-transform duration-200 ${isOpen ? 'rotate-180' : ''}`}
+          style={{ color: 'var(--text-secondary)' }}
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+        </svg>
+      </button>
+      {isOpen && (
+        <p className="pb-5 text-base leading-relaxed" style={{ color: 'var(--text-secondary)' }}>
+          {answer}
+        </p>
+      )}
+    </div>
+  );
+}
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FAQ DATA
+   ═══════════════════════════════════════════════════════════════════════ */
+const faqCategories = [
+  {
+    name: 'Getting Started',
+    icon: 'M13 10V3L4 14h7v7l9-11h-7z',
+    gradient: 'linear-gradient(135deg, #E03B12, #FD9220)',
+    questions: [
+      {
+        question: 'What is WerkFox?',
+        answer: 'Complete ERP + CRM built for Indian manufacturers. Manage inventory, production, sales, invoicing, and customers \u2014 all in one platform.',
+      },
+      {
+        question: 'How long does setup take?',
+        answer: 'Most teams are up and running within a day. Import your data, configure workflows, and go live.',
+      },
+      {
+        question: 'Can I import from Tally or Excel?',
+        answer: 'Yes. One-click import from Excel, CSV, and Tally. Free migration help on paid plans.',
+      },
+      {
+        question: 'Do I need technical knowledge?',
+        answer: 'No. WerkFox is designed for business users. No coding or IT team required.',
+      },
+    ],
+  },
+  {
+    name: 'Pricing & Plans',
+    icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z',
+    gradient: 'linear-gradient(135deg, #10B981, #059669)',
+    questions: [
+      {
+        question: 'How much does WerkFox cost?',
+        answer: 'Starter at \u20B9999/mo (5 users), Growth at \u20B92,499/mo (10 users), or Enterprise (custom). Annual billing saves 20%.',
+      },
+      {
+        question: 'Is there a free trial?',
+        answer: 'Yes, 14-day free trial on all plans. No credit card required.',
+      },
+      {
+        question: 'Can I switch plans?',
+        answer: 'Yes, upgrade or downgrade anytime. Changes take effect immediately on upgrade.',
+      },
+      {
+        question: 'Can I add more users?',
+        answer: 'Yes. Extra users: \u20B9199/user/mo on Starter, \u20B9149/user/mo on Growth.',
+      },
+    ],
+  },
+  {
+    name: 'Features & Modules',
+    icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4',
+    gradient: 'linear-gradient(135deg, #0EA5E9, #06B6D4)',
+    questions: [
+      {
+        question: 'What modules are included?',
+        answer: 'CRM, Inventory, Invoicing, Purchase on all plans. Production, Quality, Advanced Analytics on Growth+.',
+      },
+      {
+        question: 'Do you support GST?',
+        answer: 'Full GST compliance: CGST, SGST, IGST, GSTR-1, GSTR-3B, e-invoicing, e-way bill \u2014 all automated.',
+      },
+      {
+        question: 'Can I use WerkFox on mobile?',
+        answer: 'Yes. iOS and Android apps included on all plans.',
+      },
+      {
+        question: 'Do you support multi-warehouse?',
+        answer: 'Yes. Track stock across unlimited warehouses with real-time visibility.',
+      },
+    ],
+  },
+  {
+    name: 'Security & Data',
+    icon: 'M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z',
+    gradient: 'linear-gradient(135deg, #8B5CF6, #7C3AED)',
+    questions: [
+      {
+        question: 'Is my data safe?',
+        answer: 'Bank-level 256-bit encryption, daily backups, SOC 2 compliant infrastructure. Your data is yours.',
+      },
+      {
+        question: 'Can I export my data?',
+        answer: 'Yes, export everything anytime \u2014 Excel, CSV, PDF. No lock-in.',
+      },
+      {
+        question: 'Do you offer on-premise deployment?',
+        answer: 'Yes, available on Enterprise plan. Full data sovereignty with your own servers.',
+      },
+      {
+        question: 'Where is data hosted?',
+        answer: 'AWS India (Mumbai region) with 99.9% uptime SLA.',
+      },
+    ],
+  },
+  {
+    name: 'Support',
+    icon: 'M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z',
+    gradient: 'linear-gradient(135deg, #F59E0B, #EA580C)',
+    questions: [
+      {
+        question: 'What support do you offer?',
+        answer: 'Email support on Starter, priority support on Growth, dedicated 24/7 on Enterprise.',
+      },
+      {
+        question: 'Do you provide training?',
+        answer: 'Yes. Video tutorials + docs on all plans. Live onboarding sessions on Growth+.',
+      },
+      {
+        question: 'Can you help migrate from other ERP?',
+        answer: 'Yes. Our team handles data migration from Tally, Zoho, SAP, or any Excel-based system.',
+      },
+    ],
+  },
+];
+
+/* ═══════════════════════════════════════════════════════════════════════
+   FAQ PAGE
+   ═══════════════════════════════════════════════════════════════════════ */
 export default function FAQ() {
-  const [openIndex, setOpenIndex] = useState<number | null>(null);
+  const [openIndex, setOpenIndex] = useState<string | null>(null);
+  const [activeCategory, setActiveCategory] = useState(0);
 
-  const faqs = [
-    {
-      category: "Products & Services",
-      questions: [
-        {
-          question: "What types of labels do you manufacture?",
-          answer: "We manufacture a wide range of custom labels including pharmaceutical labels, automotive labels, food & beverage labels, logistics labels, retail labels, and industrial labels. Our labels are available in various materials (paper, polyester, polypropylene) and adhesives to suit different applications and environments."
-        },
-        {
-          question: "Which printer brands do you supply?",
-          answer: "We are authorized resellers of premium printer brands including LIVATO, Zebra, Citizen, TSC, Honeywell, and Datalogic. We offer POS thermal printers, industrial barcode printers, desktop printers, mobile printers, 2D scanners, and RFID readers/writers."
-        },
-        {
-          question: "What is the Label Finder tool?",
-          answer: "Label Finder is our interactive configurator that helps you find the perfect labeling solution based on your industry and application. It recommends appropriate materials, thermal ribbons, barcode types, and printer models. You can save your configuration and request a quote directly from the tool."
-        },
-        {
-          question: "Do you provide label design services?",
-          answer: "Yes, we offer comprehensive custom label design services. Our team works with you to create bespoke label designs that meet your branding requirements and regulatory compliance needs. We handle everything from artwork preparation to material selection."
-        }
-      ]
-    },
-    {
-      category: "Compliance & Regulations",
-      questions: [
-        {
-          question: "Are your pharmaceutical labels FDA compliant?",
-          answer: "Yes, all our pharmaceutical labels meet FDA 21 CFR Part 11 requirements and GMP (Good Manufacturing Practice) standards. We offer labels with proper material specifications, tamper-evident options, and support for serialization and UDI (Unique Device Identification) requirements."
-        },
-        {
-          question: "Can you help with barcode and serialization compliance?",
-          answer: "Absolutely. We provide complete barcode and serialization solutions including GS1 compliance setup, track and trace implementation, and pharmaceutical serialization for drug supply chain security. Our team offers consulting services to ensure your labeling meets all regulatory requirements."
-        },
-        {
-          question: "What certifications do your materials have?",
-          answer: "Our label materials are tested and certified for various industry standards. We offer FDA-compliant materials for food and pharmaceutical applications, automotive-grade materials for extreme temperatures, and industrial materials with chemical resistance certifications."
-        }
-      ]
-    },
-    {
-      category: "Technical Support",
-      questions: [
-        {
-          question: "Do you provide technical support after purchase?",
-          answer: "Yes, we offer comprehensive 24/7 technical support for all our products. Our support includes phone assistance, email support, remote troubleshooting, and on-site service for critical issues. We typically respond within 2 hours for priority issues."
-        },
-        {
-          question: "Do you offer printer installation services?",
-          answer: "Yes, we provide professional printer installation and integration services. This includes on-site setup, network configuration, ERP/WMS connectivity, initial calibration, and staff training on equipment operation."
-        },
-        {
-          question: "What maintenance services do you offer?",
-          answer: "We offer preventive maintenance programs, spare parts supply, repair services, firmware updates, and regular equipment optimization. Our managed services also include print volume monitoring and consumables management."
-        },
-        {
-          question: "Can you integrate with our existing systems?",
-          answer: "Yes, we specialize in system integration. Our team can connect your labeling solutions with existing ERP, WMS, or database systems. We also provide software training and support for seamless integration into your workflow."
-        }
-      ]
-    },
-    {
-      category: "Orders & Delivery",
-      questions: [
-        {
-          question: "What is the typical lead time for custom labels?",
-          answer: "Lead times vary depending on label specifications and order quantity. Standard custom labels typically take 5-7 business days after artwork approval. For urgent requirements, we offer rush order services. Contact us for specific timeline estimates."
-        },
-        {
-          question: "What is the minimum order quantity?",
-          answer: "Minimum order quantities depend on the label type and specifications. We work with businesses of all sizes and can accommodate both small and large volume orders. Please contact us with your specific requirements for a quote."
-        },
-        {
-          question: "Do you offer sample labels before placing a bulk order?",
-          answer: "Yes, we provide prototype and sample labels for approval before production. This ensures the material, print quality, and adhesive meet your requirements. Sample development is part of our custom label design consultation service."
-        },
-        {
-          question: "Do you ship internationally?",
-          answer: "Yes, we serve clients worldwide. While headquartered in Hyderabad, India, we have experience shipping labeling solutions globally. Shipping costs and delivery times vary by destination. Contact us for international shipping quotes."
-        }
-      ]
-    },
-    {
-      category: "Pricing & Quotes",
-      questions: [
-        {
-          question: "How do I get a quote for labels or printers?",
-          answer: "You can request a quote by using our Label Finder tool, filling out the contact form, or calling us directly at +91-8008413800. Provide details about your application, required quantities, and any specific requirements for an accurate quote."
-        },
-        {
-          question: "Do you offer volume discounts?",
-          answer: "Yes, we offer competitive pricing for bulk orders. Volume discounts are available based on order quantities. We also offer subscription programs for regular consumables (labels and ribbons) with preferential pricing."
-        },
-        {
-          question: "What payment methods do you accept?",
-          answer: "We accept various payment methods including bank transfers, purchase orders for corporate clients, and other standard business payment options. Specific payment terms can be discussed during the quotation process."
-        }
-      ]
-    }
-  ];
-
-  const toggleFAQ = (index: number) => {
-    setOpenIndex(openIndex === index ? null : index);
+  const toggleFAQ = (key: string) => {
+    setOpenIndex(openIndex === key ? null : key);
   };
 
-  let globalIndex = 0;
-
   return (
-    <>
+    <div className="min-h-screen bg-white">
+      <AnnouncementBar />
       <Header />
 
-      <main className="relative overflow-hidden">
-        <div className="cmyk-wave cmyk-wave-cyan animate-float" style={{ width: '400px', height: '400px', top: '5%', right: '0%', animationDelay: '0s' }}></div>
-        <div className="cmyk-wave cmyk-wave-magenta animate-float" style={{ width: '350px', height: '350px', top: '60%', left: '0%', animationDelay: '3s' }}></div>
-
-        {/* Hero Section */}
-        <section className="relative py-20 bg-gradient-to-br from-blue-50 to-white">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="text-center">
-              <h1 className="text-4xl lg:text-6xl font-extrabold tracking-tight mb-6 font-open-sans">
-                FREQUENTLY ASKED <span className="text-gray-900">QUESTIONS</span>
-              </h1>
-              <p className="text-lg lg:text-xl text-gray-600 max-w-3xl mx-auto font-inter leading-relaxed">
-                Find answers to common questions about our products, services, and support
-              </p>
-            </div>
+      {/* ━━━ 1. HERO ━━━ */}
+      <section className="pt-32 pb-16 lg:pt-40 lg:pb-20 bg-white">
+        <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
+          <div
+            className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full text-xs font-semibold uppercase tracking-wider mb-8"
+            style={{ background: 'rgba(224,59,18,0.08)', color: 'var(--werkfox-primary)' }}
+          >
+            Help Center
           </div>
-        </section>
 
-        {/* Quick Contact */}
-        <section className="relative py-12 bg-white border-b border-gray-200">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="text-center">
-              <p className="text-gray-600 font-inter mb-4">
-                Can't find the answer you're looking for?
-              </p>
-              <Link href="/contact" className="inline-flex items-center gap-2 px-6 py-3 rounded-lg bg-blue-600 text-white font-semibold hover:bg-blue-700 transition-colors font-inter">
-                CONTACT US
-                <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 5l7 7-7 7" />
+          <h1
+            className="text-4xl sm:text-5xl lg:text-6xl font-bold tracking-tight leading-[1.08] mb-6"
+            style={{ color: 'var(--text-primary)' }}
+          >
+            Frequently asked{' '}
+            <span
+              style={{
+                fontFamily: 'var(--font-caveat)',
+                background: 'linear-gradient(135deg, #E03B12, #FD9220)',
+                WebkitBackgroundClip: 'text',
+                WebkitTextFillColor: 'transparent',
+                fontSize: '115%',
+              }}
+            >
+              questions
+            </span>
+          </h1>
+
+          <p
+            className="text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto"
+            style={{ color: 'var(--text-secondary)' }}
+          >
+            Everything you need to know about WerkFox ERP. Find answers to common questions or reach out to our team.
+          </p>
+        </div>
+      </section>
+
+      {/* ━━━ 2. QUICK HELP BAR ━━━ */}
+      <section className="py-6 bg-[var(--surface)]">
+        <div className="max-w-4xl mx-auto px-6 lg:px-8">
+          <div className="card-glass rounded-2xl p-6 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div className="flex items-center gap-3">
+              <div
+                className="w-10 h-10 rounded-full flex items-center justify-center flex-shrink-0"
+                style={{ background: 'linear-gradient(135deg, #E03B12, #FD9220)' }}
+              >
+                <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                 </svg>
-              </Link>
-            </div>
-          </div>
-        </section>
-
-        {/* FAQ Content */}
-        <section className="relative py-24 bg-white">
-          <div className="mx-auto max-w-4xl px-6 lg:px-8">
-            {faqs.map((category, categoryIndex) => {
-              return (
-                <div key={categoryIndex} className="mb-16">
-                  <h2 className="text-2xl lg:text-3xl font-bold mb-8 font-open-sans text-gray-800 border-b-2 border-blue-600 pb-4">
-                    {category.category}
-                  </h2>
-                  <div className="space-y-4">
-                    {category.questions.map((faq, questionIndex) => {
-                      const currentIndex = globalIndex++;
-                      return (
-                        <div
-                          key={questionIndex}
-                          className="bg-gray-50 rounded-xl border border-gray-200 overflow-hidden hover:border-blue-300 transition-colors"
-                        >
-                          <button
-                            onClick={() => toggleFAQ(currentIndex)}
-                            className="w-full px-6 py-5 flex items-center justify-between text-left hover:bg-gray-100 transition-colors"
-                          >
-                            <span className="font-bold text-gray-800 font-open-sans pr-4">
-                              {faq.question}
-                            </span>
-                            <svg
-                              className={`w-6 h-6 text-gray-900 flex-shrink-0 transition-transform ${
-                                openIndex === currentIndex ? 'rotate-180' : ''
-                              }`}
-                              fill="none"
-                              viewBox="0 0 24 24"
-                              stroke="currentColor"
-                            >
-                              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                            </svg>
-                          </button>
-                          {openIndex === currentIndex && (
-                            <div className="px-6 pb-5">
-                              <p className="text-gray-600 font-inter leading-relaxed">
-                                {faq.answer}
-                              </p>
-                            </div>
-                          )}
-                        </div>
-                      );
-                    })}
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-
-        {/* Contact CTA */}
-        <section className="relative py-16 bg-gray-50">
-          <div className="mx-auto max-w-7xl px-6 lg:px-8">
-            <div className="bg-gradient-to-br from-blue-600 to-blue-700 rounded-2xl p-12 text-center">
-              <h2 className="text-3xl font-bold mb-4 text-white font-open-sans">
-                STILL HAVE QUESTIONS?
-              </h2>
-              <p className="text-lg text-blue-100 max-w-2xl mx-auto mb-8 font-inter">
-                Our team is here to help. Contact us for personalized assistance with your labeling needs.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <Link href="/contact" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-white text-gray-900 font-semibold hover:bg-gray-100 transition-colors shadow-lg font-inter">
-                  SEND MESSAGE
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
-                  </svg>
-                </Link>
-                <a href="tel:+918008413800" className="inline-flex items-center justify-center gap-2 px-8 py-4 rounded-lg bg-transparent border-2 border-white text-white font-semibold hover:bg-white hover:text-gray-900 transition-colors font-inter">
-                  <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                  </svg>
-                  CALL US
-                </a>
+              </div>
+              <div>
+                <p className="text-sm font-semibold" style={{ color: 'var(--text-primary)' }}>
+                  Can&apos;t find your answer?
+                </p>
+                <p className="text-sm" style={{ color: 'var(--text-secondary)' }}>
+                  Reach out at{' '}
+                  <a
+                    href="mailto:support@werkfox.com"
+                    className="font-medium hover:underline"
+                    style={{ color: 'var(--werkfox-primary)' }}
+                  >
+                    support@werkfox.com
+                  </a>
+                </p>
               </div>
             </div>
+            <Link
+              href="/contact"
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-full text-sm font-semibold text-white transition-all duration-300 hover:-translate-y-0.5 hover:shadow-lg flex-shrink-0"
+              style={{ background: 'linear-gradient(135deg, #E03B12, #FD9220)' }}
+            >
+              Contact support
+              <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" />
+              </svg>
+            </Link>
           </div>
-        </section>
-      </main>
+        </div>
+      </section>
+
+      {/* ━━━ 3. CATEGORY PILLS ━━━ */}
+      <section className="py-10 bg-white">
+        <div className="max-w-4xl mx-auto px-6 lg:px-8">
+          <div className="flex gap-2 justify-center flex-wrap mb-12">
+            {faqCategories.map((cat, i) => (
+              <button
+                key={cat.name}
+                onClick={() => setActiveCategory(i)}
+                className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300"
+                style={{
+                  background: activeCategory === i ? 'linear-gradient(135deg, #E03B12, #FD9220)' : 'var(--surface)',
+                  color: activeCategory === i ? '#fff' : 'var(--text-secondary)',
+                }}
+              >
+                <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={cat.icon} />
+                </svg>
+                {cat.name}
+              </button>
+            ))}
+          </div>
+
+          {/* ━━━ 4. FAQ ACCORDIONS ━━━ */}
+          <div className="space-y-16">
+            {faqCategories.map((category, catIndex) => (
+              <div
+                key={category.name}
+                id={category.name.toLowerCase().replace(/\s+/g, '-').replace(/&/g, 'and')}
+              >
+                {/* Category header */}
+                <div className="flex items-center gap-3 mb-6">
+                  <div
+                    className="w-10 h-10 rounded-xl flex items-center justify-center flex-shrink-0"
+                    style={{ background: category.gradient, boxShadow: '0 4px 12px rgba(0,0,0,0.12)' }}
+                  >
+                    <svg className="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={category.icon} />
+                    </svg>
+                  </div>
+                  <h2
+                    className="text-2xl sm:text-3xl font-bold tracking-tight"
+                    style={{ color: 'var(--text-primary)' }}
+                  >
+                    {category.name}
+                  </h2>
+                </div>
+
+                {/* Questions */}
+                <div className="card-glass rounded-2xl overflow-hidden px-6 sm:px-8">
+                  {category.questions.map((faq, qIndex) => (
+                    <FAQItem
+                      key={`${catIndex}-${qIndex}`}
+                      question={faq.question}
+                      answer={faq.answer}
+                      isOpen={openIndex === `${catIndex}-${qIndex}`}
+                      onClick={() => toggleFAQ(`${catIndex}-${qIndex}`)}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ━━━ 5. GRADIENT CTA ━━━ */}
+      <section
+        className="py-24 lg:py-32"
+        style={{ background: 'linear-gradient(135deg, var(--werkfox-primary) 0%, var(--werkfox-accent) 100%)' }}
+      >
+        <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold text-white tracking-tight leading-tight mb-6">
+            Still have{' '}
+            <span style={{ fontFamily: 'var(--font-caveat)', fontSize: '115%' }}>questions?</span>
+          </h2>
+          <p className="text-lg sm:text-xl text-white/80 mb-12 max-w-2xl mx-auto leading-relaxed">
+            Our team is here to help you get started. Reach out and we&apos;ll get back to you within a few hours.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
+            <Link
+              href="/contact"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[var(--werkfox-primary)] font-semibold rounded-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-base"
+            >
+              Contact us
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
+              </svg>
+            </Link>
+            <a
+              href="tel:+918008413800"
+              className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-transparent border-2 border-white/40 text-white font-semibold rounded-full hover:bg-white/10 transition-all duration-300 text-base"
+            >
+              <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
+              </svg>
+              Call us
+            </a>
+          </div>
+          <p className="text-sm text-white/50">
+            Mon&ndash;Sat, 9 AM&ndash;7 PM IST &middot; support@werkfox.com
+          </p>
+        </div>
+      </section>
 
       <Footer />
-    </>
+    </div>
   );
 }

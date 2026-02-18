@@ -23,7 +23,7 @@ export default function Modules() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4" />
         </svg>
       ),
-      color: 'from-blue-500 to-blue-600'
+      color: 'linear-gradient(135deg, #3B82F6, #2563EB)'
     },
     {
       id: 'crm',
@@ -43,7 +43,7 @@ export default function Modules() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
       ),
-      color: 'from-purple-500 to-purple-600'
+      color: 'linear-gradient(135deg, #10B981, #059669)'
     },
     {
       id: 'production',
@@ -64,7 +64,7 @@ export default function Modules() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
         </svg>
       ),
-      color: 'from-amber-500 to-amber-600'
+      color: 'linear-gradient(135deg, #F59E0B, #D97706)'
     },
     {
       id: 'purchasing',
@@ -84,7 +84,7 @@ export default function Modules() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
         </svg>
       ),
-      color: 'from-green-500 to-green-600'
+      color: 'linear-gradient(135deg, #E03B12, #FD9220)'
     },
     {
       id: 'orders',
@@ -104,7 +104,7 @@ export default function Modules() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2m-3 7h3m-3 4h3m-6-4h.01M9 16h.01" />
         </svg>
       ),
-      color: 'from-cyan-500 to-cyan-600'
+      color: 'linear-gradient(135deg, #06B6D4, #0284C7)'
     },
     {
       id: 'warehouse',
@@ -124,7 +124,7 @@ export default function Modules() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
         </svg>
       ),
-      color: 'from-indigo-500 to-indigo-600'
+      color: 'linear-gradient(135deg, #6366F1, #4F46E5)'
     },
     {
       id: 'invoicing',
@@ -144,7 +144,7 @@ export default function Modules() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 14l6-6m-5.5.5h.01m4.99 5h.01M19 21V5a2 2 0 00-2-2H7a2 2 0 00-2 2v16l3.5-2 3.5 2 3.5-2 3.5 2zM10 8.5a.5.5 0 11-1 0 .5.5 0 011 0zm5 5a.5.5 0 11-1 0 .5.5 0 011 0z" />
         </svg>
       ),
-      color: 'from-rose-500 to-rose-600'
+      color: 'linear-gradient(135deg, #8B5CF6, #7C3AED)'
     },
     {
       id: 'analytics',
@@ -164,7 +164,7 @@ export default function Modules() {
           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
         </svg>
       ),
-      color: 'from-orange-500 to-orange-600'
+      color: 'linear-gradient(135deg, #EF4444, #DC2626)'
     }
   ];
 
@@ -180,7 +180,7 @@ export default function Modules() {
             <p className="text-sm text-[var(--werkfox-primary)] font-medium mb-4">Modules</p>
             <h1 className="text-4xl lg:text-6xl font-semibold text-[#1d1d1f] mb-6 tracking-tight">
               Everything you need.<br />
-              <span className="text-[#86868b]">Nothing you don&apos;t.</span>
+              <span style={{ fontFamily: 'var(--font-caveat)', fontSize: '115%' }}>Nothing you don&apos;t.</span>
             </h1>
             <p className="text-lg lg:text-xl text-[#86868b] max-w-2xl mx-auto leading-relaxed">
               Modular by design. Start with what you need, add more as you grow. All modules work seamlessly together.
@@ -195,11 +195,11 @@ export default function Modules() {
               {modules.map((module) => (
                 <div
                   key={module.id}
-                  className="bg-white rounded-2xl p-8 hover:shadow-lg transition-shadow group"
+                  className="card-glass p-8 hover:shadow-lg transition-shadow group"
                 >
                   {/* Header */}
                   <div className="flex items-start justify-between mb-6">
-                    <div className={`w-14 h-14 rounded-xl bg-gradient-to-br ${module.color} flex items-center justify-center text-white`}>
+                    <div className="w-14 h-14 rounded-xl flex items-center justify-center text-white" style={{ background: module.color }}>
                       {module.icon}
                     </div>
                     <Link
@@ -219,7 +219,7 @@ export default function Modules() {
                   <div className="grid grid-cols-2 gap-2">
                     {module.features.map((feature, index) => (
                       <div key={index} className="flex items-center gap-2">
-                        <svg className="w-4 h-4 text-[#86868b] flex-shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <svg className="w-4 h-4 flex-shrink-0" style={{ color: 'var(--color-success)' }} fill="none" viewBox="0 0 24 24" stroke="currentColor">
                           <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
                         </svg>
                         <span className="text-xs text-[#86868b]">{feature}</span>
@@ -236,7 +236,7 @@ export default function Modules() {
         <section className="py-20 bg-white">
           <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
             <h2 className="text-3xl lg:text-4xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
-              All modules, one platform
+              All modules, <span style={{ fontFamily: 'var(--font-caveat)', fontSize: '110%' }}>one platform</span>
             </h2>
             <p className="text-lg text-[#86868b] max-w-2xl mx-auto mb-12">
               Every module shares the same database, the same interface, and the same logic.
@@ -250,7 +250,7 @@ export default function Modules() {
                 { label: 'Cross-module Reports', desc: 'Connect any data point' },
                 { label: 'Role-based Access', desc: 'Control who sees what' },
               ].map((item, index) => (
-                <div key={index} className="bg-[#f5f5f7] rounded-xl p-5">
+                <div key={index} className="card-glass p-5">
                   <p className="text-sm font-semibold text-[#1d1d1f] mb-1">{item.label}</p>
                   <p className="text-xs text-[#86868b]">{item.desc}</p>
                 </div>
@@ -278,7 +278,7 @@ export default function Modules() {
                 { name: 'Asset Management', desc: 'Equipment tracking, maintenance schedules' },
                 { name: 'Multi-location', desc: 'Manage multiple sites with consolidated reporting' },
               ].map((addon, index) => (
-                <div key={index} className="bg-white rounded-xl p-5 flex items-center gap-4">
+                <div key={index} className="card-glass p-5 flex items-center gap-4">
                   <div className="w-10 h-10 rounded-lg bg-[#f5f5f7] flex items-center justify-center">
                     <svg className="w-5 h-5 text-[#86868b]" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                       <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M12 6v6m0 0v6m0-6h6m-6 0H6" />
@@ -295,7 +295,7 @@ export default function Modules() {
         </section>
 
         {/* CTA */}
-        <section className="py-20 bg-[#1d1d1f]">
+        <section className="py-20" style={{ background: 'linear-gradient(135deg, var(--werkfox-primary) 0%, var(--werkfox-accent) 100%)' }}>
           <div className="max-w-4xl mx-auto px-6 lg:px-8 text-center">
             <h2 className="text-3xl lg:text-4xl font-semibold text-white mb-4 tracking-tight">
               Ready to see it in action?
@@ -306,13 +306,13 @@ export default function Modules() {
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Link
                 href="/contact"
-                className="inline-flex items-center justify-center px-6 py-3 bg-white text-[#1d1d1f] rounded-xl text-sm font-medium hover:bg-white/90 transition-colors"
+                className="inline-flex items-center justify-center px-6 py-3 bg-white text-[#1d1d1f] rounded-full text-sm font-medium hover:bg-white/90 transition-colors"
               >
                 Request a demo
               </Link>
               <Link
                 href="/#pricing"
-                className="inline-flex items-center justify-center px-6 py-3 border border-white/20 text-white rounded-xl text-sm font-medium hover:bg-white/10 transition-colors"
+                className="inline-flex items-center justify-center px-6 py-3 border border-white/20 text-white rounded-full text-sm font-medium hover:bg-white/10 transition-colors"
               >
                 View pricing
               </Link>

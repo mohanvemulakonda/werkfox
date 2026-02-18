@@ -74,8 +74,8 @@ export default function Contact() {
       {/* Hero */}
       <section className="pt-32 pb-16 bg-[#f5f5f7]">
         <div className="max-w-4xl mx-auto px-6 text-center">
-          <h1 className="text-4xl lg:text-5xl font-semibold text-[#1d1d1f] mb-4 tracking-tight">
-            Get in touch
+          <h1 className="text-4xl lg:text-5xl font-semibold mb-4 tracking-tight" style={{ color: 'var(--text-primary)' }}>
+            Get in <span style={{ fontFamily: 'var(--font-caveat)', fontSize: '115%' }}>touch</span>
           </h1>
           <p className="text-lg text-[#86868b]">
             Have questions about WerkFox? We&apos;re here to help.
@@ -88,41 +88,41 @@ export default function Contact() {
         <div className="max-w-6xl mx-auto px-6">
           <div className="grid md:grid-cols-3 gap-6 mb-16">
             {/* Sales */}
-            <div className="text-center p-8 rounded-2xl bg-[#f5f5f7]">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-[#1d1d1f] flex items-center justify-center">
+            <div className="card-glass text-center p-8">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #E03B12, #FD9220)' }}>
                 <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-[#1d1d1f] mb-2">Sales</h3>
+              <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Sales</h3>
               <p className="text-sm text-[#86868b] mb-4">Talk to our sales team about plans and pricing</p>
-              <a href="mailto:sales@stacknex.io" className="text-[var(--werkfox-primary)] text-sm font-medium hover:underline">
-                sales@stacknex.io
+              <a href="mailto:sales@werkfox.com" className="text-[var(--werkfox-primary)] text-sm font-medium hover:underline">
+                sales@werkfox.com
               </a>
             </div>
 
             {/* Support */}
-            <div className="text-center p-8 rounded-2xl bg-[#f5f5f7]">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-[#1d1d1f] flex items-center justify-center">
+            <div className="card-glass text-center p-8">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #E03B12, #FD9220)' }}>
                 <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-[#1d1d1f] mb-2">Support</h3>
+              <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Support</h3>
               <p className="text-sm text-[#86868b] mb-4">Get help with your WerkFox account</p>
-              <a href="mailto:support@stacknex.io" className="text-[var(--werkfox-primary)] text-sm font-medium hover:underline">
-                support@stacknex.io
+              <a href="mailto:support@werkfox.com" className="text-[var(--werkfox-primary)] text-sm font-medium hover:underline">
+                support@werkfox.com
               </a>
             </div>
 
             {/* Phone */}
-            <div className="text-center p-8 rounded-2xl bg-[#f5f5f7]">
-              <div className="w-14 h-14 mx-auto mb-4 rounded-full bg-[#1d1d1f] flex items-center justify-center">
+            <div className="card-glass text-center p-8">
+              <div className="w-14 h-14 mx-auto mb-4 rounded-full flex items-center justify-center" style={{ background: 'linear-gradient(135deg, #E03B12, #FD9220)' }}>
                 <svg className="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
                 </svg>
               </div>
-              <h3 className="text-lg font-semibold text-[#1d1d1f] mb-2">Phone</h3>
+              <h3 className="text-lg font-semibold mb-2" style={{ color: 'var(--text-primary)' }}>Phone</h3>
               <p className="text-sm text-[#86868b] mb-4">Mon-Fri 9AM-8PM, Sat 10AM-6PM</p>
               <a href="tel:+914048523456" className="text-[var(--werkfox-primary)] text-sm font-medium hover:underline">
                 +91 40 4852 3456
@@ -134,7 +134,7 @@ export default function Contact() {
           <div className="grid lg:grid-cols-2 gap-12">
             {/* Form */}
             <div>
-              <h2 className="text-2xl font-semibold text-[#1d1d1f] mb-6">Send us a message</h2>
+              <h2 className="text-2xl font-semibold mb-6" style={{ color: 'var(--text-primary)' }}>Send us a message</h2>
 
               {submitStatus === 'success' && (
                 <div className="mb-6 p-4 bg-green-50 border border-green-200 rounded-xl">
@@ -227,7 +227,8 @@ export default function Contact() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-3.5 px-6 bg-[#1d1d1f] text-white text-sm font-medium rounded-xl hover:bg-[#1d1d1f]/90 transition-colors disabled:bg-[#86868b] disabled:cursor-not-allowed"
+                  className="w-full py-3.5 px-6 text-white text-sm font-medium rounded-full hover:opacity-90 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                  style={{ background: 'linear-gradient(135deg, #E03B12, #FD9220)' }}
                 >
                   {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
@@ -236,14 +237,14 @@ export default function Contact() {
 
             {/* Company Info */}
             <div>
-              <h2 className="text-2xl font-semibold text-[#1d1d1f] mb-6">Our offices</h2>
+              <h2 className="text-2xl font-semibold mb-6" style={{ color: 'var(--text-primary)' }}>Our offices</h2>
 
               <div className="space-y-6">
                 {/* Headquarters */}
-                <div className="p-6 rounded-2xl bg-[#f5f5f7]">
+                <div className="card-glass p-6">
                   <div className="flex items-center gap-2 mb-3">
-                    <span className="px-2 py-1 bg-[#1d1d1f] text-white text-xs rounded-md">HQ</span>
-                    <h3 className="font-semibold text-[#1d1d1f]">Hyderabad, India</h3>
+                    <span className="px-2 py-1 text-white text-xs rounded-md" style={{ background: 'linear-gradient(135deg, #E03B12, #FD9220)' }}>HQ</span>
+                    <h3 className="font-semibold" style={{ color: 'var(--text-primary)' }}>Hyderabad, India</h3>
                   </div>
                   <p className="text-sm text-[#86868b] leading-relaxed">
                     WeWork Rajapushpa Summit<br />
@@ -260,16 +261,16 @@ export default function Contact() {
                     { city: 'Toronto', country: 'Canada' },
                     { city: 'Sydney', country: 'Australia' },
                   ].map((office, i) => (
-                    <div key={i} className="p-4 rounded-xl bg-[#f5f5f7]">
-                      <h4 className="font-medium text-[#1d1d1f] text-sm">{office.city}</h4>
+                    <div key={i} className="card-glass p-4">
+                      <h4 className="font-medium text-sm" style={{ color: 'var(--text-primary)' }}>{office.city}</h4>
                       <p className="text-xs text-[#86868b]">{office.country}</p>
                     </div>
                   ))}
                 </div>
 
                 {/* Support Hours */}
-                <div className="p-6 rounded-2xl border border-[#d2d2d7]">
-                  <h3 className="font-semibold text-[#1d1d1f] mb-4">Support hours</h3>
+                <div className="card-glass p-6">
+                  <h3 className="font-semibold mb-4" style={{ color: 'var(--text-primary)' }}>Support hours</h3>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
                       <span className="text-[#86868b]">Monday - Friday</span>
