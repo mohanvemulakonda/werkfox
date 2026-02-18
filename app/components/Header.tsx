@@ -36,7 +36,7 @@ export default function Header() {
               height={36}
               className="h-9 w-auto"
             />
-            <span className="text-[15px] font-semibold text-[#1d1d1f] tracking-tight">WerkFox</span>
+            <span className="text-[15px] font-semibold text-[#1d1d1f] tracking-tight" style={{ display: 'inline-flex', alignItems: 'baseline' }}>Werk<span style={{ fontFamily: 'var(--font-caveat)', fontSize: '24px', fontWeight: 700, lineHeight: 1, display: 'inline-block', paddingRight: '2px', background: 'linear-gradient(135deg, #E03B12, #FD9220)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Fox</span></span>
           </Link>
 
           <div className="hidden lg:flex items-center gap-1">

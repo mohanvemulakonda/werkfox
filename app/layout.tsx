@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Inter, Open_Sans } from "next/font/google";
+import { Inter, Open_Sans, Caveat } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ChatWidget } from "./components/AIChat";
 import "./globals.css";
@@ -13,6 +13,12 @@ const inter = Inter({
 const openSans = Open_Sans({
   subsets: ["latin"],
   variable: '--font-open-sans',
+  display: 'swap'
+});
+
+const caveat = Caveat({
+  subsets: ["latin"],
+  variable: '--font-caveat',
   display: 'swap'
 });
 
@@ -97,7 +103,7 @@ export default function RootLayout({
 }) {
   return (
     <ClerkProvider>
-      <html lang="en" className={`${inter.variable} ${openSans.variable}`}>
+      <html lang="en" className={`${inter.variable} ${openSans.variable} ${caveat.variable}`}>
         <body className={inter.className}>
           {children}
           <ChatWidget />

@@ -152,7 +152,7 @@ export default function Footer() {
         {/* Bottom Bar */}
         <div className="pt-6 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-[#86868b]">
-            Copyright &copy; {new Date().getFullYear()} WerkFox. All rights reserved.
+            Copyright &copy; {new Date().getFullYear()} Werk<span style={{ fontFamily: 'var(--font-caveat)', fontSize: '18px', fontWeight: 700, lineHeight: 1, display: 'inline-block', paddingRight: '2px', background: 'linear-gradient(135deg, #E03B12, #FD9220)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent', backgroundClip: 'text' }}>Fox</span>. All rights reserved.
           </p>
           <div className="flex items-center gap-6">
             <div className="flex gap-4">

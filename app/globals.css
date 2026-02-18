@@ -1562,6 +1562,13 @@ body {
 }
 
 .topbar-brand-fox {
+  font-family: 'Caveat', var(--font-caveat), cursive;
+  font-size: 1.35rem;
+  font-weight: 700;
+  line-height: 1;
+  vertical-align: baseline;
+  display: inline-block;
+  padding-right: 2px;
   background: linear-gradient(135deg, var(--werkfox-primary) 0%, var(--werkfox-accent) 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
