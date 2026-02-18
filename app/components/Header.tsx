@@ -25,7 +25,7 @@ export default function Header() {
   ];
 
   return (
-    <header className="header-glass fixed top-[36px] left-0 right-0 z-50">
+    <header className="header-glass fixed top-[28px] left-0 right-0 z-50">
       <nav className="mx-auto max-w-7xl px-6 lg:px-8">
         <div className="flex items-center justify-between h-12">
           <Link href="/" className="flex items-center gap-2">

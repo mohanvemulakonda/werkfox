@@ -1,5 +1,6 @@
 'use client';
 
+import AnnouncementBar from '../components/AnnouncementBar';
 import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Link from 'next/link';
@@ -552,6 +553,7 @@ const modules = [
 export default function HomeFinal() {
   return (
     <div className="min-h-screen bg-white">
+      <AnnouncementBar />
       <Header />
 
       {/* ━━━ 1. HERO (from C — playful, Caveat accent) ━━━ */}
