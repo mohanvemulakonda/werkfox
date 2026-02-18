@@ -7,6 +7,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { useState, useEffect } from 'react';
 import WhiteboardController from './WhiteboardController';
+// import ScreenTutorial from './ScreenTutorial';
 
 /* ═══════════════════════════════════════════════════════════════════════
    ANIMATED PRODUCT TOUR — Light theme matching real admin UI
