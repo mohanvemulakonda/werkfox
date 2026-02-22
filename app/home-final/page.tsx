@@ -5,341 +5,24 @@ import Header from '../components/Header';
 import Footer from '../components/Footer';
 import Link from 'next/link';
 import Image from 'next/image';
-import { useState, useEffect } from 'react';
-import WhiteboardController from './WhiteboardController';
-// import ScreenTutorial from './ScreenTutorial';
+import { useState } from 'react';
+import dynamic from 'next/dynamic';
+// Old whiteboard kept for fallback
+// import WhiteboardController from './WhiteboardController';
 
-/* ═══════════════════════════════════════════════════════════════════════
-   ANIMATED PRODUCT TOUR — Light theme matching real admin UI
-   ═══════════════════════════════════════════════════════════════════════ */
-function AnimatedProductTour() {
-  const [active, setActive] = useState(0);
-  const tabs = [
-    { label: 'Dashboard', icon: 'M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6' },
-    { label: 'CRM Pipeline', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z' },
-    { label: 'Inventory', icon: 'M20 7l-8-4-8 4m16 0l-8 4m8-4v10l-8 4m0-10L4 7m8 4v10M4 7v10l8 4' },
-    { label: 'Production', icon: 'M19.428 15.428a2 2 0 00-1.022-.547l-2.387-.477a6 6 0 00-3.86.517l-.318.158a6 6 0 01-3.86.517L6.05 15.21a2 2 0 00-1.806.547M8 4h8l-1 1v5.172a2 2 0 00.586 1.414l5 5c1.26 1.26.367 3.414-1.415 3.414H4.828c-1.782 0-2.674-2.154-1.414-3.414l5-5A2 2 0 009 10.172V5L8 4z' },
-    { label: 'Invoicing', icon: 'M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z' },
-  ];
-
-  useEffect(() => {
-    const timer = setInterval(() => setActive((p) => (p + 1) % 5), 5000);
-    return () => clearInterval(timer);
-  }, []);
-
-  return (
-    <div>
-      {/* Tab bar */}
-      <div className="flex gap-2 mb-5 justify-center flex-wrap">
-        {tabs.map((t, i) => (
-          <button
-            key={t.label}
-            onClick={() => setActive(i)}
-            className="flex items-center gap-2 px-4 py-2 rounded-full text-sm font-medium transition-all duration-300"
-            style={{
-              background: active === i ? 'linear-gradient(135deg, #E03B12, #FD9220)' : '#f5f5f7',
-              color: active === i ? '#fff' : '#86868b',
-            }}
-          >
-            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={1.5} d={t.icon} /></svg>
-            {t.label}
-          </button>
-        ))}
-      </div>
-
-      {/* Screen container — light theme */}
-      <div className="relative rounded-2xl overflow-hidden border border-[#d2d2d7] shadow-2xl" style={{ background: '#ffffff' }}>
-        {/* Browser toolbar */}
-        <div className="flex items-center gap-2 px-4 py-2.5 border-b border-[#e5e5ea]" style={{ background: '#f5f5f7' }}>
-          <div className="flex gap-1.5">
-            <div className="w-2.5 h-2.5 rounded-full bg-[#ff5f57]" />
-            <div className="w-2.5 h-2.5 rounded-full bg-[#febc2e]" />
-            <div className="w-2.5 h-2.5 rounded-full bg-[#28c840]" />
-          </div>
-          <div className="flex-1 mx-6">
-            <div className="h-6 rounded-md bg-white border border-[#d2d2d7] max-w-sm mx-auto flex items-center justify-center">
-              <span className="text-[11px] text-[#86868b]">app.werkfox.com/{tabs[active].label.toLowerCase().replace(' ', '-')}</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Topbar replica — dark like real admin */}
-        <div className="flex items-center h-10 px-3 border-b border-[#48484a]" style={{ background: '#1d1d1f' }}>
-          <div className="flex items-center gap-2">
-            <Image src="/logo.png" alt="WerkFox" width={20} height={20} className="rounded" />
-            <span className="text-[11px] font-bold text-white/80">Werk<span style={{ fontFamily: 'var(--font-caveat)', fontSize: '120%', color: '#FD9220' }}>Fox</span></span>
-          </div>
-          <div className="flex gap-0 ml-4">
-            {['CRM', 'Sales', 'Inventory', 'Production', 'Invoicing'].map((t) => (
-              <span key={t} className="px-2.5 py-1.5 text-[10px] text-white/40 font-medium">{t}</span>
-            ))}
-          </div>
-          <div className="ml-auto flex items-center gap-2">
-            <div className="w-5 h-5 rounded-full" style={{ background: 'linear-gradient(135deg, #E03B12, #FD9220)' }}>
-              <span className="flex items-center justify-center h-full text-[8px] text-white font-bold">MV</span>
-            </div>
-          </div>
-        </div>
-
-        {/* Content area — light background */}
-        <div className="p-4 min-h-[340px] sm:min-h-[400px] relative overflow-hidden" style={{ background: '#f5f5f7' }}>
-          {/* Dashboard — exact replica of real admin/page.tsx */}
-          <div className={`absolute inset-4 transition-all duration-500 ${active === 0 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8 pointer-events-none'}`}>
-            {/* Page header — matches .admin-page-header */}
-            <div className="mb-3">
-              <h3 className="text-base font-semibold text-[#1d1d1f]">Dashboard</h3>
-              <p className="text-[10px] text-[#86868b]">Business overview at a glance</p>
-            </div>
-            {/* Stat cards — matches .admin-stats-grid + .admin-stat-card (glass morphism with orange icon) */}
-            <div className="grid grid-cols-4 gap-2 mb-3">
-              {[
-                { label: 'Pipeline Value', val: '₹24.5L', sub: '12 open opportunities', icon: 'M13 7h8m0 0v8m0-8l-8 8-4-4-6 6' },
-                { label: 'Revenue', val: '₹18.2L', sub: '45 invoices total', icon: 'M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z' },
-                { label: 'Active Leads', val: '128', sub: '34 customers', icon: 'M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z' },
-                { label: 'Pending Actions', val: '8', sub: '5 invoices, 3 POs', icon: 'M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z' },
-              ].map((s) => (
-                <div key={s.label} className="rounded-2xl p-2.5" style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'saturate(180%) blur(20px)', border: '1px solid rgba(0,0,0,0.06)', boxShadow: '0 1px 4px rgba(0,0,0,0.04)' }}>
-                  {/* Orange gradient icon — matches .admin-stat-icon */}
-                  <div className="w-8 h-8 rounded-xl flex items-center justify-center mb-1.5" style={{ background: 'linear-gradient(135deg, #E03B12, #FD9220)', boxShadow: '0 4px 12px rgba(224,59,18,0.3)' }}>
-                    <svg className="w-4 h-4 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d={s.icon} /></svg>
-                  </div>
-                  <p className="text-[9px] font-medium text-[#86868b] mb-0.5">{s.label}</p>
-                  <p className="text-base font-bold text-[#1d1d1f] leading-tight">{s.val}</p>
-                  <p className="text-[8px] text-[#aeaeb2] mt-0.5">{s.sub}</p>
-                </div>
-              ))}
-            </div>
-            {/* Sales Chart — matches real SalesChart: glass container, title, time filter, SVG line chart */}
-            <div className="rounded-2xl p-2.5" style={{ background: 'rgba(255,255,255,0.7)', backdropFilter: 'saturate(180%) blur(20px)', border: '1px solid rgba(0,0,0,0.06)' }}>
-              <div className="flex items-center justify-between mb-2">
-                <p className="text-[11px] font-semibold text-[#1d1d1f]">Sales Overview</p>
-                <div className="flex items-center gap-1.5">
-                  <select className="text-[8px] border border-[#d2d2d7] rounded px-1.5 py-0.5 text-[#424245] bg-white" disabled>
-                    <option>Last 12 Months</option>
-                  </select>
-                  <div className="flex rounded border border-[#d2d2d7] overflow-hidden">
-                    <span className="px-1.5 py-0.5 text-[8px] bg-[#2563eb] text-white">Monthly</span>
-                    <span className="px-1.5 py-0.5 text-[8px] text-[#424245] bg-white border-l border-[#d2d2d7]">Quarterly</span>
-                    <span className="px-1.5 py-0.5 text-[8px] text-[#424245] bg-white border-l border-[#d2d2d7]">Yearly</span>
-                  </div>
-                </div>
-              </div>
-              {/* Summary stats row — matches real chart */}
-              <div className="flex gap-4 mb-2">
-                <div><p className="text-[7px] text-[#86868b]">Total Revenue</p><p className="text-xs font-bold text-[#1d1d1f]">₹18,24,500</p></div>
-                <div><p className="text-[7px] text-[#86868b]">Total Invoices</p><p className="text-xs font-bold text-[#1d1d1f]">45</p></div>
-                <div><p className="text-[7px] text-[#86868b]">Average Invoice</p><p className="text-xs font-bold text-[#1d1d1f]">₹40,544</p></div>
-              </div>
-              {/* SVG line chart — matches real blue line with gradient fill */}
-              <svg viewBox="0 0 420 80" className="w-full" style={{ height: '80px' }}>
-                <defs>
-                  <linearGradient id="demo-chart-grad" x1="0%" y1="0%" x2="0%" y2="100%">
-                    <stop offset="0%" stopColor="#2563eb" stopOpacity="0.3" />
-                    <stop offset="100%" stopColor="#2563eb" stopOpacity="0" />
-                  </linearGradient>
-                </defs>
-                {/* Grid lines */}
-                {[0, 20, 40, 60].map((y) => (
-                  <line key={y} x1="30" y1={y} x2="410" y2={y} stroke="#e5e7eb" strokeWidth="0.5" strokeDasharray="2 2" />
-                ))}
-                {/* Area fill */}
-                <path d="M30 55 L65 42 L100 48 L135 30 L170 50 L205 22 L240 38 L275 10 L310 28 L345 15 L380 22 L410 8 L410 70 L30 70 Z" fill="url(#demo-chart-grad)" />
-                {/* Line */}
-                <path d="M30 55 L65 42 L100 48 L135 30 L170 50 L205 22 L240 38 L275 10 L310 28 L345 15 L380 22 L410 8" fill="none" stroke="#2563eb" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" />
-                {/* Data points */}
-                {[[30,55],[65,42],[100,48],[135,30],[170,50],[205,22],[240,38],[275,10],[310,28],[345,15],[380,22],[410,8]].map(([x,y], i) => (
-                  <circle key={i} cx={x} cy={y} r="2.5" fill="#2563eb" stroke="white" strokeWidth="1.5" />
-                ))}
-                {/* X-axis labels */}
-                {['Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec', 'Jan', 'Feb'].map((m, i) => (
-                  <text key={m} x={30 + i * (380/11)} y="78" textAnchor="middle" fontSize="6" fill="#86868b">{m}</text>
-                ))}
-              </svg>
-            </div>
-          </div>
-
-          {/* CRM Pipeline */}
-          <div className={`absolute inset-4 transition-all duration-500 ${active === 1 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8 pointer-events-none'}`}>
-            <div className="flex gap-2.5 overflow-hidden h-full">
-              {[
-                { stage: 'Qualification', val: '₹8.2L', count: 3, color: '#3B82F6', deals: [{ n: 'Patel Manufacturing', v: '₹2.4L', p: 'RP', score: 2 }, { n: 'TechParts India', v: '₹3.1L', p: 'PS', score: 3 }, { n: 'Nova Industries', v: '₹2.7L', p: 'NK', score: 1 }] },
-                { stage: 'Proposal', val: '₹6.5L', count: 2, color: '#8B5CF6', deals: [{ n: 'Khan Engineering', v: '₹5.2L', p: 'MK', score: 3 }, { n: 'AutoMax Parts', v: '₹1.3L', p: 'AS', score: 2 }] },
-                { stage: 'Negotiation', val: '₹5.8L', count: 1, color: '#F59E0B', deals: [{ n: 'IndoSteel Corp', v: '₹5.8L', p: 'RJ', score: 3 }] },
-                { stage: 'Closed Won', val: '₹12.1L', count: 2, color: '#10B981', deals: [{ n: 'Mehta Precision', v: '₹8.1L', p: 'AM', score: 3 }, { n: 'Vijay Textiles', v: '₹4.0L', p: 'VK', score: 2 }] },
-              ].map((col) => (
-                <div key={col.stage} className="flex-1 min-w-0">
-                  <div className="flex items-center gap-1.5 mb-2">
-                    <div className="w-2 h-2 rounded-full" style={{ background: col.color }} />
-                    <span className="text-[10px] font-bold text-[#86868b] uppercase tracking-wider truncate">{col.stage}</span>
-                    <span className="text-[8px] text-[#aeaeb2] bg-[#e5e5ea] px-1 py-0.5 rounded-full">{col.count}</span>
-                    <span className="text-[9px] text-[#aeaeb2] ml-auto">{col.val}</span>
-                  </div>
-                  <div className="space-y-1.5">
-                    {col.deals.map((d) => (
-                      <div key={d.n} className="rounded-lg p-2.5 bg-white border border-[#e5e5ea] hover:shadow-sm transition-shadow">
-                        <div className="flex items-center justify-between">
-                          <p className="text-[11px] font-semibold text-[#1d1d1f] truncate flex-1">{d.n}</p>
-                          <div className="w-5 h-5 rounded-full flex items-center justify-center text-[7px] font-bold text-white ml-1" style={{ background: 'linear-gradient(135deg, #E03B12, #FD9220)' }}>{d.p}</div>
-                        </div>
-                        <div className="flex items-center justify-between mt-1.5">
-                          <span className="text-[11px] font-bold" style={{ color: '#E03B12' }}>{d.v}</span>
-                          <div className="flex gap-0.5">{[1,2,3].map((s) => <span key={s} className="text-[8px]" style={{ color: s <= d.score ? '#FCD34D' : '#e5e5ea' }}>&#9733;</span>)}</div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Inventory */}
-          <div className={`absolute inset-4 transition-all duration-500 ${active === 2 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8 pointer-events-none'}`}>
-            {/* Action bar */}
-            <div className="flex items-center justify-between mb-3">
-              <div className="flex items-center gap-2">
-                <div className="h-7 rounded-lg bg-white border border-[#d2d2d7] px-2.5 flex items-center gap-1.5">
-                  <svg className="w-3 h-3 text-[#aeaeb2]" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" /></svg>
-                  <span className="text-[10px] text-[#aeaeb2]">Search products...</span>
-                </div>
-                <span className="text-[9px] px-2 py-1 rounded-full bg-white border border-[#d2d2d7] text-[#86868b]">All Locations</span>
-              </div>
-              <div className="flex gap-1.5">
-                <span className="text-[9px] px-2 py-1 rounded bg-[#1d1d1f] text-white">List</span>
-                <span className="text-[9px] px-2 py-1 rounded bg-white border border-[#d2d2d7] text-[#86868b]">Kanban</span>
-              </div>
-            </div>
-            <div className="rounded-xl overflow-hidden bg-white border border-[#e5e5ea]">
-              <div className="grid grid-cols-6 gap-0 px-3 py-2 border-b border-[#e5e5ea]" style={{ background: '#fafafa' }}>
-                {['SKU', 'Product', 'Location', 'On Hand', 'Value', 'Status'].map((h) => (
-                  <span key={h} className="text-[9px] font-bold text-[#86868b] uppercase tracking-wider">{h}</span>
-                ))}
-              </div>
-              {[
-                { sku: 'MFG-001', name: 'Steel Rod 12mm', cat: 'METALS', loc: 'Main Warehouse', qty: '1,450 EA', rsv: '120 reserved', val: '₹4,35,000', status: 'IN STOCK', sc: '#10B981' },
-                { sku: 'MFG-002', name: 'Copper Wire 2mm', cat: 'METALS', loc: 'Main Warehouse', qty: '85 Rolls', rsv: '20 reserved', val: '₹1,27,500', status: 'LOW STOCK', sc: '#F59E0B' },
-                { sku: 'CHM-001', name: 'Lubricant Oil 20W', cat: 'CHEMICALS', loc: 'Store B', qty: '340 L', rsv: '', val: '₹51,000', status: 'IN STOCK', sc: '#10B981' },
-                { sku: 'PKG-003', name: 'Carton Box A4', cat: 'PACKAGING', loc: 'Store B', qty: '0 EA', rsv: '', val: '₹0', status: 'OUT OF STOCK', sc: '#EF4444' },
-                { sku: 'MFG-007', name: 'Bearing 6205', cat: 'PARTS', loc: 'Main Warehouse', qty: '28 EA', rsv: '10 reserved', val: '₹16,800', status: 'LOW STOCK', sc: '#F59E0B' },
-                { sku: 'ELC-002', name: 'Motor 3HP', cat: 'ELECTRICAL', loc: 'Main Warehouse', qty: '12 EA', rsv: '', val: '₹2,40,000', status: 'IN STOCK', sc: '#10B981' },
-              ].map((r, i) => (
-                <div key={r.sku} className="grid grid-cols-6 gap-0 px-3 py-2 items-center border-t border-[#f0f0f0]" style={{ background: i % 2 === 0 ? '#fff' : '#fafafa' }}>
-                  <span className="text-[10px] text-[#86868b] font-mono">{r.sku}</span>
-                  <div>
-                    <p className="text-[11px] text-[#1d1d1f] font-medium">{r.name}</p>
-                    <p className="text-[8px] text-[#aeaeb2] uppercase tracking-wider">{r.cat}</p>
-                  </div>
-                  <span className="text-[10px] text-[#86868b]">{r.loc}</span>
-                  <div>
-                    <span className="text-[11px] text-[#424245] font-medium">{r.qty}</span>
-                    {r.rsv && <p className="text-[8px]" style={{ color: '#F59E0B' }}>{r.rsv}</p>}
-                  </div>
-                  <span className="text-[11px] text-[#424245] font-medium">{r.val}</span>
-                  <span className="text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full inline-block w-fit" style={{ background: `${r.sc}15`, color: r.sc }}>{r.status}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Production */}
-          <div className={`absolute inset-4 transition-all duration-500 ${active === 3 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8 pointer-events-none'}`}>
-            <div className="grid grid-cols-5 gap-2 mb-3">
-              {[
-                { l: 'Total Orders', v: '24', c: '#E03B12' },
-                { l: 'Planned', v: '6', c: '#0EA5E9' },
-                { l: 'In Progress', v: '8', c: '#6366F1' },
-                { l: 'Quality Check', v: '3', c: '#8B5CF6' },
-                { l: 'Completed', v: '7', c: '#10B981' },
-              ].map((s) => (
-                <div key={s.l} className="rounded-xl p-2 bg-white border border-[#e5e5ea]">
-                  <p className="text-[8px] text-[#aeaeb2]">{s.l}</p>
-                  <p className="text-sm font-bold" style={{ color: s.c }}>{s.v}</p>
-                </div>
-              ))}
-            </div>
-            <div className="rounded-xl overflow-hidden bg-white border border-[#e5e5ea]">
-              <div className="grid grid-cols-7 gap-0 px-3 py-2 border-b border-[#e5e5ea]" style={{ background: '#fafafa' }}>
-                {['Prod #', 'Product', 'Planned', 'Done', 'Status', 'Priority', 'BOM'].map((h) => (
-                  <span key={h} className="text-[9px] font-bold text-[#86868b] uppercase tracking-wider">{h}</span>
-                ))}
-              </div>
-              {[
-                { id: 'PRD-1024', name: 'Steel Brackets', sku: 'MFG-001', planned: 500, done: 500, status: 'COMPLETED', sc: '#10B981', priority: 'HIGH', pc: '#ea580c', bom: 4 },
-                { id: 'PRD-1025', name: 'Custom Gears', sku: 'MFG-004', planned: 200, done: 144, status: 'IN PROGRESS', sc: '#6366F1', priority: 'URGENT', pc: '#EF4444', bom: 6 },
-                { id: 'PRD-1026', name: 'Shaft Assembly', sku: 'MFG-005', planned: 150, done: 52, status: 'QC', sc: '#8B5CF6', priority: 'MEDIUM', pc: '#3B82F6', bom: 3 },
-                { id: 'PRD-1027', name: 'Motor Housing', sku: 'MFG-006', planned: 80, done: 0, status: 'PLANNED', sc: '#0EA5E9', priority: 'LOW', pc: '#86868b', bom: 5 },
-                { id: 'PRD-1028', name: 'Flange Coupling', sku: 'MFG-008', planned: 300, done: 0, status: 'MATERIAL REQ', sc: '#F59E0B', priority: 'HIGH', pc: '#ea580c', bom: 2 },
-              ].map((r, i) => (
-                <div key={r.id} className="grid grid-cols-7 gap-0 px-3 py-2 items-center border-t border-[#f0f0f0]" style={{ background: i % 2 === 0 ? '#fff' : '#fafafa' }}>
-                  <span className="text-[10px] font-medium" style={{ color: '#E03B12' }}>{r.id}</span>
-                  <div>
-                    <p className="text-[11px] text-[#1d1d1f] font-medium">{r.name}</p>
-                    <p className="text-[8px] text-[#aeaeb2] font-mono">{r.sku}</p>
-                  </div>
-                  <span className="text-[11px] text-[#424245]">{r.planned}</span>
-                  <span className="text-[11px] font-medium" style={{ color: r.done === r.planned ? '#10B981' : r.done > 0 ? '#F59E0B' : '#aeaeb2' }}>{r.done}</span>
-                  <span className="text-[8px] font-bold uppercase tracking-wider px-1.5 py-0.5 rounded inline-block w-fit" style={{ background: `${r.sc}15`, color: r.sc }}>{r.status}</span>
-                  <span className="text-[9px] font-semibold" style={{ color: r.pc }}>{r.priority}</span>
-                  <span className="text-[10px] text-[#86868b]">{r.bom} items</span>
-                </div>
-              ))}
-            </div>
-          </div>
-
-          {/* Invoicing */}
-          <div className={`absolute inset-4 transition-all duration-500 ${active === 4 ? 'opacity-100 translate-x-0' : 'opacity-0 translate-x-8 pointer-events-none'}`}>
-            <div className="grid grid-cols-3 gap-2 mb-3">
-              {[{ l: 'Total Revenue', v: '₹18.2L', c: '#10B981' }, { l: 'Pending', v: '₹4.8L', c: '#F59E0B' }, { l: 'Overdue', v: '₹1.2L', c: '#EF4444' }].map((s) => (
-                <div key={s.l} className="rounded-xl p-2.5 bg-white border border-[#e5e5ea]">
-                  <p className="text-[9px] text-[#86868b]">{s.l}</p>
-                  <p className="text-base font-bold" style={{ color: s.c }}>{s.v}</p>
-                </div>
-              ))}
-            </div>
-            <div className="rounded-xl overflow-hidden bg-white border border-[#e5e5ea]">
-              <div className="grid grid-cols-5 gap-0 px-3 py-2 border-b border-[#e5e5ea]" style={{ background: '#fafafa' }}>
-                {['Invoice #', 'Customer', 'Amount', 'GST', 'Status'].map((h) => (
-                  <span key={h} className="text-[9px] font-bold text-[#86868b] uppercase tracking-wider">{h}</span>
-                ))}
-              </div>
-              {[
-                { id: 'INV-1042', cust: 'Mehta Precision Parts', amt: '₹94,400', gst: '₹14,400', status: 'PAID', sc: '#10B981' },
-                { id: 'INV-1041', cust: 'IndoSteel Corporation', amt: '₹2,35,000', gst: '₹35,880', status: 'SENT', sc: '#3B82F6' },
-                { id: 'INV-1040', cust: 'Khan Engineering Works', amt: '₹1,48,000', gst: '₹22,576', status: 'PAID', sc: '#10B981' },
-                { id: 'INV-1039', cust: 'AutoMax Parts Ltd', amt: '₹67,200', gst: '₹10,251', status: 'OVERDUE', sc: '#EF4444' },
-                { id: 'INV-1038', cust: 'Patel Manufacturing', amt: '₹3,12,000', gst: '₹47,593', status: 'DRAFT', sc: '#86868b' },
-              ].map((r, i) => (
-                <div key={r.id} className="grid grid-cols-5 gap-0 px-3 py-2 items-center border-t border-[#f0f0f0]" style={{ background: i % 2 === 0 ? '#fff' : '#fafafa' }}>
-                  <span className="text-[11px] font-medium" style={{ color: '#E03B12' }}>{r.id}</span>
-                  <span className="text-[11px] text-[#424245] truncate">{r.cust}</span>
-                  <span className="text-[11px] text-[#1d1d1f] font-semibold">{r.amt}</span>
-                  <span className="text-[10px] text-[#86868b]">{r.gst}</span>
-                  <span className="text-[8px] font-bold uppercase tracking-wider px-2 py-0.5 rounded-full inline-block w-fit" style={{ background: `${r.sc}15`, color: r.sc }}>{r.status}</span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Progress bar */}
-        <div className="flex gap-1 px-4 pb-3" style={{ background: '#f5f5f7' }}>
-          {tabs.map((_, i) => (
-            <div key={i} className="flex-1 h-0.5 rounded-full overflow-hidden bg-[#d2d2d7]">
-              <div
-                className="h-full rounded-full transition-all"
-                style={{
-                  background: 'linear-gradient(90deg, #E03B12, #FD9220)',
-                  width: active === i ? '100%' : '0%',
-                  transition: active === i ? 'width 5s linear' : 'width 0.3s ease',
-                }}
-              />
-            </div>
-          ))}
-        </div>
-      </div>
+const RemotionProductPlayer = dynamic(() => import('./remotion/RemotionPlayer'), {
+  ssr: false,
+  loading: () => (
+    <div style={{ aspectRatio: '5/3', maxWidth: 800, margin: '0 auto', borderRadius: 16, background: '#f5f5f7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+      <span style={{ color: '#86868b', fontSize: 14 }}>Loading animation...</span>
     </div>
-  );
-}
+  ),
+});
+
+/* AnimatedProductTour removed — replaced by Remotion ProductTour.
+   Original was ~315 lines of tab-based admin UI mockup.
+   Now using @remotion/player for professional animations. */
+
 
 /* ═══════════════════════════════════════════════════════════════════════
    REAL UI MOCKUP COMPONENTS
@@ -594,7 +277,7 @@ export default function HomeFinal() {
         </div>
       </section>
 
-      {/* ━━━ 1.5 WHITEBOARD ANIMATION — end-to-end journey ━━━ */}
+      {/* ━━━ 1.5 PRODUCT TOUR — Remotion animated walkthrough ━━━ */}
       <section className="py-16 lg:py-20 bg-white overflow-hidden">
         <div className="max-w-5xl mx-auto px-6 lg:px-8">
           <h2 className="text-2xl sm:text-3xl font-bold text-center tracking-tight mb-2" style={{ color: 'var(--text-primary)' }}>
@@ -602,27 +285,9 @@ export default function HomeFinal() {
             <span style={{ fontFamily: 'var(--font-caveat)', fontSize: '115%' }}>Watch the magic.</span>
           </h2>
           <p className="text-center text-sm mb-10" style={{ color: 'var(--text-secondary)' }}>
-            A hand-drawn walkthrough of how your business runs on WerkFox.
+            See how your entire business runs on WerkFox — in 30 seconds.
           </p>
-          <WhiteboardController />
-        </div>
-      </section>
-
-      {/* ━━━ 2. ANIMATED PRODUCT TOUR ━━━ */}
-      <section className="py-16 lg:py-20 bg-[var(--surface)]">
-        <div className="max-w-5xl mx-auto px-6 lg:px-8">
-          <h2 className="text-2xl sm:text-3xl font-bold text-center tracking-tight mb-3" style={{ color: 'var(--text-primary)' }}>
-            See Werk<span style={{ fontFamily: 'var(--font-caveat)', fontSize: '115%', background: 'linear-gradient(135deg, #E03B12, #FD9220)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>Fox</span> in <span style={{ fontFamily: 'var(--font-caveat)', fontSize: '115%' }}>action</span>
-          </h2>
-          <p className="text-center mb-8 text-sm" style={{ color: 'var(--text-secondary)' }}>Real screens from the app. Click or watch it auto-play.</p>
-
-          <div className="relative">
-            <AnimatedProductTour />
-          </div>
-
-          <p className="text-center mt-6 text-sm" style={{ color: 'var(--text-secondary)' }}>
-            See how Patel Manufacturing cut order processing from <strong style={{ color: 'var(--text-primary)' }}>2 days to 5 hours</strong>
-          </p>
+          <RemotionProductPlayer />
         </div>
       </section>
 

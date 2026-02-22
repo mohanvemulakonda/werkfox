@@ -16,6 +16,8 @@
     "@clerk/nextjs": "^6.37.0",
     "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.1.0",
+    "@remotion/cli": "^4.0.427",
+    "@remotion/player": "^4.0.427",
     "@types/pdfkit": "^0.17.3",
     "@upstash/redis": "^1.36.1",
     "@vercel/blob": "^2.0.1",
@@ -30,7 +32,8 @@
     "pdfjs-dist": "^5.4.394",
     "pdfkit": "^0.17.2",
     "react": "19.0.0",
-    "react-dom": "19.0.0"
+    "react-dom": "19.0.0",
+    "remotion": "^4.0.427"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3",
