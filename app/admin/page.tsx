@@ -1,209 +1,359 @@
-import Link from 'next/link';
-import SalesChart from './components/SalesChart';
-import prisma from '@/lib/prisma';
+import { Metadata } from "next";
+import Link from "next/link";
+import { prisma } from "@/lib/prisma";
 
-async function getStats() {
+export const dynamic = "force-dynamic";
+import { requireAdmin } from "@/lib/auth";
+import { Badge } from "@/components/ui/Badge";
+import { formatDate, pricingLabel, pricingColor } from "@/lib/utils";
+import { approveTool, rejectTool } from "@/lib/actions";
+import {
+  Shield,
+  Package,
+  Users,
+  Star,
+  Clock,
+  CheckCircle,
+  XCircle,
+  ExternalLink,
+  BarChart3,
+  ChevronUp,
+  AlertCircle,
+} from "lucide-react";
+
+export const metadata: Metadata = {
+  title: "Admin Dashboard",
+};
+
+
+/* ------------------------------------------------------------------ */
+/*  Admin Page (server component)                                      */
+/* ------------------------------------------------------------------ */
+export default async function AdminPage() {
+  // Guard: only admins can access this page
+  await requireAdmin();
+
+  // Fetch all stats + data in parallel
   const [
-    totalLeads,
-    openOpportunities,
-    customers,
-    totalInvoices,
-    pendingInvoices,
-    pendingPOs,
-    activitiesThisWeek,
+    totalTools,
+    totalUsers,
+    totalReviews,
+    pendingCount,
+    pendingTools,
+    recentApproved,
   ] = await Promise.all([
-    prisma.leads.count(),
-    prisma.opportunities.count({ where: { status: 'OPEN' } }),
-    prisma.customers.count(),
-    prisma.invoices.count(),
-    prisma.invoices.count({ where: { status: { in: ['DRAFT', 'SENT'] } } }),
-    prisma.purchase_orders.count({ where: { status: { in: ['SENT', 'CONFIRMED', 'PARTIAL_RECEIVED'] } } }),
-    prisma.activities.count(),
+    prisma.tool.count(),
+    prisma.user.count(),
+    prisma.review.count(),
+    prisma.tool.count({ where: { status: "PENDING" } }),
+    prisma.tool.findMany({
+      where: { status: "PENDING" },
+      include: {
+        submitter: { select: { id: true, name: true, username: true, email: true, avatar: true } },
+        category: { select: { name: true } },
+        _count: { select: { upvotes: true } },
+      },
+      orderBy: { createdAt: "asc" },
+    }),
+    prisma.tool.findMany({
+      where: { status: "APPROVED" },
+      include: {
+        submitter: { select: { id: true, name: true, username: true } },
+        category: { select: { name: true } },
+        _count: { select: { upvotes: true } },
+      },
+      orderBy: { updatedAt: "desc" },
+      take: 10,
+    }),
   ]);
 
-  const openOpps = await prisma.opportunities.findMany({
-    where: { status: 'OPEN' },
-    select: { value: true },
-  });
-  const pipelineValue = openOpps.reduce((sum, o) => sum + Number(o.value), 0);
-
-  const paidInvoices = await prisma.invoices.findMany({
-    where: { status: 'PAID' },
-    select: { total: true },
-  });
-  const totalRevenue = paidInvoices.reduce((sum, inv) => sum + Number(inv.total), 0);
-
-  const recentLeads = await prisma.leads.findMany({
-    take: 5,
-    orderBy: { createdAt: 'desc' },
-    select: {
-      id: true, name: true, email: true, company: true,
-      stage: true, status: true, createdAt: true,
-    },
-  });
-
-  return {
-    totalLeads, openOpportunities, customers, totalInvoices,
-    pendingInvoices, pendingPOs, activitiesThisWeek,
-    pipelineValue, totalRevenue, recentLeads,
-  };
-}
-
-async function getSalesData() {
-  const invoices = await prisma.invoices.findMany({
-    select: { total: true, createdAt: true },
-    orderBy: { createdAt: 'asc' },
-  });
-
-  if (invoices.length === 0) return [];
-
-  const monthlyData: { [key: string]: { revenue: number; count: number } } = {};
-
-  invoices.forEach(invoice => {
-    const monthKey = new Intl.DateTimeFormat('en-US', {
-      month: 'short', year: 'numeric',
-    }).format(invoice.createdAt);
-
-    if (!monthlyData[monthKey]) {
-      monthlyData[monthKey] = { revenue: 0, count: 0 };
-    }
-    monthlyData[monthKey].revenue += Number(invoice.total);
-    monthlyData[monthKey].count += 1;
-  });
-
-  return Object.entries(monthlyData)
-    .map(([month, data]) => ({
-      month,
-      revenue: Math.round(data.revenue * 100) / 100,
-      invoiceCount: data.count,
-    }))
-    .sort((a, b) => new Date(a.month).getTime() - new Date(b.month).getTime());
-}
-
-function formatINR(value: number) {
-  if (value >= 10000000) return `₹${(value / 10000000).toFixed(1)}Cr`;
-  if (value >= 100000) return `₹${(value / 100000).toFixed(1)}L`;
-  if (value >= 1000) return `₹${(value / 1000).toFixed(1)}K`;
-  return `₹${value}`;
-}
-
-export default async function AdminDashboard() {
-  const [stats, salesData] = await Promise.all([getStats(), getSalesData()]);
-
-  const statCards = [
-    {
-      name: 'Pipeline Value',
-      value: formatINR(stats.pipelineValue),
-      change: `${stats.openOpportunities} open opportunities`,
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6" />
-        </svg>
-      ),
-      href: '/admin/crm/opportunities',
-    },
-    {
-      name: 'Revenue',
-      value: formatINR(stats.totalRevenue),
-      change: `${stats.totalInvoices} invoices total`,
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
-      href: '/admin/erp/invoices',
-    },
-    {
-      name: 'Active Leads',
-      value: stats.totalLeads,
-      change: `${stats.customers} customers`,
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z" />
-        </svg>
-      ),
-      href: '/admin/crm/leads',
-    },
-    {
-      name: 'Pending Actions',
-      value: stats.pendingInvoices + stats.pendingPOs,
-      change: `${stats.pendingInvoices} invoices, ${stats.pendingPOs} POs`,
-      icon: (
-        <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-        </svg>
-      ),
-      href: '/admin/erp/invoices',
-    },
-  ];
-
   return (
-    <div className="flex-1 overflow-y-auto p-4 md:p-6">
-      <div className="admin-page-header">
-        <h1 className="admin-page-title">Dashboard</h1>
-        <p className="admin-page-description">Business overview at a glance</p>
+    <div className="mx-auto max-w-6xl px-4 py-10 sm:py-14">
+      {/* Header */}
+      <div className="mb-8 flex items-center gap-3">
+        <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-brand-100 dark:bg-brand-900/30">
+          <Shield size={20} className="text-brand-600 dark:text-brand-400" />
+        </div>
+        <div>
+          <h1 className="text-2xl font-bold text-[var(--text-primary)] sm:text-3xl">
+            Admin Dashboard
+          </h1>
+          <p className="text-sm text-[var(--text-secondary)]">
+            Manage tool submissions, review queue, and platform stats.
+          </p>
+        </div>
       </div>
 
-      <div className="admin-stats-grid">
-        {statCards.map((stat) => (
-          <Link key={stat.name} href={stat.href} className="admin-stat-card">
-            <div className="admin-stat-icon">{stat.icon}</div>
-            <h3 className="admin-stat-label">{stat.name}</h3>
-            <p className="admin-stat-value">{stat.value}</p>
-            {stat.change && <p className="admin-stat-change">{stat.change}</p>}
-          </Link>
-        ))}
+      {/* Stats Grid */}
+      <div className="mb-10 grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <StatCard
+          icon={<Package size={20} className="text-brand-500" />}
+          label="Total Tools"
+          value={totalTools}
+        />
+        <StatCard
+          icon={<Users size={20} className="text-blue-500" />}
+          label="Total Users"
+          value={totalUsers}
+        />
+        <StatCard
+          icon={<Star size={20} className="text-yellow-500" />}
+          label="Total Reviews"
+          value={totalReviews}
+        />
+        <StatCard
+          icon={<Clock size={20} className="text-orange-500" />}
+          label="Pending Tools"
+          value={pendingCount}
+          highlight={pendingCount > 0}
+        />
       </div>
 
-      {salesData.length > 0 && (
-        <div className="admin-chart-container">
-          <SalesChart initialData={salesData} />
+      {/* Pending Review Section */}
+      <section className="mb-12">
+        <div className="mb-4 flex items-center gap-2">
+          <AlertCircle size={18} className="text-yellow-500" />
+          <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+            Pending Review
+          </h2>
+          {pendingCount > 0 && (
+            <Badge variant="warning">{pendingCount}</Badge>
+          )}
         </div>
-      )}
 
-      <div className="admin-table-container">
-        <div className="admin-table-header">
-          <h2 className="admin-table-title">Recent Leads</h2>
-          <Link href="/admin/crm/leads" className="admin-table-link">View all →</Link>
-        </div>
-        {stats.recentLeads.length === 0 ? (
-          <div className="p-8 text-center text-gray-500">
-            <p>No leads yet.</p>
-            <Link href="/admin/crm/leads/create" className="text-blue-600 hover:underline mt-2 inline-block">
-              Create your first lead →
-            </Link>
+        {pendingTools.length === 0 ? (
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg)] p-10 text-center">
+            <CheckCircle
+              size={32}
+              className="mx-auto text-green-500"
+            />
+            <p className="mt-3 text-sm text-[var(--text-secondary)]">
+              All caught up! No tools pending review.
+            </p>
           </div>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="admin-table">
-              <thead>
-                <tr>
-                  <th>Name</th>
-                  <th>Company</th>
-                  <th>Stage</th>
-                  <th>Date</th>
-                </tr>
-              </thead>
-              <tbody>
-                {stats.recentLeads.map((lead) => (
-                  <tr key={lead.id}>
-                    <td className="primary">
-                      <Link href={`/admin/crm/leads/${lead.id}`} className="hover:underline">{lead.name}</Link>
-                    </td>
-                    <td>{lead.company || '-'}</td>
-                    <td>
-                      <span className={`admin-badge ${
-                        lead.stage === 'QUALIFIED' ? 'admin-badge-success' :
-                        lead.stage === 'CONTACTED' ? 'admin-badge-info' : ''
-                      }`}>{lead.stage}</span>
-                    </td>
-                    <td>{new Date(lead.createdAt).toLocaleDateString()}</td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
+          <div className="space-y-4">
+            {pendingTools.map((tool) => (
+              <div
+                key={tool.id}
+                className="rounded-xl border border-[var(--border)] bg-[var(--bg)] p-5 transition-shadow hover:shadow-md"
+              >
+                <div className="flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+                  {/* Tool Info */}
+                  <div className="flex items-start gap-4 min-w-0 flex-1">
+                    {/* Avatar / Initial */}
+                    <div className="flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-xl bg-brand-100 text-lg font-bold text-brand-600 dark:bg-brand-900/30 dark:text-brand-400">
+                      {tool.logo ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={tool.logo}
+                          alt={tool.name}
+                          className="h-12 w-12 rounded-xl object-cover"
+                        />
+                      ) : (
+                        tool.name.charAt(0).toUpperCase()
+                      )}
+                    </div>
+
+                    <div className="min-w-0 flex-1">
+                      <div className="flex flex-wrap items-center gap-2">
+                        <h3 className="text-base font-semibold text-[var(--text-primary)]">
+                          {tool.name}
+                        </h3>
+                        <Badge variant="warning">Pending</Badge>
+                        <span
+                          className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${pricingColor(
+                            tool.pricing
+                          )}`}
+                        >
+                          {pricingLabel(tool.pricing)}
+                        </span>
+                      </div>
+
+                      <p className="mt-1 text-sm text-[var(--text-secondary)] line-clamp-2">
+                        {tool.tagline}
+                      </p>
+
+                      <div className="mt-2 flex flex-wrap items-center gap-x-4 gap-y-1 text-xs text-[var(--text-tertiary)]">
+                        <span>
+                          Submitted {formatDate(tool.createdAt)}
+                        </span>
+                        <span>
+                          by{" "}
+                          <Link
+                            href={`/u/${tool.submitter.username}`}
+                            className="font-medium text-[var(--text-secondary)] hover:text-brand-500 transition-colors"
+                          >
+                            {tool.submitter.name || tool.submitter.username}
+                          </Link>
+                        </span>
+                        {tool.category && (
+                          <span className="rounded-full bg-[var(--bg-secondary)] px-2 py-0.5 text-xs">
+                            {tool.category.name}
+                          </span>
+                        )}
+                        {tool.website && (
+                          <a
+                            href={tool.website}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="inline-flex items-center gap-1 text-brand-500 hover:text-brand-600 transition-colors"
+                          >
+                            <ExternalLink size={12} />
+                            Website
+                          </a>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="flex items-center gap-2 flex-shrink-0 sm:ml-4">
+                    <form action={async () => {
+                      "use server";
+                      await approveTool(tool.id);
+                    }}>
+                      <button
+                        type="submit"
+                        className="inline-flex items-center gap-1.5 rounded-lg bg-green-600 px-4 py-2 text-sm font-medium text-white transition-colors hover:bg-green-700 focus:outline-none focus:ring-2 focus:ring-green-500 focus:ring-offset-2"
+                      >
+                        <CheckCircle size={16} />
+                        Approve
+                      </button>
+                    </form>
+                    <form action={async () => {
+                      "use server";
+                      await rejectTool(tool.id);
+                    }}>
+                      <button
+                        type="submit"
+                        className="inline-flex items-center gap-1.5 rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-sm font-medium text-red-700 transition-colors hover:bg-red-100 dark:border-red-800 dark:bg-red-900/20 dark:text-red-400 dark:hover:bg-red-900/30 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2"
+                      >
+                        <XCircle size={16} />
+                        Reject
+                      </button>
+                    </form>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         )}
+      </section>
+
+      {/* Recently Approved Section */}
+      <section>
+        <div className="mb-4 flex items-center gap-2">
+          <BarChart3 size={18} className="text-green-500" />
+          <h2 className="text-lg font-semibold text-[var(--text-primary)]">
+            Recently Approved
+          </h2>
+        </div>
+
+        {recentApproved.length === 0 ? (
+          <div className="rounded-xl border border-[var(--border)] bg-[var(--bg)] p-10 text-center">
+            <Package
+              size={32}
+              className="mx-auto text-[var(--text-tertiary)]"
+            />
+            <p className="mt-3 text-sm text-[var(--text-secondary)]">
+              No approved tools yet.
+            </p>
+          </div>
+        ) : (
+          <div className="space-y-3">
+            {recentApproved.map((tool) => (
+              <div
+                key={tool.id}
+                className="flex items-center gap-4 rounded-xl border border-[var(--border)] bg-[var(--bg)] p-4 transition-shadow hover:shadow-sm"
+              >
+                {/* Initial */}
+                <div className="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-xl bg-green-100 text-sm font-bold text-green-600 dark:bg-green-900/30 dark:text-green-400">
+                  {tool.logo ? (
+                    // eslint-disable-next-line @next/next/no-img-element
+                    <img
+                      src={tool.logo}
+                      alt={tool.name}
+                      className="h-10 w-10 rounded-xl object-cover"
+                    />
+                  ) : (
+                    tool.name.charAt(0).toUpperCase()
+                  )}
+                </div>
+
+                {/* Info */}
+                <div className="min-w-0 flex-1">
+                  <div className="flex items-center gap-2">
+                    <h3 className="text-sm font-semibold text-[var(--text-primary)] truncate">
+                      {tool.name}
+                    </h3>
+                    <Badge variant="success">Approved</Badge>
+                  </div>
+                  <p className="mt-0.5 text-xs text-[var(--text-secondary)] truncate">
+                    {tool.tagline}
+                  </p>
+                </div>
+
+                {/* Meta */}
+                <div className="hidden items-center gap-3 text-xs text-[var(--text-tertiary)] sm:flex">
+                  {tool.category && (
+                    <span className="rounded-full bg-[var(--bg-secondary)] px-2 py-0.5">
+                      {tool.category.name}
+                    </span>
+                  )}
+                  <span className="flex items-center gap-1">
+                    <ChevronUp size={14} />
+                    {tool._count.upvotes}
+                  </span>
+                  <span>{formatDate(tool.updatedAt)}</span>
+                </div>
+
+                {/* Link */}
+                <Link
+                  href={`/tools/${tool.slug}`}
+                  className="flex-shrink-0 rounded-lg p-2 text-[var(--text-secondary)] hover:bg-[var(--bg-secondary)] transition-colors"
+                >
+                  <ExternalLink size={16} />
+                </Link>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
+    </div>
+  );
+}
+
+/* ------------------------------------------------------------------ */
+/*  StatCard helper component                                          */
+/* ------------------------------------------------------------------ */
+function StatCard({
+  icon,
+  label,
+  value,
+  highlight = false,
+}: {
+  icon: React.ReactNode;
+  label: string;
+  value: number;
+  highlight?: boolean;
+}) {
+  return (
+    <div
+      className={`rounded-xl border p-4 text-center transition-shadow hover:shadow-sm ${
+        highlight
+          ? "border-yellow-300 bg-yellow-50 dark:border-yellow-800 dark:bg-yellow-900/10"
+          : "border-[var(--border)] bg-[var(--bg)]"
+      }`}
+    >
+      <div className="mx-auto mb-2 flex h-8 w-8 items-center justify-center">
+        {icon}
+      </div>
+      <div className="text-2xl font-bold text-[var(--text-primary)]">
+        {value.toLocaleString()}
+      </div>
+      <div className="mt-0.5 text-xs text-[var(--text-secondary)]">
+        {label}
       </div>
     </div>
   );

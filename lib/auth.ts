@@ -1,95 +1,60 @@
-import { auth as clerkAuth, currentUser } from '@clerk/nextjs/server';
-import prisma from './prisma';
-import { cookies } from 'next/headers';
-import { getEnabledModules, type ModuleId, type PackageType } from './modules';
+import { auth, currentUser } from "@clerk/nextjs/server";
+import { prisma } from "./prisma";
 
-/**
- * Auth wrapper that provides session-like object for compatibility
- * with existing code that used NextAuth's getServerSession
- *
- * Now also returns organization membership data to support multi-tenancy.
- * Respects an optional 'werkfox_current_org' cookie to select the user's preferred org.
- */
-export async function auth() {
-  const { userId } = await clerkAuth();
+export async function getDbUser() {
+  const { userId } = await auth();
+  if (!userId) return null;
 
-  if (!userId) {
-    return null;
-  }
+  const user = await prisma.user.findUnique({
+    where: { clerkId: userId },
+  });
 
-  const user = await currentUser();
+  return user;
+}
+
+export async function getOrCreateDbUser() {
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  let user = await prisma.user.findUnique({
+    where: { clerkId: userId },
+  });
 
   if (!user) {
-    return null;
-  }
+    const clerkUser = await currentUser();
+    if (!clerkUser) return null;
 
-  // Fetch organization memberships for this Clerk user
-  let organizations: {
-    id: number;
-    name: string;
-    slug: string;
-    role: string;
-    packageType: PackageType;
-  }[] = [];
+    const email =
+      clerkUser.emailAddresses[0]?.emailAddress ?? `${userId}@toolsfinder.io`;
+    const username =
+      clerkUser.username ??
+      email.split("@")[0] ??
+      `user_${userId.slice(-8)}`;
 
-  try {
-    const memberships = await prisma.organization_members.findMany({
-      where: { clerkUserId: user.id, isActive: true },
-      include: { organization: true },
+    user = await prisma.user.create({
+      data: {
+        clerkId: userId,
+        email,
+        username,
+        name:
+          [clerkUser.firstName, clerkUser.lastName].filter(Boolean).join(" ") ||
+          null,
+        avatar: clerkUser.imageUrl,
+      },
     });
-
-    organizations = memberships.map((m) => ({
-      id: m.organization.id,
-      name: m.organization.name,
-      slug: m.organization.slug,
-      role: m.role,
-      packageType: m.organization.packageType as PackageType,
-    }));
-  } catch (e) {
-    // Database not available — continue with empty organizations
-    console.warn('Database not available for org lookup, continuing without orgs');
   }
 
-  // Default currentOrg is first active org
-  let currentOrg: {
-    id: number;
-    name: string;
-    slug: string;
-    role: string;
-    packageType: PackageType;
-    enabledModules: ModuleId[];
-  } | null = organizations.length
-      ? {
-        ...organizations[0],
-        enabledModules: getEnabledModules(organizations[0].packageType),
-      }
-      : null;
+  return user;
+}
 
-  // If a cookie exists with a preferred org, and the user is a member of it, honor it
-  try {
-    const currentOrgCookie = (await cookies()).get('werkfox_current_org')?.value;
-    if (currentOrgCookie) {
-      const cookieOrgId = parseInt(currentOrgCookie, 10);
-      const match = organizations.find((o) => o.id === cookieOrgId);
-      if (match) {
-        currentOrg = {
-          ...match,
-          enabledModules: getEnabledModules(match.packageType),
-        };
-      }
-    }
-  } catch (e) {
-    // cookies() may throw in some contexts; ignore and use default
-  }
+export async function requireDbUser() {
+  const user = await getOrCreateDbUser();
+  if (!user) throw new Error("Unauthorized");
+  return user;
+}
 
-  return {
-    user: {
-      id: user.id,
-      name: user.fullName || user.firstName || 'User',
-      email: user.emailAddresses[0]?.emailAddress || '',
-      image: user.imageUrl,
-    },
-    organizations,
-    currentOrg,
-  };
+export async function requireAdmin() {
+  const user = await requireDbUser();
+  if (user.role !== "ADMIN") throw new Error("Forbidden");
+  return user;
 }
