@@ -12,6 +12,7 @@ export default function QuotationActions({ quotation }: QuotationActionsProps) {
   const router = useRouter();
   const [isUpdating, setIsUpdating] = useState(false);
   const [isConverting, setIsConverting] = useState(false);
+  const [isDownloading, setIsDownloading] = useState(false);
   const [error, setError] = useState('');
 
   const updateStatus = async (newStatus: string) => {
@@ -77,6 +78,39 @@ export default function QuotationActions({ quotation }: QuotationActionsProps) {
           </button>
         </div>
       )}
+
+      {/* PDF actions — always visible */}
+      <button
+        onClick={() => window.open(`/api/quotations/${quotation.id}/pdf`, '_blank')}
+        className="admin-btn admin-btn-secondary"
+      >
+        Preview PDF
+      </button>
+      <button
+        disabled={isDownloading}
+        onClick={async () => {
+          setIsDownloading(true);
+          try {
+            const res = await fetch(`/api/quotations/${quotation.id}/pdf`);
+            if (!res.ok) throw new Error('Failed to download');
+            const blob = await res.blob();
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `Quote-${quotation.quoteNumber}.pdf`;
+            a.click();
+            URL.revokeObjectURL(url);
+          } catch (err: any) {
+            setError(err.message || 'Failed to download PDF');
+          } finally {
+            setIsDownloading(false);
+          }
+        }}
+        className="admin-btn admin-btn-secondary"
+        style={{ opacity: isDownloading ? 0.5 : 1 }}
+      >
+        {isDownloading ? 'Downloading...' : 'Download PDF'}
+      </button>
 
       {/* DRAFT actions */}
       {quotation.status === 'DRAFT' && (

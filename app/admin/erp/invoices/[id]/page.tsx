@@ -142,8 +142,26 @@ export default function InvoiceDetailPage() {
                 Record Payment
               </button>
             )}
-            <button className="admin-btn admin-btn-secondary">
-              Print PDF
+            <button
+              onClick={() => window.open(`/api/invoices/${invoice.id}/pdf`, '_blank')}
+              className="admin-btn admin-btn-secondary"
+            >
+              Preview PDF
+            </button>
+            <button
+              onClick={async () => {
+                const res = await fetch(`/api/invoices/${invoice.id}/pdf`);
+                const blob = await res.blob();
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `Invoice-${invoice.invoiceNumber}.pdf`;
+                a.click();
+                URL.revokeObjectURL(url);
+              }}
+              className="admin-btn admin-btn-secondary"
+            >
+              Download PDF
             </button>
             <Link href="/admin/erp/invoices" className="admin-btn admin-btn-ghost">← Invoices</Link>
           </div>
