@@ -40,7 +40,7 @@ export default function ProductsPage() {
       const data = await response.json();
 
       if (response.ok) {
-        let filtered = data.products || [];
+        let filtered = Array.isArray(data) ? data : data.products || [];
         if (searchQuery) {
           filtered = filtered.filter((p: Product) =>
             p.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
