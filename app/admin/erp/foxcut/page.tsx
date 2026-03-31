@@ -407,13 +407,22 @@ export default function FoxCutPage() {
             Optimize rectangular sheet cutting to minimize material waste
           </p>
         </div>
-        <Link
-          href="/admin/erp/foxcut/history"
-          className="group relative inline-flex items-center gap-2 px-6 py-3 bg-gray-800 text-white overflow-hidden font-inter"
-        >
-          <span className="relative z-10 text-sm tracking-wide">Saved Plans</span>
-          <div className="absolute inset-0 bg-gray-900 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
-        </Link>
+        <div className="flex gap-3">
+          <Link
+            href="/admin/erp/foxcut/tool-designer"
+            className="group relative inline-flex items-center gap-2 px-6 py-3 bg-[#E03B12] text-white overflow-hidden font-inter"
+          >
+            <span className="relative z-10 text-sm tracking-wide">Tool Designer</span>
+            <div className="absolute inset-0 bg-gray-900 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+          </Link>
+          <Link
+            href="/admin/erp/foxcut/history"
+            className="group relative inline-flex items-center gap-2 px-6 py-3 bg-gray-800 text-white overflow-hidden font-inter"
+          >
+            <span className="relative z-10 text-sm tracking-wide">Saved Plans</span>
+            <div className="absolute inset-0 bg-gray-900 transform translate-y-full group-hover:translate-y-0 transition-transform duration-300"></div>
+          </Link>
+        </div>
       </div>
 
       <div className="flex flex-col lg:flex-row gap-6">
