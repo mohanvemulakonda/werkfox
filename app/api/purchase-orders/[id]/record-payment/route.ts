@@ -13,6 +13,9 @@ export async function POST(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const poId = parseInt(id);
@@ -32,9 +35,9 @@ export async function POST(
       );
     }
 
-    // Fetch PO
-    const purchaseOrder = await prisma.purchase_orders.findUnique({
-      where: { id: poId },
+    // Fetch PO (verify org ownership)
+    const purchaseOrder = await prisma.purchase_orders.findFirst({
+      where: { id: poId, organizationId: session.currentOrg.id },
     });
 
     if (!purchaseOrder) {
@@ -77,6 +80,7 @@ export async function POST(
       // Create payment
       const newPayment = await tx.payments.create({
         data: {
+          organizationId: session.currentOrg.id,
           paymentNumber,
           type: 'MADE',
           vendorId: purchaseOrder.vendorId,

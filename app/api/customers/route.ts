@@ -8,12 +8,15 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const searchParams = request.nextUrl.searchParams;
     const search = searchParams.get('search');
     const isActive = searchParams.get('isActive');
 
-    const where: any = {};
+    const where: any = { organizationId: session.currentOrg.id };
 
     if (isActive !== null && isActive !== '') {
       where.isActive = isActive === 'true';
@@ -51,6 +54,9 @@ export async function POST(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const body = await request.json();
 
@@ -63,6 +69,7 @@ export async function POST(request: NextRequest) {
 
     const customer = await prisma.customers.create({
       data: {
+        organizationId: session.currentOrg.id,
         name: body.name,
         displayName: body.displayName || null,
         email: body.email || null,

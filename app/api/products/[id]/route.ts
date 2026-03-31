@@ -11,10 +11,13 @@ export async function GET(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
-    const product = await prisma.products.findUnique({
-      where: { id: parseInt(id) }
+    const product = await prisma.products.findFirst({
+      where: { id: parseInt(id), organizationId: session.currentOrg.id }
     });
 
     if (!product) {
@@ -40,23 +43,26 @@ export async function PUT(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const body = await request.json();
     const { id } = await params;
     const productId = parseInt(id);
 
-    const existing = await prisma.products.findUnique({
-      where: { id: productId }
+    const existing = await prisma.products.findFirst({
+      where: { id: productId, organizationId: session.currentOrg.id }
     });
 
     if (!existing) {
       return NextResponse.json({ error: 'Product not found' }, { status: 404 });
     }
 
-    // If SKU is being changed, check uniqueness
+    // If SKU is being changed, check uniqueness within org
     if (body.sku && body.sku !== existing.sku) {
-      const skuExists = await prisma.products.findUnique({
-        where: { sku: body.sku }
+      const skuExists = await prisma.products.findFirst({
+        where: { sku: body.sku, organizationId: session.currentOrg.id }
       });
       if (skuExists) {
         return NextResponse.json(
@@ -109,12 +115,15 @@ export async function DELETE(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const productId = parseInt(id);
 
-    const existing = await prisma.products.findUnique({
-      where: { id: productId }
+    const existing = await prisma.products.findFirst({
+      where: { id: productId, organizationId: session.currentOrg.id }
     });
 
     if (!existing) {

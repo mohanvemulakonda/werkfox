@@ -20,6 +20,9 @@ export async function GET(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const prodId = parseInt(id);
@@ -28,8 +31,8 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid production order ID' }, { status: 400 });
     }
 
-    const productionOrder = await prisma.production_orders.findUnique({
-      where: { id: prodId },
+    const productionOrder = await prisma.production_orders.findFirst({
+      where: { id: prodId, organizationId: session.currentOrg.id },
       include: {
         product: { select: { id: true, name: true, sku: true } },
         items: {
@@ -67,6 +70,9 @@ export async function PUT(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const prodId = parseInt(id);
@@ -75,9 +81,9 @@ export async function PUT(
       return NextResponse.json({ error: 'Invalid production order ID' }, { status: 400 });
     }
 
-    // Check if production order exists and is in PLANNED status
-    const existing = await prisma.production_orders.findUnique({
-      where: { id: prodId },
+    // Check if production order exists, belongs to org, and is in PLANNED status
+    const existing = await prisma.production_orders.findFirst({
+      where: { id: prodId, organizationId: session.currentOrg.id },
     });
 
     if (!existing) {

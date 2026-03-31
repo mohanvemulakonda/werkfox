@@ -12,6 +12,9 @@ export async function GET(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const vendorId = parseInt(id);
@@ -20,8 +23,8 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid vendor ID' }, { status: 400 });
     }
 
-    const vendor = await prisma.vendors.findUnique({
-      where: { id: vendorId },
+    const vendor = await prisma.vendors.findFirst({
+      where: { id: vendorId, organizationId: session.currentOrg.id },
       include: {
         purchaseOrders: {
           orderBy: { createdAt: 'desc' },
@@ -61,6 +64,9 @@ export async function PUT(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const vendorId = parseInt(id);
@@ -97,9 +103,9 @@ export async function PUT(
       isActive,
     } = body;
 
-    // Check if vendor exists
-    const existingVendor = await prisma.vendors.findUnique({
-      where: { id: vendorId },
+    // Check if vendor exists and belongs to org
+    const existingVendor = await prisma.vendors.findFirst({
+      where: { id: vendorId, organizationId: session.currentOrg.id },
     });
 
     if (!existingVendor) {
@@ -178,6 +184,9 @@ export async function DELETE(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const vendorId = parseInt(id);
@@ -186,9 +195,9 @@ export async function DELETE(
       return NextResponse.json({ error: 'Invalid vendor ID' }, { status: 400 });
     }
 
-    // Check if vendor exists
-    const existingVendor = await prisma.vendors.findUnique({
-      where: { id: vendorId },
+    // Check if vendor exists and belongs to org
+    const existingVendor = await prisma.vendors.findFirst({
+      where: { id: vendorId, organizationId: session.currentOrg.id },
     });
 
     if (!existingVendor) {

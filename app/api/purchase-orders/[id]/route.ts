@@ -20,6 +20,9 @@ export async function GET(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const poId = parseInt(id);
@@ -28,8 +31,8 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid purchase order ID' }, { status: 400 });
     }
 
-    const purchaseOrder = await prisma.purchase_orders.findUnique({
-      where: { id: poId },
+    const purchaseOrder = await prisma.purchase_orders.findFirst({
+      where: { id: poId, organizationId: session.currentOrg.id },
       include: {
         vendor: true,
         location: { select: { id: true, name: true, code: true } },
@@ -68,6 +71,9 @@ export async function PUT(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const poId = parseInt(id);
@@ -76,9 +82,9 @@ export async function PUT(
       return NextResponse.json({ error: 'Invalid purchase order ID' }, { status: 400 });
     }
 
-    // Check if PO exists and is in DRAFT status
-    const existingPO = await prisma.purchase_orders.findUnique({
-      where: { id: poId },
+    // Check if PO exists, belongs to org, and is in DRAFT status
+    const existingPO = await prisma.purchase_orders.findFirst({
+      where: { id: poId, organizationId: session.currentOrg.id },
     });
 
     if (!existingPO) {
@@ -203,6 +209,9 @@ export async function PATCH(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const poId = parseInt(id);
@@ -221,9 +230,9 @@ export async function PATCH(
       );
     }
 
-    // Fetch current PO
-    const existingPO = await prisma.purchase_orders.findUnique({
-      where: { id: poId },
+    // Fetch current PO (verify org ownership)
+    const existingPO = await prisma.purchase_orders.findFirst({
+      where: { id: poId, organizationId: session.currentOrg.id },
     });
 
     if (!existingPO) {

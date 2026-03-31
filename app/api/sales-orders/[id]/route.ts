@@ -20,6 +20,9 @@ export async function GET(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const soId = parseInt(id);
@@ -28,8 +31,8 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid sales order ID' }, { status: 400 });
     }
 
-    const salesOrder = await prisma.sales_orders.findUnique({
-      where: { id: soId },
+    const salesOrder = await prisma.sales_orders.findFirst({
+      where: { id: soId, organizationId: session.currentOrg.id },
       include: {
         customer: true,
         items: {
@@ -64,6 +67,9 @@ export async function PUT(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const soId = parseInt(id);
@@ -72,9 +78,9 @@ export async function PUT(
       return NextResponse.json({ error: 'Invalid sales order ID' }, { status: 400 });
     }
 
-    // Check if SO exists and is in PENDING status
-    const existingSO = await prisma.sales_orders.findUnique({
-      where: { id: soId },
+    // Check if SO exists, belongs to org, and is in PENDING status
+    const existingSO = await prisma.sales_orders.findFirst({
+      where: { id: soId, organizationId: session.currentOrg.id },
     });
 
     if (!existingSO) {
@@ -199,6 +205,9 @@ export async function PATCH(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const soId = parseInt(id);
@@ -217,9 +226,9 @@ export async function PATCH(
       );
     }
 
-    // Fetch current SO
-    const existingSO = await prisma.sales_orders.findUnique({
-      where: { id: soId },
+    // Fetch current SO (verify org ownership)
+    const existingSO = await prisma.sales_orders.findFirst({
+      where: { id: soId, organizationId: session.currentOrg.id },
     });
 
     if (!existingSO) {

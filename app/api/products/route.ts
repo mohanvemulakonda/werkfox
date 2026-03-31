@@ -8,13 +8,16 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { searchParams } = new URL(request.url);
     const isActive = searchParams.get('isActive');
     const productType = searchParams.get('productType');
     const search = searchParams.get('search');
 
-    const where: any = {};
+    const where: any = { organizationId: session.currentOrg.id };
     if (isActive !== null) {
       where.isActive = isActive === 'true';
     }
@@ -50,6 +53,9 @@ export async function POST(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const body = await request.json();
 
@@ -61,9 +67,9 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Check if SKU already exists
-    const existing = await prisma.products.findUnique({
-      where: { sku: body.sku }
+    // Check if SKU already exists within this org
+    const existing = await prisma.products.findFirst({
+      where: { sku: body.sku, organizationId: session.currentOrg.id }
     });
 
     if (existing) {
@@ -75,6 +81,7 @@ export async function POST(request: NextRequest) {
 
     const product = await prisma.products.create({
       data: {
+        organizationId: session.currentOrg.id,
         sku: body.sku,
         name: body.name,
         description: body.description || null,

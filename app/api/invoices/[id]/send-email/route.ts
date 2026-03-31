@@ -2,15 +2,24 @@ import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
 import { generateInvoicePDFPro } from '@/lib/pdf-generator-pro';
 import { sendEmail, generateInvoiceEmailHTML, generateInvoiceEmailText } from '@/lib/email';
+import { auth } from '@/lib/auth';
 
 export async function POST(
   request: NextRequest,
   { params }: { params: Promise<{ id: string }> }
 ) {
   try {
+    const session = await auth();
+    if (!session) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
+
     const { id } = await params;
-    const invoice = await prisma.invoices.findUnique({
-      where: { id: parseInt(id) },
+    const invoice = await prisma.invoices.findFirst({
+      where: { id: parseInt(id), organizationId: session.currentOrg.id },
       include: { items: true }
     });
 

@@ -20,6 +20,9 @@ export async function GET(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const quotationId = parseInt(id);
@@ -31,8 +34,8 @@ export async function GET(
       );
     }
 
-    const quotation = await prisma.quotations.findUnique({
-      where: { id: quotationId },
+    const quotation = await prisma.quotations.findFirst({
+      where: { id: quotationId, organizationId: session.currentOrg.id },
       include: {
         customer: true,
         items: {
@@ -75,6 +78,9 @@ export async function PUT(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const quotationId = parseInt(id);
@@ -86,9 +92,9 @@ export async function PUT(
       );
     }
 
-    // Check if quotation exists and is in DRAFT status
-    const existing = await prisma.quotations.findUnique({
-      where: { id: quotationId },
+    // Check if quotation exists, belongs to org, and is in DRAFT status
+    const existing = await prisma.quotations.findFirst({
+      where: { id: quotationId, organizationId: session.currentOrg.id },
     });
 
     if (!existing) {
@@ -208,6 +214,9 @@ export async function PATCH(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const quotationId = parseInt(id);
@@ -229,9 +238,9 @@ export async function PATCH(
       );
     }
 
-    // Get current quotation
-    const existing = await prisma.quotations.findUnique({
-      where: { id: quotationId },
+    // Get current quotation (verify org ownership)
+    const existing = await prisma.quotations.findFirst({
+      where: { id: quotationId, organizationId: session.currentOrg.id },
     });
 
     if (!existing) {

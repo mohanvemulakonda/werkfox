@@ -1,8 +1,12 @@
 import Link from 'next/link';
 import SalesChart from './components/SalesChart';
 import prisma from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
-async function getStats() {
+async function getStats(orgId: number) {
+  const orgFilter = { organizationId: orgId };
+
   const [
     totalLeads,
     openOpportunities,
@@ -12,28 +16,29 @@ async function getStats() {
     pendingPOs,
     activitiesThisWeek,
   ] = await Promise.all([
-    prisma.leads.count(),
-    prisma.opportunities.count({ where: { status: 'OPEN' } }),
-    prisma.customers.count(),
-    prisma.invoices.count(),
-    prisma.invoices.count({ where: { status: { in: ['DRAFT', 'SENT'] } } }),
-    prisma.purchase_orders.count({ where: { status: { in: ['SENT', 'CONFIRMED', 'PARTIAL_RECEIVED'] } } }),
-    prisma.activities.count(),
+    prisma.leads.count({ where: orgFilter }),
+    prisma.opportunities.count({ where: { ...orgFilter, status: 'OPEN' } }),
+    prisma.customers.count({ where: orgFilter }),
+    prisma.invoices.count({ where: orgFilter }),
+    prisma.invoices.count({ where: { ...orgFilter, status: { in: ['DRAFT', 'SENT'] } } }),
+    prisma.purchase_orders.count({ where: { ...orgFilter, status: { in: ['SENT', 'CONFIRMED', 'PARTIAL_RECEIVED'] } } }),
+    prisma.activities.count({ where: orgFilter }),
   ]);
 
   const openOpps = await prisma.opportunities.findMany({
-    where: { status: 'OPEN' },
+    where: { ...orgFilter, status: 'OPEN' },
     select: { value: true },
   });
   const pipelineValue = openOpps.reduce((sum, o) => sum + Number(o.value), 0);
 
   const paidInvoices = await prisma.invoices.findMany({
-    where: { status: 'PAID' },
+    where: { ...orgFilter, status: 'PAID' },
     select: { total: true },
   });
   const totalRevenue = paidInvoices.reduce((sum, inv) => sum + Number(inv.total), 0);
 
   const recentLeads = await prisma.leads.findMany({
+    where: orgFilter,
     take: 5,
     orderBy: { createdAt: 'desc' },
     select: {
@@ -49,8 +54,9 @@ async function getStats() {
   };
 }
 
-async function getSalesData() {
+async function getSalesData(orgId: number) {
   const invoices = await prisma.invoices.findMany({
+    where: { organizationId: orgId },
     select: { total: true, createdAt: true },
     orderBy: { createdAt: 'asc' },
   });
@@ -88,7 +94,12 @@ function formatINR(value: number) {
 }
 
 export default async function AdminDashboard() {
-  const [stats, salesData] = await Promise.all([getStats(), getSalesData()]);
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+
+  const orgId = session.currentOrg.id;
+  const [stats, salesData] = await Promise.all([getStats(orgId), getSalesData(orgId)]);
 
   const statCards = [
     {

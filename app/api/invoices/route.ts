@@ -3,13 +3,15 @@ import prisma from '@/lib/prisma';
 import { auth } from '@/lib/auth';
 
 // Generate sequential invoice number using database
-async function generateInvoiceNumber(type: string): Promise<string> {
+async function generateInvoiceNumber(type: string, organizationId?: number): Promise<string> {
   const now = new Date();
   const year = now.getFullYear().toString().slice(-2);
   const month = (now.getMonth() + 1).toString().padStart(2, '0');
 
   // Get company settings for prefix and next number
-  const settings = await prisma.company_settings.findFirst();
+  const settings = await prisma.company_settings.findFirst({
+    where: organizationId ? { organizationId } : undefined,
+  });
 
   let prefix = 'INV';
   let nextNumber = 1;
@@ -45,12 +47,15 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { searchParams } = new URL(request.url);
     const type = searchParams.get('type');
     const status = searchParams.get('status');
 
-    const where: any = {};
+    const where: any = { organizationId: session.currentOrg.id };
     if (type) where.type = type;
     if (status) where.status = status;
 
@@ -87,6 +92,9 @@ export async function POST(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const body = await request.json();
 
@@ -106,7 +114,7 @@ export async function POST(request: NextRequest) {
     }
 
     // Generate invoice number (sequential from database)
-    const invoiceNumber = await generateInvoiceNumber(body.type || 'INVOICE');
+    const invoiceNumber = await generateInvoiceNumber(body.type || 'INVOICE', session.currentOrg.id);
 
     const totalAmount = parseFloat(body.total || 0);
     const paidAmount = parseFloat(body.amountPaid || 0);
@@ -114,6 +122,7 @@ export async function POST(request: NextRequest) {
     // Create invoice with items
     const invoice = await prisma.invoices.create({
       data: {
+        organizationId: session.currentOrg.id,
         invoiceNumber,
         customerId: parseInt(body.customerId),
         type: body.type || 'INVOICE',

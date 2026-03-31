@@ -21,6 +21,9 @@ export async function GET(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const woId = parseInt(id);
@@ -29,8 +32,8 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid work order ID' }, { status: 400 });
     }
 
-    const workOrder = await prisma.work_orders.findUnique({
-      where: { id: woId },
+    const workOrder = await prisma.work_orders.findFirst({
+      where: { id: woId, organizationId: session.currentOrg.id },
       include: {
         customer: true,
         items: {
@@ -65,6 +68,9 @@ export async function PUT(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const woId = parseInt(id);
@@ -73,9 +79,9 @@ export async function PUT(
       return NextResponse.json({ error: 'Invalid work order ID' }, { status: 400 });
     }
 
-    // Check if WO exists and is in PENDING status
-    const existingWO = await prisma.work_orders.findUnique({
-      where: { id: woId },
+    // Check if WO exists, belongs to org, and is in PENDING status
+    const existingWO = await prisma.work_orders.findFirst({
+      where: { id: woId, organizationId: session.currentOrg.id },
     });
 
     if (!existingWO) {
@@ -193,6 +199,9 @@ export async function PATCH(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const woId = parseInt(id);
@@ -211,9 +220,9 @@ export async function PATCH(
       );
     }
 
-    // Fetch current WO
-    const existingWO = await prisma.work_orders.findUnique({
-      where: { id: woId },
+    // Fetch current WO (verify org ownership)
+    const existingWO = await prisma.work_orders.findFirst({
+      where: { id: woId, organizationId: session.currentOrg.id },
     });
 
     if (!existingWO) {
@@ -268,6 +277,9 @@ export async function DELETE(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const woId = parseInt(id);
@@ -276,8 +288,8 @@ export async function DELETE(
       return NextResponse.json({ error: 'Invalid work order ID' }, { status: 400 });
     }
 
-    const existingWO = await prisma.work_orders.findUnique({
-      where: { id: woId },
+    const existingWO = await prisma.work_orders.findFirst({
+      where: { id: woId, organizationId: session.currentOrg.id },
     });
 
     if (!existingWO) {

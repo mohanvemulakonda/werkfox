@@ -15,6 +15,9 @@ export async function POST(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const soId = parseInt(id);
@@ -23,9 +26,9 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid sales order ID' }, { status: 400 });
     }
 
-    // Fetch sales order with items
-    const salesOrder = await prisma.sales_orders.findUnique({
-      where: { id: soId },
+    // Fetch sales order with items (verify org ownership)
+    const salesOrder = await prisma.sales_orders.findFirst({
+      where: { id: soId, organizationId: session.currentOrg.id },
       include: {
         items: {
           include: {
@@ -100,6 +103,7 @@ export async function POST(
       // Create invoice
       const newInvoice = await tx.invoices.create({
         data: {
+          organizationId: session.currentOrg.id,
           invoiceNumber,
           customerId: salesOrder.customerId,
           salesOrderId: salesOrder.id,

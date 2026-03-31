@@ -13,6 +13,9 @@ export async function POST(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const quoteId = parseInt(id);
@@ -21,9 +24,9 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid quotation ID' }, { status: 400 });
     }
 
-    // Fetch quotation with items
-    const quotation = await prisma.quotations.findUnique({
-      where: { id: quoteId },
+    // Fetch quotation with items (verify org ownership)
+    const quotation = await prisma.quotations.findFirst({
+      where: { id: quoteId, organizationId: session.currentOrg.id },
       include: { items: true },
     });
 
@@ -47,6 +50,7 @@ export async function POST(
       // Create sales order copying customer fields and items from quotation
       const newSO = await tx.sales_orders.create({
         data: {
+          organizationId: session.currentOrg.id,
           soNumber,
           customerId: quotation.customerId,
           quotationId: quotation.id,

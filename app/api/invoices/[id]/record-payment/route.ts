@@ -13,6 +13,9 @@ export async function POST(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const invoiceId = parseInt(id);
@@ -32,9 +35,9 @@ export async function POST(
       );
     }
 
-    // Fetch invoice
-    const invoice = await prisma.invoices.findUnique({
-      where: { id: invoiceId },
+    // Fetch invoice (verify org ownership)
+    const invoice = await prisma.invoices.findFirst({
+      where: { id: invoiceId, organizationId: session.currentOrg.id },
     });
 
     if (!invoice) {
@@ -66,6 +69,7 @@ export async function POST(
       // Create payment
       const newPayment = await tx.payments.create({
         data: {
+          organizationId: session.currentOrg.id,
           paymentNumber,
           type: 'RECEIVED',
           customerId: invoice.customerId,

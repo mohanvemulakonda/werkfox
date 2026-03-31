@@ -40,6 +40,7 @@ model admin_users {
 
 model company_settings {
   id                     Int      @id @default(autoincrement())
+  organizationId         Int?
   companyName            String   @db.VarChar(255)
   companyAddress         String?  @db.Text
   companyCity            String?  @db.VarChar(100)
@@ -95,6 +96,10 @@ model company_settings {
   enableAuditTrail       Boolean  @default(false)
   createdAt              DateTime @default(now())
   updatedAt              DateTime
+
+  organization           organizations? @relation(fields: [organizationId], references: [id])
+
+  @@index([organizationId])
 }
 
 model currencies {
@@ -269,11 +274,27 @@ model organizations {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  members      organization_members[] @relation("OrgMembers")
-  leads        leads[]
-  opportunities opportunities[]
-  activities   activities[]
-  contacts     contacts[]
+  members        organization_members[] @relation("OrgMembers")
+  leads          leads[]
+  opportunities  opportunities[]
+  activities     activities[]
+  contacts       contacts[]
+  customers      customers[]
+  vendors        vendors[]
+  products       products[]
+  categories     categories[]
+  locations      locations[]
+  purchaseOrders purchase_orders[]
+  quotations     quotations[]
+  salesOrders    sales_orders[]
+  invoices       invoices[]
+  workOrders     work_orders[]
+  productionOrders production_orders[]
+  materialRequests material_requests[]
+  dispatchOrders dispatch_orders[]
+  payments       payments[]
+  expenses       expenses[]
+  companySettings company_settings[]
 
   @@index([slug])
   @@index([isActive])
@@ -435,6 +456,7 @@ model subscribers {
 // Vendors (Suppliers)
 model vendors {
   id             Int      @id @default(autoincrement())
+  organizationId Int?
   code           String?  @unique @db.VarChar(50)
   name           String   @db.VarChar(255)
   displayName    String?  @db.VarChar(255)
@@ -462,12 +484,14 @@ model vendors {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  organization   organizations? @relation(fields: [organizationId], references: [id])
   purchaseOrders purchase_orders[]
   expenses       expenses[]
   payments       payments[]
   returns        returns[]
   creditNotes    credit_notes[]
 
+  @@index([organizationId])
   @@index([name])
   @@index([isActive])
 }
@@ -475,6 +499,7 @@ model vendors {
 // Products / Inventory Items
 model products {
   id               Int      @id @default(autoincrement())
+  organizationId   Int?
   sku              String   @unique @db.VarChar(100)
   name             String   @db.VarChar(255)
   description      String?  @db.Text
@@ -497,6 +522,7 @@ model products {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
+  organization             organizations?          @relation(fields: [organizationId], references: [id])
   categoryRef              categories?             @relation(fields: [categoryId], references: [id])
   purchaseOrderItems       purchase_order_items[]
   grnItems                 grn_items[]
@@ -516,6 +542,7 @@ model products {
   returnItems              return_items[]
   creditNoteItems          credit_note_items[]
 
+  @@index([organizationId])
   @@index([sku])
   @@index([name])
   @@index([categoryId])
@@ -524,8 +551,9 @@ model products {
 
 // Product Categories
 model categories {
-  id          Int      @id @default(autoincrement())
-  name        String   @db.VarChar(100)
+  id             Int      @id @default(autoincrement())
+  organizationId Int?
+  name           String   @db.VarChar(100)
   slug        String   @unique @db.VarChar(100)
   description String?  @db.Text
   parentId    Int?
@@ -535,10 +563,12 @@ model categories {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
-  parent   categories?  @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
-  children categories[] @relation("CategoryHierarchy")
-  products products[]
+  organization organizations? @relation(fields: [organizationId], references: [id])
+  parent       categories?    @relation("CategoryHierarchy", fields: [parentId], references: [id], onDelete: NoAction, onUpdate: NoAction)
+  children     categories[]   @relation("CategoryHierarchy")
+  products     products[]
 
+  @@index([organizationId])
   @@index([parentId])
   @@index([isActive])
 }
@@ -546,6 +576,7 @@ model categories {
 // Customers
 model customers {
   id              Int      @id @default(autoincrement())
+  organizationId  Int?
   customerCode    String?  @unique @db.VarChar(50)
   leadId          Int?
   name            String   @db.VarChar(255)
@@ -576,6 +607,7 @@ model customers {
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
+  organization    organizations? @relation(fields: [organizationId], references: [id])
   quotations      quotations[]
   salesOrders     sales_orders[]
   invoices        invoices[]
@@ -586,6 +618,7 @@ model customers {
   returns         returns[]
   creditNotes     credit_notes[]
 
+  @@index([organizationId])
   @@index([leadId])
   @@index([name])
   @@index([email])
@@ -594,8 +627,9 @@ model customers {
 
 // Locations / Warehouses
 model locations {
-  id          Int      @id @default(autoincrement())
-  code        String   @unique @db.VarChar(50)
+  id             Int      @id @default(autoincrement())
+  organizationId Int?
+  code           String   @unique @db.VarChar(50)
   name        String   @db.VarChar(255)
   type        String   @default("WAREHOUSE") @db.VarChar(50)
   address     String?  @db.Text
@@ -611,6 +645,7 @@ model locations {
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
+  organization      organizations? @relation(fields: [organizationId], references: [id])
   purchaseOrders    purchase_orders[]
   goodsReceiptNotes goods_receipt_notes[]
   inventoryRecords  inventory[]
@@ -618,14 +653,16 @@ model locations {
   stockMovements    stock_movements[]
   dispatchOrders    dispatch_orders[]
 
+  @@index([organizationId])
   @@index([code])
   @@index([isActive])
 }
 
 // Purchase Orders
 model purchase_orders {
-  id            Int                   @id @default(autoincrement())
-  poNumber      String                @unique @db.VarChar(50)
+  id             Int                   @id @default(autoincrement())
+  organizationId Int?
+  poNumber       String                @unique @db.VarChar(50)
   vendorId      Int
   locationId    Int
   vendorName    String                @db.VarChar(255)
@@ -650,11 +687,13 @@ model purchase_orders {
   createdAt     DateTime              @default(now())
   updatedAt     DateTime              @updatedAt
 
+  organization      organizations?        @relation(fields: [organizationId], references: [id])
   vendor            vendors               @relation(fields: [vendorId], references: [id])
   location          locations             @relation(fields: [locationId], references: [id])
   items             purchase_order_items[]
   goodsReceiptNotes goods_receipt_notes[]
 
+  @@index([organizationId])
   @@index([vendorId])
   @@index([locationId])
   @@index([status])
@@ -732,6 +771,7 @@ model grn_items {
 // Quotations
 model quotations {
   id              Int             @id @default(autoincrement())
+  organizationId  Int?
   quoteNumber     String          @unique @db.VarChar(50)
   customerId      Int
   opportunityId   Int?
@@ -757,11 +797,13 @@ model quotations {
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
+  organization organizations? @relation(fields: [organizationId], references: [id])
   customer    customers      @relation(fields: [customerId], references: [id])
   opportunity opportunities? @relation(fields: [opportunityId], references: [id])
   items       quotation_items[]
   salesOrders sales_orders[]
 
+  @@index([organizationId])
   @@index([customerId])
   @@index([opportunityId])
   @@index([status])
@@ -792,6 +834,7 @@ model quotation_items {
 // Sales Orders
 model sales_orders {
   id               Int               @id @default(autoincrement())
+  organizationId   Int?
   soNumber         String            @unique @db.VarChar(50)
   customerId       Int
   quotationId      Int?
@@ -819,12 +862,14 @@ model sales_orders {
   createdAt       DateTime          @default(now())
   updatedAt       DateTime          @updatedAt
 
+  organization    organizations?      @relation(fields: [organizationId], references: [id])
   customer        customers           @relation(fields: [customerId], references: [id])
   quotation       quotations?         @relation(fields: [quotationId], references: [id])
   items           sales_order_items[]
   invoices        invoices[]
   dispatchOrders  dispatch_orders[]
 
+  @@index([organizationId])
   @@index([customerId])
   @@index([quotationId])
   @@index([status])
@@ -855,6 +900,7 @@ model sales_order_items {
 // Invoices
 model invoices {
   id                   Int           @id @default(autoincrement())
+  organizationId       Int?
   invoiceNumber        String        @unique @db.VarChar(50)
   customerId           Int
   salesOrderId         Int?
@@ -901,10 +947,12 @@ model invoices {
   createdAt            DateTime      @default(now())
   updatedAt            DateTime      @updatedAt
 
+  organization organizations? @relation(fields: [organizationId], references: [id])
   customer   customers       @relation(fields: [customerId], references: [id])
   salesOrder sales_orders?   @relation(fields: [salesOrderId], references: [id])
   items      invoice_items[]
 
+  @@index([organizationId])
   @@index([customerId])
   @@index([salesOrderId])
   @@index([status])
@@ -1030,8 +1078,9 @@ model expense_categories {
 
 // Expenses
 model expenses {
-  id          Int           @id @default(autoincrement())
-  categoryId  Int?
+  id             Int           @id @default(autoincrement())
+  organizationId Int?
+  categoryId     Int?
   vendorId    Int?
   description String        @db.VarChar(255)
   amount      Decimal       @db.Decimal(12, 2)
@@ -1050,9 +1099,11 @@ model expenses {
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 
+  organization organizations?    @relation(fields: [organizationId], references: [id])
   category expense_categories? @relation(fields: [categoryId], references: [id])
   vendor   vendors?            @relation(fields: [vendorId], references: [id])
 
+  @@index([organizationId])
   @@index([categoryId])
   @@index([vendorId])
   @@index([status])
@@ -1065,6 +1116,7 @@ model expenses {
 
 model work_orders {
   id              Int       @id @default(autoincrement())
+  organizationId  Int?
   woNumber        String    @unique @db.VarChar(50)
   type            WorkOrderType @default(SERVICE)
   customerId      Int
@@ -1086,9 +1138,11 @@ model work_orders {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
+  organization    organizations? @relation(fields: [organizationId], references: [id])
   customer        customers @relation(fields: [customerId], references: [id])
   items           work_order_items[]
 
+  @@index([organizationId])
   @@index([customerId])
   @@index([salesOrderId])
   @@index([status])
@@ -1119,6 +1173,7 @@ model work_order_items {
 
 model production_orders {
   id                Int       @id @default(autoincrement())
+  organizationId    Int?
   prodNumber        String    @unique @db.VarChar(50)
   salesOrderId      Int?
   productId         Int?
@@ -1137,10 +1192,12 @@ model production_orders {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
+  organization      organizations? @relation(fields: [organizationId], references: [id])
   product           products? @relation(fields: [productId], references: [id])
   items             production_order_items[]
   materialRequests  material_requests[]
 
+  @@index([organizationId])
   @@index([salesOrderId])
   @@index([productId])
   @@index([status])
@@ -1170,6 +1227,7 @@ model production_order_items {
 
 model material_requests {
   id                Int       @id @default(autoincrement())
+  organizationId    Int?
   mrNumber          String    @unique @db.VarChar(50)
   type              String    @default("PRODUCTION") @db.VarChar(50) // PRODUCTION, WAREHOUSE, GENERAL
   productionOrderId Int?
@@ -1186,9 +1244,11 @@ model material_requests {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
+  organization      organizations? @relation(fields: [organizationId], references: [id])
   productionOrder   production_orders? @relation(fields: [productionOrderId], references: [id])
   items             material_request_items[]
 
+  @@index([organizationId])
   @@index([productionOrderId])
   @@index([purchaseOrderId])
   @@index([status])
@@ -1217,6 +1277,7 @@ model material_request_items {
 
 model dispatch_orders {
   id                Int       @id @default(autoincrement())
+  organizationId    Int?
   dispatchNumber    String    @unique @db.VarChar(50)
   salesOrderId      Int
   customerId        Int
@@ -1247,11 +1308,13 @@ model dispatch_orders {
   createdAt         DateTime  @default(now())
   updatedAt         DateTime  @updatedAt
 
+  organization      organizations? @relation(fields: [organizationId], references: [id])
   salesOrder        sales_orders @relation(fields: [salesOrderId], references: [id])
   customer          customers    @relation(fields: [customerId], references: [id])
   location          locations?   @relation(fields: [locationId], references: [id])
   items             dispatch_order_items[]
 
+  @@index([organizationId])
   @@index([salesOrderId])
   @@index([customerId])
   @@index([locationId])
@@ -1282,6 +1345,7 @@ model dispatch_order_items {
 
 model payments {
   id              Int       @id @default(autoincrement())
+  organizationId  Int?
   paymentNumber   String    @unique @db.VarChar(50)
   type            PaymentType @default(RECEIVED)
   customerId      Int?
@@ -1298,10 +1362,12 @@ model payments {
   createdAt       DateTime  @default(now())
   updatedAt       DateTime  @updatedAt
 
+  organization    organizations? @relation(fields: [organizationId], references: [id])
   customer        customers? @relation(fields: [customerId], references: [id])
   vendor          vendors?   @relation(fields: [vendorId], references: [id])
   allocations     payment_allocations[]
 
+  @@index([organizationId])
   @@index([customerId])
   @@index([vendorId])
   @@index([type])

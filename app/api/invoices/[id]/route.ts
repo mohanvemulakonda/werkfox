@@ -11,6 +11,9 @@ export async function GET(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const invoiceId = parseInt(id);
@@ -19,8 +22,8 @@ export async function GET(
       return NextResponse.json({ error: 'Invalid invoice ID' }, { status: 400 });
     }
 
-    const invoice = await prisma.invoices.findUnique({
-      where: { id: invoiceId },
+    const invoice = await prisma.invoices.findFirst({
+      where: { id: invoiceId, organizationId: session.currentOrg.id },
       include: {
         items: {
           include: {
@@ -56,9 +59,20 @@ export async function PATCH(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const body = await request.json();
+
+    // Verify invoice belongs to org
+    const existing = await prisma.invoices.findFirst({
+      where: { id: parseInt(id), organizationId: session.currentOrg.id },
+    });
+    if (!existing) {
+      return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
+    }
 
     const invoice = await prisma.invoices.update({
       where: { id: parseInt(id) },
@@ -86,10 +100,21 @@ export async function PUT(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const invoiceId = parseInt(id);
     const body = await request.json();
+
+    // Verify invoice belongs to org
+    const existingInvoice = await prisma.invoices.findFirst({
+      where: { id: invoiceId, organizationId: session.currentOrg.id },
+    });
+    if (!existingInvoice) {
+      return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
+    }
 
     // Delete existing items
     await prisma.invoice_items.deleteMany({
@@ -179,9 +204,20 @@ export async function DELETE(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const invoiceId = parseInt(id);
+
+    // Verify invoice belongs to org
+    const existingInv = await prisma.invoices.findFirst({
+      where: { id: invoiceId, organizationId: session.currentOrg.id },
+    });
+    if (!existingInv) {
+      return NextResponse.json({ error: 'Invoice not found' }, { status: 404 });
+    }
 
     await prisma.invoices.delete({ where: { id: invoiceId } });
 

@@ -45,6 +45,41 @@ export async function auth() {
       role: m.role,
       packageType: m.organization.packageType as PackageType,
     }));
+
+    // Auto-create organization for new users who have none
+    if (organizations.length === 0) {
+      const userName = user.fullName || user.firstName || 'My';
+      const orgName = `${userName}'s Business`;
+      const baseSlug = orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
+      // Add random suffix to ensure uniqueness
+      const slug = `${baseSlug}-${Date.now().toString(36)}`;
+
+      const newOrg = await prisma.organizations.create({
+        data: {
+          name: orgName,
+          slug,
+          packageType: 'FULL_SUITE',
+          isActive: true,
+        },
+      });
+
+      await prisma.organization_members.create({
+        data: {
+          organizationId: newOrg.id,
+          clerkUserId: user.id,
+          role: 'OWNER',
+          isActive: true,
+        },
+      });
+
+      organizations = [{
+        id: newOrg.id,
+        name: newOrg.name,
+        slug: newOrg.slug,
+        role: 'OWNER',
+        packageType: newOrg.packageType as PackageType,
+      }];
+    }
   } catch (e) {
     // Database not available — continue with empty organizations
     console.warn('Database not available for org lookup, continuing without orgs');

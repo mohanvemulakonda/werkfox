@@ -10,11 +10,14 @@ export async function GET(request: NextRequest) {
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const searchParams = request.nextUrl.searchParams;
     const status = searchParams.get('status');
 
-    const where: any = {};
+    const where: any = { organizationId: session.currentOrg.id };
 
     if (status) {
       where.status = status;
@@ -45,6 +48,9 @@ export async function POST(request: NextRequest) {
     const session = await auth();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
     }
 
     const body = await request.json();
@@ -83,6 +89,7 @@ export async function POST(request: NextRequest) {
 
     const productionOrder = await prisma.production_orders.create({
       data: {
+        organizationId: session.currentOrg.id,
         prodNumber,
         productId: parseInt(productId),
         productName,

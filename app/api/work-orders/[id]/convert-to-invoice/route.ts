@@ -13,6 +13,9 @@ export async function POST(
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
+    if (!session.currentOrg) {
+      return NextResponse.json({ error: 'No organization selected' }, { status: 400 });
+    }
 
     const { id } = await params;
     const woId = parseInt(id);
@@ -21,9 +24,9 @@ export async function POST(
       return NextResponse.json({ error: 'Invalid work order ID' }, { status: 400 });
     }
 
-    // Fetch work order with items and customer
-    const workOrder = await prisma.work_orders.findUnique({
-      where: { id: woId },
+    // Fetch work order with items and customer (verify org ownership)
+    const workOrder = await prisma.work_orders.findFirst({
+      where: { id: woId, organizationId: session.currentOrg.id },
       include: {
         customer: true,
         items: {
@@ -104,6 +107,7 @@ export async function POST(
       // Create invoice
       const newInvoice = await tx.invoices.create({
         data: {
+          organizationId: session.currentOrg.id,
           invoiceNumber,
           customerId: workOrder.customerId,
           customerName: workOrder.customer.name,
