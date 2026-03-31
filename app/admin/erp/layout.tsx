@@ -16,6 +16,7 @@ const erpNavItems = [
   { name: 'Work Orders', href: '/admin/erp/work-orders' },
   { name: 'Dispatch', href: '/admin/erp/dispatch' },
   { name: 'Payments', href: '/admin/erp/payments' },
+  { name: 'FoxCut', href: '/admin/erp/foxcut' },
 ];
 
 export default function ERPLayout({

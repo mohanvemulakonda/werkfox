@@ -1762,3 +1762,25 @@ enum ReturnStatus {
   COMPLETED
   CANCELLED
 }
+
+// ============================================
+// FOXCUT - Sheet Cutting Optimizer
+// ============================================
+
+model cutting_plans {
+  id             Int      @id @default(autoincrement())
+  organizationId Int
+  name           String   @db.VarChar(255)
+  material       String?  @db.VarChar(255)
+  sheetWidth     Int      @default(2440)
+  sheetHeight    Int      @default(1220)
+  kerf           Int      @default(4)
+  pieces         Json
+  result         Json?
+  utilization    Decimal? @db.Decimal(5, 2)
+  sheetsUsed     Int?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  @@index([organizationId])
+}
