@@ -1,10 +1,12 @@
+import { Suspense } from 'react';
 import { notFound, redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import SalesOrderForm from '../../SalesOrderForm';
+import { auth } from '@/lib/auth';
 
-async function getSalesOrder(id: number) {
-  return prisma.sales_orders.findUnique({
-    where: { id },
+async function getSalesOrder(id: number, orgId: number) {
+  return prisma.sales_orders.findFirst({
+    where: { id, organizationId: orgId },
     include: {
       customer: true,
       items: {
@@ -21,6 +23,11 @@ export default async function EditSalesOrderPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const { id } = await params;
   const soId = parseInt(id);
 
@@ -28,7 +35,7 @@ export default async function EditSalesOrderPage({
     notFound();
   }
 
-  const salesOrder = await getSalesOrder(soId);
+  const salesOrder = await getSalesOrder(soId, orgId);
 
   if (!salesOrder) {
     notFound();
@@ -76,7 +83,9 @@ export default async function EditSalesOrderPage({
         </h1>
         <p className="text-gray-600 font-inter font-light">Update this sales order's details and line items</p>
       </div>
-      <SalesOrderForm salesOrder={serialized} />
+      <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#E03B12]"></div></div>}>
+        <SalesOrderForm salesOrder={serialized} />
+      </Suspense>
     </div>
   );
 }

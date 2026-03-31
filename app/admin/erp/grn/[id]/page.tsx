@@ -1,11 +1,12 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import GRNStatusActions from './GRNStatusActions';
+import { auth } from '@/lib/auth';
 
-async function getGRN(id: number) {
-  return prisma.goods_receipt_notes.findUnique({
-    where: { id },
+async function getGRN(id: number, orgId: number) {
+  return prisma.goods_receipt_notes.findFirst({
+    where: { id, purchaseOrder: { organizationId: orgId } },
     include: {
       purchaseOrder: {
         select: { id: true, poNumber: true, vendorName: true, status: true },
@@ -59,6 +60,11 @@ export default async function GRNDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const { id } = await params;
   const grnId = parseInt(id);
 
@@ -66,7 +72,7 @@ export default async function GRNDetailPage({
     notFound();
   }
 
-  const grn = await getGRN(grnId);
+  const grn = await getGRN(grnId, orgId);
 
   if (!grn) {
     notFound();

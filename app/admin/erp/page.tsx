@@ -1,16 +1,18 @@
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
-async function getERPStats() {
+async function getERPStats(orgId: number) {
   const [totalProducts, totalInvoices, pendingInvoices, pendingPOs] = await Promise.all([
-    prisma.products.count(),
-    prisma.invoices.count(),
-    prisma.invoices.count({ where: { status: { in: ['DRAFT', 'SENT'] } } }),
-    prisma.purchase_orders.count({ where: { status: { in: ['SENT', 'CONFIRMED', 'PARTIAL_RECEIVED'] } } }),
+    prisma.products.count({ where: { organizationId: orgId } }),
+    prisma.invoices.count({ where: { organizationId: orgId } }),
+    prisma.invoices.count({ where: { status: { in: ['DRAFT', 'SENT'] }, organizationId: orgId } }),
+    prisma.purchase_orders.count({ where: { status: { in: ['SENT', 'CONFIRMED', 'PARTIAL_RECEIVED'] }, organizationId: orgId } }),
   ]);
 
   const paidInvoices = await prisma.invoices.findMany({
-    where: { status: 'PAID' },
+    where: { status: 'PAID', organizationId: orgId },
     select: { total: true },
   });
   const revenueThisMonth = paidInvoices.reduce((sum, inv) => sum + Number(inv.total), 0);
@@ -18,17 +20,18 @@ async function getERPStats() {
   return { totalProducts, totalInvoices, pendingInvoices, revenueThisMonth, pendingPOs };
 }
 
-async function getRecentInvoices() {
+async function getRecentInvoices(orgId: number) {
   return prisma.invoices.findMany({
+    where: { organizationId: orgId },
     take: 5,
     orderBy: { createdAt: 'desc' },
     select: { id: true, invoiceNumber: true, customerName: true, total: true, status: true, currency: true },
   });
 }
 
-async function getLowStockProducts() {
+async function getLowStockProducts(orgId: number) {
   const inventory = await prisma.inventory.findMany({
-    where: { quantity: { gt: 0 } },
+    where: { quantity: { gt: 0 }, product: { organizationId: orgId } },
     include: { product: { select: { name: true, sku: true, reorderLevel: true } } },
     orderBy: { quantity: 'asc' },
     take: 10,
@@ -37,10 +40,15 @@ async function getLowStockProducts() {
 }
 
 export default async function ERPOverview() {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const [stats, recentInvoices, lowStockProducts] = await Promise.all([
-    getERPStats(),
-    getRecentInvoices(),
-    getLowStockProducts(),
+    getERPStats(orgId),
+    getRecentInvoices(orgId),
+    getLowStockProducts(orgId),
   ]);
 
   const statCards = [

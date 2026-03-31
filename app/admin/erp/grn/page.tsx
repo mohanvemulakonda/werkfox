@@ -1,8 +1,11 @@
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
-async function getGRNs() {
+async function getGRNs(orgId: number) {
   const grns = await prisma.goods_receipt_notes.findMany({
+    where: { purchaseOrder: { organizationId: orgId } },
     orderBy: { createdAt: 'desc' },
     include: {
       purchaseOrder: { select: { poNumber: true, vendorName: true } },
@@ -34,7 +37,12 @@ function formatStatus(status: string): string {
 }
 
 export default async function GRNListPage() {
-  const { grns, stats } = await getGRNs();
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
+  const { grns, stats } = await getGRNs(orgId);
 
   return (
     <div>

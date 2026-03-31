@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 import PurchaseOrderForm from '../PurchaseOrderForm';
 
@@ -21,7 +22,9 @@ export default function CreatePurchaseOrderPage() {
         </Link>
       </div>
 
-      <PurchaseOrderForm />
+      <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#E03B12]"></div></div>}>
+        <PurchaseOrderForm />
+      </Suspense>
     </div>
   );
 }

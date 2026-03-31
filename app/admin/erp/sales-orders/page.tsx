@@ -40,7 +40,7 @@ export default function SalesOrdersPage() {
       const data = await response.json();
 
       if (response.ok) {
-        let filtered = data.salesOrders || [];
+        let filtered = Array.isArray(data) ? data : (data.salesOrders || []);
         if (searchQuery) {
           filtered = filtered.filter((o: SalesOrder) =>
             o.soNumber.toLowerCase().includes(searchQuery.toLowerCase()) ||

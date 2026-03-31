@@ -187,6 +187,12 @@ export default function LeadDetailPage() {
         steps={statusSteps}
       />
 
+      {error && (
+        <div className="mx-4 mt-4 p-3 bg-red-50 border border-red-200 rounded-lg text-red-700 text-sm">
+          {error}
+        </div>
+      )}
+
       <div className="flex-1 overflow-auto py-8 px-4">
         <Sheet>
           <div className="mb-8">

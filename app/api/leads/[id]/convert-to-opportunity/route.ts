@@ -33,13 +33,10 @@ export async function POST(
       return NextResponse.json({ error: 'Lead not found' }, { status: 404 });
     }
 
-    // Validate lead stage — must not be NEW or LOST
-    const disallowedStages = ['NEW', 'LOST'];
-    if (disallowedStages.includes(lead.stage)) {
+    // Validate lead stage — must not be LOST
+    if (lead.stage === 'LOST') {
       return NextResponse.json(
-        {
-          error: `Lead cannot be converted from stage "${lead.stage}". Lead must be at least CONTACTED (not NEW or LOST).`,
-        },
+        { error: 'Lost leads cannot be converted to opportunities.' },
         { status: 400 }
       );
     }

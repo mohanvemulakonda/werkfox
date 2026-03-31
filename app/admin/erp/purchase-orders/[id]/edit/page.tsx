@@ -1,11 +1,13 @@
+import { Suspense } from 'react';
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import PurchaseOrderForm from '../../PurchaseOrderForm';
+import { auth } from '@/lib/auth';
 
-async function getPurchaseOrder(id: number) {
-  return prisma.purchase_orders.findUnique({
-    where: { id },
+async function getPurchaseOrder(id: number, orgId: number) {
+  return prisma.purchase_orders.findFirst({
+    where: { id, organizationId: orgId },
     include: {
       vendor: true,
       location: { select: { id: true, name: true, code: true } },
@@ -23,6 +25,11 @@ export default async function EditPurchaseOrderPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const { id } = await params;
   const poId = parseInt(id);
 
@@ -30,7 +37,7 @@ export default async function EditPurchaseOrderPage({
     notFound();
   }
 
-  const po = await getPurchaseOrder(poId);
+  const po = await getPurchaseOrder(poId, orgId);
 
   if (!po) {
     notFound();
@@ -63,7 +70,9 @@ export default async function EditPurchaseOrderPage({
         </Link>
       </div>
 
-      <PurchaseOrderForm po={serializedPO} />
+      <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#E03B12]"></div></div>}>
+        <PurchaseOrderForm po={serializedPO} />
+      </Suspense>
     </div>
   );
 }

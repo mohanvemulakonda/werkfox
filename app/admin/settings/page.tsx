@@ -1,3 +1,4 @@
+import { Suspense } from 'react';
 import { auth } from '@/lib/auth';
 import { redirect } from 'next/navigation';
 import SettingsTabsClient from './SettingsTabsClient';
@@ -20,11 +21,13 @@ export default async function SettingsPage() {
         </p>
       </div>
 
-      <SettingsTabsClient
-        organizationId={session.currentOrg.id}
-        userRole={session.currentOrg.role}
-        initialPackageType={session.currentOrg.packageType}
-      />
+      <Suspense fallback={<div className="flex items-center justify-center py-12"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-[#E03B12]"></div></div>}>
+        <SettingsTabsClient
+          organizationId={session.currentOrg.id}
+          userRole={session.currentOrg.role}
+          initialPackageType={session.currentOrg.packageType}
+        />
+      </Suspense>
     </div>
   );
 }
