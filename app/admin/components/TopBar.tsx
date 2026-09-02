@@ -33,6 +33,8 @@ export default function TopBar({ user, organizations = [], currentOrg = null }: 
     const modules = [
         { name: 'CRM', href: '/admin/crm' },
         { name: 'ERP', href: '/admin/erp' },
+        { name: 'FoxTrail', href: '/admin/foxtrail' },
+        { name: 'FoxCut', href: '/admin/foxcut' },
     ];
 
     const isModuleActive = (href: string) => pathname.startsWith(href);

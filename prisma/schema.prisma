@@ -94,6 +94,13 @@ model company_settings {
   enableQCInspections    Boolean  @default(false)
   enableReturns          Boolean  @default(false)
   enableAuditTrail       Boolean  @default(false)
+  // FoxTrail module
+  enableFoxTrail         Boolean  @default(false)
+  ftAutoPauseSeconds     Int?     @default(120)
+  ftGeofenceRadiusM      Int?     @default(100)
+  ftWorkStart            String?  @default("09:00") @db.VarChar(5)
+  ftWorkEnd              String?  @default("18:00") @db.VarChar(5)
+  ftTrackingIntervalS    Int?     @default(5)
   createdAt              DateTime @default(now())
   updatedAt              DateTime
 
@@ -155,14 +162,16 @@ model opportunity_products {
 model organization_members {
   id             Int      @id @default(autoincrement())
   organizationId Int
-  clerkUserId    String   @db.VarChar(255)
-  role           String   @default("MEMBER") @db.VarChar(50) // SUPER_ADMIN, ADMIN, MANAGER, MEMBER, VIEWER
+  userId         Int?
+  clerkUserId    String?  @db.VarChar(255) // deprecated — kept for migration, will remove
+  role           String   @default("MEMBER") @db.VarChar(50) // OWNER, ADMIN, MANAGER, MEMBER, VIEWER, FIELD_REP, FIELD_MANAGER
   isActive       Boolean  @default(true)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
   organization   organizations @relation("OrgMembers", fields: [organizationId], references: [id])
 
+  @@index([userId])
   @@index([clerkUserId])
   @@index([organizationId])
 }
@@ -240,6 +249,8 @@ enum admin_users_role {
   SUPPORT
   FINANCE
   VIEWER
+  FIELD_REP
+  FIELD_MANAGER
 }
 
 enum quote_requests_status {
@@ -604,6 +615,10 @@ model customers {
   currentBalance Decimal? @default(0.00) @db.Decimal(12, 2)
   notes          String?  @db.Text
   isActive       Boolean  @default(true)
+  // FoxTrail: location for geofencing
+  lat            Decimal? @db.Decimal(10, 7)
+  lng            Decimal? @db.Decimal(10, 7)
+  geofenceRadius Int?     @default(100)
   createdAt      DateTime @default(now())
   updatedAt      DateTime @updatedAt
 
@@ -617,6 +632,7 @@ model customers {
   payments        payments[]
   returns         returns[]
   creditNotes     credit_notes[]
+  ftVisits        ft_visits[]
 
   @@index([organizationId])
   @@index([leadId])
@@ -1783,4 +1799,416 @@ model cutting_plans {
   updatedAt      DateTime @updatedAt
 
   @@index([organizationId])
+}
+
+// ═══════════════════════════════════════════════════════════════
+// FoxTrail Module
+// ═══════════════════════════════════════════════════════════════
+
+model ft_journeys {
+  id              Int               @id @default(autoincrement())
+  organizationId  Int
+  userId          Int
+  status          ft_journey_status @default(ACTIVE)
+  startedAt       DateTime          @default(now())
+  endedAt         DateTime?
+  startLat        Decimal           @db.Decimal(10, 7)
+  startLng        Decimal           @db.Decimal(10, 7)
+  endLat          Decimal?          @db.Decimal(10, 7)
+  endLng          Decimal?          @db.Decimal(10, 7)
+  totalDistanceM  Int?              @default(0)
+  activeTimeS     Int?              @default(0)
+  pausedTimeS     Int?              @default(0)
+  visitCount      Int?              @default(0)
+  createdAt       DateTime          @default(now())
+  updatedAt       DateTime          @updatedAt
+
+  checkins      ft_checkins[]
+  locationPings ft_location_pings[]
+  visits        ft_visits[]
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+enum ft_journey_status {
+  ACTIVE
+  PAUSED
+  COMPLETED
+}
+
+model ft_visits {
+  id                Int             @id @default(autoincrement())
+  organizationId    Int
+  userId            Int
+  customerId        Int?
+  journeyId         Int?
+  opportunityId     Int?
+  salesOrderId      Int?
+  leadId            Int?
+  companyName       String          @db.VarChar(255)
+  contactName       String?         @db.VarChar(255)
+  contactPhone      String?         @db.VarChar(50)
+  address           String?         @db.Text
+  lat               Decimal?        @db.Decimal(10, 7)
+  lng               Decimal?        @db.Decimal(10, 7)
+  purpose           String?         @db.Text
+  visitType         ft_visit_type   @default(SALES_MEETING)
+  scheduledDate     DateTime        @db.Date
+  scheduledTime     String?         @db.VarChar(5)
+  estimatedDuration Int?            @default(60)
+  status            ft_visit_status @default(SCHEDULED)
+  checkInTime       DateTime?
+  checkOutTime      DateTime?
+  checkInLat        Decimal?        @db.Decimal(10, 7)
+  checkInLng        Decimal?        @db.Decimal(10, 7)
+  notes             String?         @db.Text
+  outcome           String?         @db.VarChar(50)
+  nextAction        String?         @db.Text
+  nextActionDate    DateTime?
+  signatureUrl      String?         @db.VarChar(500)
+  assignedBy        Int?
+  createdAt         DateTime        @default(now())
+  updatedAt         DateTime        @updatedAt
+
+  customer  customers?   @relation(fields: [customerId], references: [id])
+  journey   ft_journeys? @relation(fields: [journeyId], references: [id])
+  checkins  ft_checkins[]
+  media     ft_media[]
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([customerId])
+  @@index([journeyId])
+  @@index([scheduledDate])
+  @@index([status])
+}
+
+enum ft_visit_type {
+  SALES_MEETING
+  FOLLOW_UP
+  DEMO
+  DELIVERY
+  PICKUP
+  SERVICE_CALL
+  SITE_INSPECTION
+  AUDIT
+  COLLECTION
+  OTHER
+}
+
+enum ft_visit_status {
+  SCHEDULED
+  EN_ROUTE
+  CHECKED_IN
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+model ft_checkins {
+  id             Int             @id @default(autoincrement())
+  organizationId Int
+  userId         Int
+  journeyId      Int?
+  visitId        Int?
+  geofenceId     Int?
+  type           ft_checkin_type
+  lat            Decimal         @db.Decimal(10, 7)
+  lng            Decimal         @db.Decimal(10, 7)
+  accuracy       Decimal?        @db.Decimal(6, 2)
+  locationName   String?         @db.VarChar(255)
+  address        String?         @db.Text
+  note           String?         @db.Text
+  isAutoDetected Boolean         @default(false)
+  wifiSSID       String?         @db.VarChar(100)
+  timestamp      DateTime        @default(now())
+  syncedAt       DateTime?
+
+  journey ft_journeys? @relation(fields: [journeyId], references: [id])
+  visit   ft_visits?   @relation(fields: [visitId], references: [id])
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([journeyId])
+  @@index([visitId])
+  @@index([timestamp])
+}
+
+enum ft_checkin_type {
+  IN
+  OUT
+}
+
+model ft_location_pings {
+  id             Int             @id @default(autoincrement())
+  organizationId Int
+  userId         Int
+  journeyId      Int?
+  lat            Decimal         @db.Decimal(10, 7)
+  lng            Decimal         @db.Decimal(10, 7)
+  accuracy       Decimal?        @db.Decimal(6, 2)
+  speed          Decimal?        @db.Decimal(6, 2)
+  heading        Decimal?        @db.Decimal(5, 2)
+  altitude       Decimal?        @db.Decimal(8, 2)
+  motionState    ft_motion_state @default(MOVING)
+  timestamp      DateTime        @default(now())
+
+  journey ft_journeys? @relation(fields: [journeyId], references: [id])
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([journeyId])
+  @@index([timestamp])
+  @@index([userId, timestamp])
+}
+
+enum ft_motion_state {
+  MOVING
+  STATIONARY
+  UNKNOWN
+}
+
+model ft_geofences {
+  id             Int              @id @default(autoincrement())
+  organizationId Int
+  name           String           @db.VarChar(255)
+  type           ft_geofence_type
+  address        String?          @db.Text
+  lat            Decimal          @db.Decimal(10, 7)
+  lng            Decimal          @db.Decimal(10, 7)
+  radiusM        Int              @default(100)
+  customerId     Int?
+  wifiSSID       String?          @db.VarChar(100)
+  isActive       Boolean          @default(true)
+  createdAt      DateTime         @default(now())
+
+  @@index([organizationId])
+  @@index([customerId])
+  @@index([lat, lng])
+}
+
+enum ft_geofence_type {
+  HQ
+  BRANCH
+  WAREHOUSE
+  FACTORY
+  CUSTOMER
+  OTHER
+}
+
+model ft_followups {
+  id             Int                @id @default(autoincrement())
+  organizationId Int
+  userId         Int
+  assignedBy     Int?
+  customerId     Int?
+  visitId        Int?
+  title          String             @db.VarChar(255)
+  description    String?            @db.Text
+  dueDate        DateTime           @db.Date
+  priority       ft_priority        @default(MEDIUM)
+  status         ft_followup_status @default(PENDING)
+  completedAt    DateTime?
+  createdAt      DateTime           @default(now())
+  updatedAt      DateTime           @updatedAt
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([dueDate])
+  @@index([status])
+}
+
+enum ft_priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ft_followup_status {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+model ft_media {
+  id             Int           @id @default(autoincrement())
+  organizationId Int
+  userId         Int
+  visitId        Int?
+  checkinId      Int?
+  type           ft_media_type
+  url            String        @db.VarChar(500)
+  thumbnailUrl   String?       @db.VarChar(500)
+  fileName       String?       @db.VarChar(255)
+  fileSizeBytes  Int?
+  caption        String?       @db.Text
+  isSignature    Boolean       @default(false)
+  lat            Decimal?      @db.Decimal(10, 7)
+  lng            Decimal?      @db.Decimal(10, 7)
+  createdAt      DateTime      @default(now())
+
+  visit ft_visits? @relation(fields: [visitId], references: [id])
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([visitId])
+}
+
+enum ft_media_type {
+  PHOTO
+  DOCUMENT
+  VOICE_NOTE
+  SIGNATURE
+}
+
+model ft_activity_log {
+  id             Int      @id @default(autoincrement())
+  organizationId Int
+  userId         Int
+  action         String   @db.VarChar(50)
+  description    String?  @db.Text
+  entityType     String?  @db.VarChar(50)
+  entityId       Int?
+  metadata       String?  @db.Text
+  timestamp      DateTime @default(now())
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([timestamp])
+  @@index([userId, timestamp])
+}
+
+model ft_leaves {
+  id             Int             @id @default(autoincrement())
+  organizationId Int
+  userId         Int
+  approvedBy     Int?
+  type           ft_leave_type
+  startDate      DateTime        @db.Date
+  endDate        DateTime        @db.Date
+  days           Decimal         @db.Decimal(4, 1)
+  reason         String?         @db.Text
+  status         ft_leave_status @default(PENDING)
+  reviewNote     String?         @db.Text
+  reviewedAt     DateTime?
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([status])
+  @@index([startDate])
+}
+
+enum ft_leave_type {
+  CASUAL
+  SICK
+  PTO
+  UNPAID
+  COMP_OFF
+}
+
+enum ft_leave_status {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+model ft_leave_balance {
+  id             Int           @id @default(autoincrement())
+  organizationId Int
+  userId         Int
+  year           Int
+  type           ft_leave_type
+  total          Decimal       @db.Decimal(4, 1)
+  used           Decimal       @default(0) @db.Decimal(4, 1)
+  remaining      Decimal       @db.Decimal(4, 1)
+
+  @@unique([organizationId, userId, year, type])
+  @@index([userId])
+}
+
+model ft_role_permissions {
+  id                  Int      @id @default(autoincrement())
+  organizationId      Int
+  role                String   @db.VarChar(50)
+  canViewLeads        Boolean  @default(false)
+  canViewOpportunities Boolean @default(false)
+  canViewContacts     Boolean  @default(false)
+  canViewSalesOrders  Boolean  @default(false)
+  canViewInvoices     Boolean  @default(false)
+  canViewInventory    Boolean  @default(false)
+  canViewDispatch     Boolean  @default(false)
+  canCheckIn          Boolean  @default(true)
+  canLogVisits        Boolean  @default(true)
+  canUploadMedia      Boolean  @default(true)
+  canViewTeamMap      Boolean  @default(false)
+  canAssignVisits     Boolean  @default(false)
+  canApproveLeaves    Boolean  @default(false)
+  canViewReports      Boolean  @default(false)
+  canManageGeofences  Boolean  @default(false)
+  canCaptureSignature Boolean  @default(false)
+  createdAt           DateTime @default(now())
+  updatedAt           DateTime @updatedAt
+
+  @@unique([organizationId, role])
+}
+
+// ═══════════════════════════════════════════════════════════════
+// Platform Admin & Tracking
+// ═══════════════════════════════════════════════════════════════
+
+model login_attempts {
+  id          Int      @id @default(autoincrement())
+  email       String   @db.VarChar(255)
+  success     Boolean
+  ipAddress   String?  @db.VarChar(100)
+  userAgent   String?  @db.Text
+  country     String?  @db.VarChar(10)
+  city        String?  @db.VarChar(100)
+  errorReason String?  @db.VarChar(255)
+  userId      Int?
+  createdAt   DateTime @default(now())
+
+  @@index([email])
+  @@index([createdAt])
+  @@index([success])
+}
+
+model impersonation_logs {
+  id            Int      @id @default(autoincrement())
+  adminUserId   Int
+  targetUserId  Int
+  targetOrgId   Int
+  reason        String?  @db.Text
+  ipAddress     String?  @db.VarChar(100)
+  startedAt     DateTime @default(now())
+  endedAt       DateTime?
+
+  @@index([adminUserId])
+  @@index([targetUserId])
+  @@index([startedAt])
+}
+
+model platform_events {
+  id          Int      @id @default(autoincrement())
+  event       String   @db.VarChar(100)
+  entityType  String?  @db.VarChar(50)
+  entityId    Int?
+  userId      Int?
+  orgId       Int?
+  metadata    String?  @db.Text
+  ipAddress   String?  @db.VarChar(100)
+  createdAt   DateTime @default(now())
+
+  @@index([event])
+  @@index([userId])
+  @@index([orgId])
+  @@index([createdAt])
 }

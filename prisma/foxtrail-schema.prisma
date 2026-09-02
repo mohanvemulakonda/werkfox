@@ -1,0 +1,364 @@
+// ═══════════════════════════════════════════════════════════════
+// FoxTrail Module — Schema Additions
+// Add these to the main schema.prisma
+// ═══════════════════════════════════════════════════════════════
+
+// ─── 1. Update admin_users_role enum ─────────────────────────
+// ADD these to the existing enum:
+//   FIELD_REP
+//   FIELD_MANAGER
+
+// ─── 2. Update company_settings ──────────────────────────────
+// ADD these fields:
+//   enableFoxTrail       Boolean  @default(false)
+//   foxTrailAutoStop     Int?     @default(120)   // auto-pause after N seconds stationary
+//   foxTrailGeofenceRadius Int?   @default(100)   // default geofence radius in meters
+//   foxTrailWorkStart    String?  @default("09:00") @db.VarChar(5)
+//   foxTrailWorkEnd      String?  @default("18:00") @db.VarChar(5)
+
+// ─── 3. Update customers ────────────────────────────────────
+// ADD these fields:
+//   lat                  Decimal? @db.Decimal(10, 7)
+//   lng                  Decimal? @db.Decimal(10, 7)
+//   geofenceRadius       Int?     @default(100)    // meters
+
+// ═══════════════════════════════════════════════════════════════
+// NEW TABLES
+// ═══════════════════════════════════════════════════════════════
+
+// ─── Journeys: Start/end day tracking sessions ──────────────
+model ft_journeys {
+  id              Int       @id @default(autoincrement())
+  organizationId  Int
+  userId          Int                              // admin_users.id
+  status          ft_journey_status @default(ACTIVE)
+  startedAt       DateTime  @default(now())
+  endedAt         DateTime?
+  startLat        Decimal   @db.Decimal(10, 7)
+  startLng        Decimal   @db.Decimal(10, 7)
+  endLat          Decimal?  @db.Decimal(10, 7)
+  endLng          Decimal?  @db.Decimal(10, 7)
+  totalDistanceM  Int?      @default(0)            // meters
+  activeTimeS     Int?      @default(0)            // seconds
+  pausedTimeS     Int?      @default(0)            // seconds
+  visitCount      Int?      @default(0)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  checkins        ft_checkins[]
+  locationPings   ft_location_pings[]
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([status])
+  @@index([startedAt])
+}
+
+enum ft_journey_status {
+  ACTIVE
+  PAUSED
+  COMPLETED
+}
+
+// ─── Visits: Scheduled & completed customer visits ──────────
+model ft_visits {
+  id              Int       @id @default(autoincrement())
+  organizationId  Int
+  userId          Int                              // assigned rep
+  customerId      Int?                             // customers.id
+  journeyId       Int?                             // ft_journeys.id
+
+  // Visit details
+  companyName     String    @db.VarChar(255)       // denormalized for offline
+  contactName     String?   @db.VarChar(255)
+  contactPhone    String?   @db.VarChar(50)
+  address         String?   @db.Text
+  lat             Decimal?  @db.Decimal(10, 7)
+  lng             Decimal?  @db.Decimal(10, 7)
+  purpose         String?   @db.Text
+
+  // Schedule
+  scheduledDate   DateTime  @db.Date
+  scheduledTime   String?   @db.VarChar(5)         // "14:30"
+  estimatedDuration Int?    @default(60)            // minutes
+
+  // Status
+  status          ft_visit_status @default(SCHEDULED)
+  checkInTime     DateTime?
+  checkOutTime    DateTime?
+  checkInLat      Decimal?  @db.Decimal(10, 7)
+  checkInLng      Decimal?  @db.Decimal(10, 7)
+
+  // Outcome
+  notes           String?   @db.Text
+  outcome         String?   @db.VarChar(50)        // POSITIVE, NEUTRAL, FOLLOW_UP, LOST
+  nextAction      String?   @db.Text
+  nextActionDate  DateTime?
+
+  // Assigned by (admin/manager)
+  assignedBy      Int?                             // admin_users.id
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  checkins        ft_checkins[]
+  media           ft_media[]
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([customerId])
+  @@index([scheduledDate])
+  @@index([status])
+}
+
+enum ft_visit_status {
+  SCHEDULED
+  EN_ROUTE
+  CHECKED_IN
+  COMPLETED
+  CANCELLED
+  NO_SHOW
+}
+
+// ─── Check-ins: GPS-verified location records ───────────────
+model ft_checkins {
+  id              Int       @id @default(autoincrement())
+  organizationId  Int
+  userId          Int
+  journeyId       Int?
+  visitId         Int?
+  geofenceId      Int?                             // matched geofence
+
+  type            ft_checkin_type                   // IN or OUT
+  lat             Decimal   @db.Decimal(10, 7)
+  lng             Decimal   @db.Decimal(10, 7)
+  accuracy        Decimal?  @db.Decimal(6, 2)       // GPS accuracy in meters
+  locationName    String?   @db.VarChar(255)        // "Meridian Health" or "HQ"
+  address         String?   @db.Text                // reverse geocoded
+  note            String?   @db.Text
+
+  // Verification
+  isAutoDetected  Boolean   @default(false)         // geofence matched
+  wifiSSID        String?   @db.VarChar(100)        // for extra verification
+
+  timestamp       DateTime  @default(now())
+  syncedAt        DateTime?                         // when synced from offline
+
+  journey         ft_journeys?  @relation(fields: [journeyId], references: [id])
+  visit           ft_visits?    @relation(fields: [visitId], references: [id])
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([journeyId])
+  @@index([visitId])
+  @@index([timestamp])
+}
+
+enum ft_checkin_type {
+  IN
+  OUT
+}
+
+// ─── Location pings: GPS breadcrumb trail ───────────────────
+model ft_location_pings {
+  id              Int       @id @default(autoincrement())
+  organizationId  Int
+  userId          Int
+  journeyId       Int?
+
+  lat             Decimal   @db.Decimal(10, 7)
+  lng             Decimal   @db.Decimal(10, 7)
+  accuracy        Decimal?  @db.Decimal(6, 2)
+  speed           Decimal?  @db.Decimal(6, 2)       // km/h
+  heading         Decimal?  @db.Decimal(5, 2)       // degrees
+  altitude        Decimal?  @db.Decimal(8, 2)
+
+  motionState     ft_motion_state @default(MOVING)
+  timestamp       DateTime  @default(now())
+
+  journey         ft_journeys?  @relation(fields: [journeyId], references: [id])
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([journeyId])
+  @@index([timestamp])
+  @@index([userId, timestamp])                     // for trail queries
+}
+
+enum ft_motion_state {
+  MOVING
+  STATIONARY
+  UNKNOWN
+}
+
+// ─── Geofences: Known locations ─────────────────────────────
+model ft_geofences {
+  id              Int       @id @default(autoincrement())
+  organizationId  Int
+  name            String    @db.VarChar(255)        // "HQ", "Brooklyn Branch", "Meridian Health"
+  type            ft_geofence_type
+  address         String?   @db.Text
+  lat             Decimal   @db.Decimal(10, 7)
+  lng             Decimal   @db.Decimal(10, 7)
+  radiusM         Int       @default(100)           // radius in meters
+  customerId      Int?                             // link to customer if it's a customer office
+  wifiSSID        String?   @db.VarChar(100)        // optional WiFi verification
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+
+  @@index([organizationId])
+  @@index([customerId])
+  @@index([lat, lng])
+}
+
+enum ft_geofence_type {
+  HQ
+  BRANCH
+  WAREHOUSE
+  FACTORY
+  CUSTOMER
+  OTHER
+}
+
+// ─── Follow-ups: Tasks & reminders ──────────────────────────
+model ft_followups {
+  id              Int       @id @default(autoincrement())
+  organizationId  Int
+  userId          Int                              // assigned to
+  assignedBy      Int?                             // assigned by (manager)
+  customerId      Int?
+  visitId         Int?
+
+  title           String    @db.VarChar(255)
+  description     String?   @db.Text
+  dueDate         DateTime  @db.Date
+  priority        ft_priority @default(MEDIUM)
+  status          ft_followup_status @default(PENDING)
+  completedAt     DateTime?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([dueDate])
+  @@index([status])
+}
+
+enum ft_priority {
+  LOW
+  MEDIUM
+  HIGH
+  URGENT
+}
+
+enum ft_followup_status {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  CANCELLED
+}
+
+// ─── Media: Photos, files, voice notes ──────────────────────
+model ft_media {
+  id              Int       @id @default(autoincrement())
+  organizationId  Int
+  userId          Int
+  visitId         Int?
+  checkinId       Int?
+
+  type            ft_media_type
+  url             String    @db.VarChar(500)        // Vercel Blob URL
+  thumbnailUrl    String?   @db.VarChar(500)
+  fileName        String?   @db.VarChar(255)
+  fileSizeBytes   Int?
+  caption         String?   @db.Text
+  lat             Decimal?  @db.Decimal(10, 7)      // where photo was taken
+  lng             Decimal?  @db.Decimal(10, 7)
+
+  createdAt       DateTime  @default(now())
+
+  visit           ft_visits?  @relation(fields: [visitId], references: [id])
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([visitId])
+}
+
+enum ft_media_type {
+  PHOTO
+  DOCUMENT
+  VOICE_NOTE
+}
+
+// ─── Activity log: All actions feed ─────────────────────────
+model ft_activity_log {
+  id              Int       @id @default(autoincrement())
+  organizationId  Int
+  userId          Int
+  action          String    @db.VarChar(50)         // CHECKIN, CHECKOUT, VISIT_START, NOTE_ADDED, PHOTO_ADDED, JOURNEY_START, etc.
+  description     String?   @db.Text
+  entityType      String?   @db.VarChar(50)         // visit, checkin, journey
+  entityId        Int?
+  metadata        String?   @db.Text                // JSON for extra data
+  timestamp       DateTime  @default(now())
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([timestamp])
+  @@index([userId, timestamp])
+}
+
+// ─── Leaves: Leave requests & balance ───────────────────────
+model ft_leaves {
+  id              Int       @id @default(autoincrement())
+  organizationId  Int
+  userId          Int
+  approvedBy      Int?                             // manager who approved
+
+  type            ft_leave_type
+  startDate       DateTime  @db.Date
+  endDate         DateTime  @db.Date
+  days            Decimal   @db.Decimal(4, 1)       // supports half days (0.5)
+  reason          String?   @db.Text
+  status          ft_leave_status @default(PENDING)
+  reviewNote      String?   @db.Text
+  reviewedAt      DateTime?
+
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+
+  @@index([organizationId])
+  @@index([userId])
+  @@index([status])
+  @@index([startDate])
+}
+
+enum ft_leave_type {
+  CASUAL
+  SICK
+  PTO
+  UNPAID
+  COMP_OFF
+}
+
+enum ft_leave_status {
+  PENDING
+  APPROVED
+  REJECTED
+  CANCELLED
+}
+
+// ─── Leave balance: Per-user per-year allocation ────────────
+model ft_leave_balance {
+  id              Int       @id @default(autoincrement())
+  organizationId  Int
+  userId          Int
+  year            Int                              // 2026
+  type            ft_leave_type
+  total           Decimal   @db.Decimal(4, 1)       // allocated
+  used            Decimal   @default(0) @db.Decimal(4, 1)
+  remaining       Decimal   @db.Decimal(4, 1)       // computed but stored for speed
+
+  @@unique([organizationId, userId, year, type])
+  @@index([userId])
+}
