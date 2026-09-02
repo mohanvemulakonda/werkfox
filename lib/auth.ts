@@ -1,29 +1,73 @@
-import { auth as clerkAuth, currentUser } from '@clerk/nextjs/server';
-import prisma from './prisma';
 import { cookies } from 'next/headers';
+import bcrypt from 'bcryptjs';
+import prisma from './prisma';
+import {
+  generateToken as genToken,
+  verifyToken as verToken,
+  type JWTPayload,
+} from './auth-edge';
 import { getEnabledModules, type ModuleId, type PackageType } from './modules';
 
+// Re-export Edge-compatible functions
+export const generateToken = genToken;
+export const verifyToken = verToken;
+export type { JWTPayload };
+
 /**
- * Auth wrapper that provides session-like object for compatibility
- * with existing code that used NextAuth's getServerSession
- *
- * Now also returns organization membership data to support multi-tenancy.
- * Respects an optional 'werkfox_current_org' cookie to select the user's preferred org.
+ * Get current user from auth_token cookie
+ */
+export async function getCurrentUser(): Promise<JWTPayload | null> {
+  const cookieStore = await cookies();
+  const token = cookieStore.get('auth_token')?.value;
+  if (!token) return null;
+  return verifyToken(token);
+}
+
+/**
+ * Set auth cookie
+ */
+export async function setAuthCookie(token: string) {
+  const cookieStore = await cookies();
+  cookieStore.set('auth_token', token, {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === 'production',
+    sameSite: 'lax',
+    maxAge: 60 * 60 * 24 * 7, // 7 days
+    path: '/',
+  });
+}
+
+/**
+ * Clear auth cookie
+ */
+export async function clearAuthCookie() {
+  const cookieStore = await cookies();
+  cookieStore.delete('auth_token');
+}
+
+/**
+ * Hash password
+ */
+export async function hashPassword(password: string): Promise<string> {
+  return bcrypt.hash(password, 10);
+}
+
+/**
+ * Verify password
+ */
+export async function verifyPassword(password: string, hash: string): Promise<boolean> {
+  return bcrypt.compare(password, hash);
+}
+
+/**
+ * Full auth() function — replaces Clerk's auth
+ * Returns user, organizations, currentOrg with enabled modules
  */
 export async function auth() {
-  const { userId } = await clerkAuth();
+  const user = await getCurrentUser();
+  if (!user) return null;
 
-  if (!userId) {
-    return null;
-  }
-
-  const user = await currentUser();
-
-  if (!user) {
-    return null;
-  }
-
-  // Fetch organization memberships for this Clerk user
+  // Fetch organization memberships
   let organizations: {
     id: number;
     name: string;
@@ -34,7 +78,7 @@ export async function auth() {
 
   try {
     const memberships = await prisma.organization_members.findMany({
-      where: { clerkUserId: user.id, isActive: true },
+      where: { userId: user.userId, isActive: true },
       include: { organization: true },
     });
 
@@ -45,47 +89,11 @@ export async function auth() {
       role: m.role,
       packageType: m.organization.packageType as PackageType,
     }));
-
-    // Auto-create organization for new users who have none
-    if (organizations.length === 0) {
-      const userName = user.fullName || user.firstName || 'My';
-      const orgName = `${userName}'s Business`;
-      const baseSlug = orgName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, '');
-      // Add random suffix to ensure uniqueness
-      const slug = `${baseSlug}-${Date.now().toString(36)}`;
-
-      const newOrg = await prisma.organizations.create({
-        data: {
-          name: orgName,
-          slug,
-          packageType: 'FULL_SUITE',
-          isActive: true,
-        },
-      });
-
-      await prisma.organization_members.create({
-        data: {
-          organizationId: newOrg.id,
-          clerkUserId: user.id,
-          role: 'OWNER',
-          isActive: true,
-        },
-      });
-
-      organizations = [{
-        id: newOrg.id,
-        name: newOrg.name,
-        slug: newOrg.slug,
-        role: 'OWNER',
-        packageType: newOrg.packageType as PackageType,
-      }];
-    }
   } catch (e) {
-    // Database not available — continue with empty organizations
-    console.warn('Database not available for org lookup, continuing without orgs');
+    console.warn('Database not available for org lookup');
   }
 
-  // Default currentOrg is first active org
+  // Determine current org
   let currentOrg: {
     id: number;
     name: string;
@@ -94,15 +102,16 @@ export async function auth() {
     packageType: PackageType;
     enabledModules: ModuleId[];
   } | null = organizations.length
-      ? {
+    ? {
         ...organizations[0],
         enabledModules: getEnabledModules(organizations[0].packageType),
       }
-      : null;
+    : null;
 
-  // If a cookie exists with a preferred org, and the user is a member of it, honor it
+  // Honor org cookie if set
   try {
-    const currentOrgCookie = (await cookies()).get('werkfox_current_org')?.value;
+    const cookieStore = await cookies();
+    const currentOrgCookie = cookieStore.get('werkfox_current_org')?.value;
     if (currentOrgCookie) {
       const cookieOrgId = parseInt(currentOrgCookie, 10);
       const match = organizations.find((o) => o.id === cookieOrgId);
@@ -113,16 +122,16 @@ export async function auth() {
         };
       }
     }
-  } catch (e) {
-    // cookies() may throw in some contexts; ignore and use default
+  } catch {
+    // cookies() may throw in some contexts
   }
 
   return {
     user: {
-      id: user.id,
-      name: user.fullName || user.firstName || 'User',
-      email: user.emailAddresses[0]?.emailAddress || '',
-      image: user.imageUrl,
+      id: String(user.userId),
+      name: user.name,
+      email: user.email,
+      image: undefined as string | undefined,
     },
     organizations,
     currentOrg,
