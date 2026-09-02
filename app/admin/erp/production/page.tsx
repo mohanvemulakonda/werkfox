@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 const statusColors: Record<string, string> = {
   PLANNED: 'bg-blue-100 text-blue-800 border-blue-300',
@@ -16,8 +18,9 @@ const priorityColors: Record<string, string> = {
   URGENT: 'text-red-600',
 };
 
-async function getProductionOrders() {
+async function getProductionOrders(orgId: number) {
   const orders = await prisma.production_orders.findMany({
+    where: { organizationId: orgId },
     orderBy: { createdAt: 'desc' },
     include: {
       product: { select: { name: true, sku: true } },
@@ -34,7 +37,12 @@ async function getProductionOrders() {
 }
 
 export default async function ProductionOrdersPage() {
-  const { orders, stats } = await getProductionOrders();
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
+  const { orders, stats } = await getProductionOrders(orgId);
 
   return (
     <div>

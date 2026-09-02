@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import WorkOrderActions from './WorkOrderActions';
+import { auth } from '@/lib/auth';
 
 const statusBadgeClass: Record<string, string> = {
   PENDING: 'admin-badge admin-badge-pending',
@@ -42,9 +43,9 @@ function getStepState(currentStatus: string, step: string) {
   return '';
 }
 
-async function getWorkOrder(id: number) {
-  return prisma.work_orders.findUnique({
-    where: { id },
+async function getWorkOrder(id: number, orgId: number) {
+  return prisma.work_orders.findFirst({
+    where: { id, organizationId: orgId },
     include: {
       customer: true,
       items: {
@@ -61,6 +62,11 @@ export default async function WorkOrderDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const { id } = await params;
   const woId = parseInt(id);
 
@@ -68,7 +74,7 @@ export default async function WorkOrderDetailPage({
     notFound();
   }
 
-  const workOrder = await getWorkOrder(woId);
+  const workOrder = await getWorkOrder(woId, orgId);
 
   if (!workOrder) {
     notFound();

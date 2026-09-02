@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import MaterialRequestActions from './MaterialRequestActions';
+import { auth } from '@/lib/auth';
 
 const statusBadgeClass: Record<string, string> = {
   DRAFT: 'admin-badge admin-badge-draft',
@@ -11,9 +12,9 @@ const statusBadgeClass: Record<string, string> = {
   FULFILLED: 'admin-badge admin-badge-in-progress',
 };
 
-async function getMaterialRequest(id: number) {
-  return prisma.material_requests.findUnique({
-    where: { id },
+async function getMaterialRequest(id: number, orgId: number) {
+  return prisma.material_requests.findFirst({
+    where: { id, organizationId: orgId },
     include: {
       productionOrder: { select: { id: true, prodNumber: true, productName: true } },
       items: {
@@ -24,11 +25,16 @@ async function getMaterialRequest(id: number) {
 }
 
 export default async function MaterialRequestDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const { id } = await params;
   const mrId = parseInt(id);
   if (isNaN(mrId)) notFound();
 
-  const mr = await getMaterialRequest(mrId);
+  const mr = await getMaterialRequest(mrId, orgId);
   if (!mr) notFound();
 
   return (

@@ -1,10 +1,11 @@
 import prisma from '@/lib/prisma';
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
+import { auth } from '@/lib/auth';
 
-async function getVendor(id: number) {
-  const vendor = await prisma.vendors.findUnique({
-    where: { id },
+async function getVendor(id: number, orgId: number) {
+  const vendor = await prisma.vendors.findFirst({
+    where: { id, organizationId: orgId },
     include: {
       purchaseOrders: {
         orderBy: { createdAt: 'desc' },
@@ -41,6 +42,11 @@ export default async function VendorDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const { id } = await params;
   const vendorId = parseInt(id);
 
@@ -48,7 +54,7 @@ export default async function VendorDetailPage({
     notFound();
   }
 
-  const vendor = await getVendor(vendorId);
+  const vendor = await getVendor(vendorId, orgId);
 
   if (!vendor) {
     notFound();

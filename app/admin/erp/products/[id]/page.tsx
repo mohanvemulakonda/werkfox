@@ -1,13 +1,19 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import ProductForm from '../ProductForm';
+import { auth } from '@/lib/auth';
 
 export default async function EditProductPage({ params }: { params: Promise<{ id: string }> }) {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const { id } = await params;
 
-  const product = await prisma.products.findUnique({
-    where: { id: parseInt(id) },
+  const product = await prisma.products.findFirst({
+    where: { id: parseInt(id), organizationId: orgId },
   });
 
   if (!product) {

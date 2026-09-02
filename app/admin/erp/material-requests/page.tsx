@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 const statusBadgeClass: Record<string, string> = {
   DRAFT: 'admin-badge admin-badge-draft',
@@ -16,8 +18,9 @@ const priorityBadge: Record<string, string> = {
   URGENT: 'bg-red-100 text-red-800',
 };
 
-async function getMaterialRequests() {
+async function getMaterialRequests(orgId: number) {
   return prisma.material_requests.findMany({
+    where: { organizationId: orgId },
     include: {
       productionOrder: { select: { prodNumber: true } },
       _count: { select: { items: true } },
@@ -27,7 +30,12 @@ async function getMaterialRequests() {
 }
 
 export default async function MaterialRequestsPage() {
-  const materialRequests = await getMaterialRequests();
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
+  const materialRequests = await getMaterialRequests(orgId);
 
   return (
     <div>

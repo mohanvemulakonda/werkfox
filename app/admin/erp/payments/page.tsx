@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 const statusBadgeClass: Record<string, string> = {
   DRAFT: 'admin-badge admin-badge-draft',
@@ -15,8 +17,9 @@ const typeBadge: Record<string, string> = {
   ADVANCE: 'bg-blue-100 text-blue-800',
 };
 
-async function getPayments() {
+async function getPayments(orgId: number) {
   return prisma.payments.findMany({
+    where: { organizationId: orgId },
     include: {
       customer: { select: { name: true } },
       vendor: { select: { name: true } },
@@ -27,7 +30,12 @@ async function getPayments() {
 }
 
 export default async function PaymentsPage() {
-  const payments = await getPayments();
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
+  const payments = await getPayments(orgId);
 
   return (
     <div>

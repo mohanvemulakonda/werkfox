@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import StatusActions from './StatusActions';
+import { auth } from '@/lib/auth';
 
 const poStatusFlow = ['DRAFT', 'SENT', 'CONFIRMED', 'RECEIVED'];
 
@@ -56,9 +57,9 @@ function getTimelineStatus(currentStatus: string, step: string): 'completed' | '
   return '';
 }
 
-async function getPurchaseOrder(id: number) {
-  return prisma.purchase_orders.findUnique({
-    where: { id },
+async function getPurchaseOrder(id: number, orgId: number) {
+  return prisma.purchase_orders.findFirst({
+    where: { id, organizationId: orgId },
     include: {
       vendor: true,
       location: { select: { id: true, name: true, code: true } },
@@ -79,6 +80,11 @@ export default async function PurchaseOrderDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const { id } = await params;
   const poId = parseInt(id);
 
@@ -86,7 +92,7 @@ export default async function PurchaseOrderDetailPage({
     notFound();
   }
 
-  const po = await getPurchaseOrder(poId);
+  const po = await getPurchaseOrder(poId, orgId);
 
   if (!po) {
     notFound();

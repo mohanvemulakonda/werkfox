@@ -1,8 +1,11 @@
 import prisma from '@/lib/prisma';
 import ContactsTable from './ContactsTable';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
-async function getContacts() {
+async function getContacts(orgId: number) {
   const contacts = await prisma.contacts.findMany({
+    where: { organizationId: orgId },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -21,7 +24,12 @@ async function getContacts() {
 }
 
 export default async function ContactsPage() {
-  const contacts = await getContacts();
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
+  const contacts = await getContacts(orgId);
 
   return (
     <div>

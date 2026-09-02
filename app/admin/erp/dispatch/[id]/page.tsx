@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import DispatchActions from './DispatchActions';
+import { auth } from '@/lib/auth';
 
 const statusBadgeClass: Record<string, string> = {
   PENDING: 'admin-badge admin-badge-pending',
@@ -21,9 +22,9 @@ function getStepState(currentStatus: string, step: string) {
   return '';
 }
 
-async function getDispatchOrder(id: number) {
-  return prisma.dispatch_orders.findUnique({
-    where: { id },
+async function getDispatchOrder(id: number, orgId: number) {
+  return prisma.dispatch_orders.findFirst({
+    where: { id, organizationId: orgId },
     include: {
       salesOrder: { select: { id: true, soNumber: true } },
       customer: { select: { id: true, name: true, customerCode: true, phone: true, email: true } },
@@ -34,11 +35,16 @@ async function getDispatchOrder(id: number) {
 }
 
 export default async function DispatchDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const { id } = await params;
   const dcId = parseInt(id);
   if (isNaN(dcId)) notFound();
 
-  const dispatch = await getDispatchOrder(dcId);
+  const dispatch = await getDispatchOrder(dcId, orgId);
   if (!dispatch) notFound();
 
   return (

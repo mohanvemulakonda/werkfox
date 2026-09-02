@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 const statusColors: Record<string, { bg: string; text: string; border: string }> = {
   DRAFT: { bg: 'bg-gray-100', text: 'text-gray-800', border: 'border-gray-300' },
@@ -11,8 +13,9 @@ const statusColors: Record<string, { bg: string; text: string; border: string }>
   CONVERTED: { bg: 'bg-emerald-100', text: 'text-emerald-800', border: 'border-emerald-300' },
 };
 
-async function getQuotations() {
+async function getQuotations(orgId: number) {
   const quotes = await prisma.quotations.findMany({
+    where: { organizationId: orgId },
     orderBy: { createdAt: 'desc' },
     include: {
       customer: { select: { name: true, customerCode: true } },
@@ -31,7 +34,12 @@ async function getQuotations() {
 }
 
 export default async function QuotesPage() {
-  const { quotes, stats } = await getQuotations();
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
+  const { quotes, stats } = await getQuotations(orgId);
 
   return (
     <div>

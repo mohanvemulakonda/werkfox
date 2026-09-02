@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 const statusBadgeClass: Record<string, string> = {
   PENDING: 'admin-badge admin-badge-pending',
@@ -9,8 +11,9 @@ const statusBadgeClass: Record<string, string> = {
   DELIVERED: 'admin-badge admin-badge-completed',
 };
 
-async function getDispatchOrders() {
+async function getDispatchOrders(orgId: number) {
   const orders = await prisma.dispatch_orders.findMany({
+    where: { organizationId: orgId },
     orderBy: { createdAt: 'desc' },
     include: {
       salesOrder: { select: { soNumber: true } },
@@ -30,7 +33,12 @@ async function getDispatchOrders() {
 }
 
 export default async function DispatchPage() {
-  const { orders, stats } = await getDispatchOrders();
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
+  const { orders, stats } = await getDispatchOrders(orgId);
 
   return (
     <div>

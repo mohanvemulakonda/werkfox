@@ -1,16 +1,18 @@
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
-async function getCRMStats() {
+async function getCRMStats(orgId: number) {
   const [totalLeads, qualifiedLeads, opportunities, activities] = await Promise.all([
-    prisma.leads.count(),
-    prisma.leads.count({ where: { stage: 'QUALIFIED' } }),
-    prisma.opportunities.count(),
-    prisma.activities.count(),
+    prisma.leads.count({ where: { organizationId: orgId } }),
+    prisma.leads.count({ where: { stage: 'QUALIFIED', organizationId: orgId } }),
+    prisma.opportunities.count({ where: { organizationId: orgId } }),
+    prisma.activities.count({ where: { organizationId: orgId } }),
   ]);
 
   const opps = await prisma.opportunities.findMany({
-    where: { status: 'OPEN' },
+    where: { status: 'OPEN', organizationId: orgId },
     select: { value: true },
   });
   const pipelineValue = opps.reduce((sum, o) => sum + Number(o.value), 0);
@@ -20,16 +22,18 @@ async function getCRMStats() {
   return { totalLeads, qualifiedLeads, opportunities, pipelineValue, activities, conversionRate };
 }
 
-async function getRecentLeads() {
+async function getRecentLeads(orgId: number) {
   return prisma.leads.findMany({
+    where: { organizationId: orgId },
     take: 5,
     orderBy: { createdAt: 'desc' },
     select: { id: true, name: true, company: true, stage: true, leadScore: true },
   });
 }
 
-async function getUpcomingActivities() {
+async function getUpcomingActivities(orgId: number) {
   return prisma.activities.findMany({
+    where: { organizationId: orgId },
     take: 5,
     orderBy: { createdAt: 'desc' },
     include: { lead: { select: { name: true } } },
@@ -37,10 +41,15 @@ async function getUpcomingActivities() {
 }
 
 export default async function CRMOverview() {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const [stats, recentLeads, upcomingActivities] = await Promise.all([
-    getCRMStats(),
-    getRecentLeads(),
-    getUpcomingActivities(),
+    getCRMStats(orgId),
+    getRecentLeads(orgId),
+    getUpcomingActivities(orgId),
   ]);
 
   const statCards = [

@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 const statusBadgeClass: Record<string, string> = {
   PENDING: 'admin-badge admin-badge-pending',
@@ -24,8 +26,9 @@ const priorityBadgeColors: Record<string, string> = {
   URGENT: 'bg-red-100 text-red-800',
 };
 
-async function getWorkOrders() {
+async function getWorkOrders(orgId: number) {
   const orders = await prisma.work_orders.findMany({
+    where: { organizationId: orgId },
     orderBy: { createdAt: 'desc' },
     include: {
       customer: { select: { name: true } },
@@ -44,7 +47,12 @@ async function getWorkOrders() {
 }
 
 export default async function WorkOrdersPage() {
-  const { orders, stats } = await getWorkOrders();
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
+  const { orders, stats } = await getWorkOrders(orgId);
 
   return (
     <div>

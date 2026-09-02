@@ -1,8 +1,11 @@
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
-async function getVendors() {
+async function getVendors(orgId: number) {
   const vendors = await prisma.vendors.findMany({
+    where: { organizationId: orgId },
     orderBy: { createdAt: 'desc' },
   });
 
@@ -15,7 +18,12 @@ async function getVendors() {
 }
 
 export default async function VendorsPage() {
-  const { vendors, stats } = await getVendors();
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
+  const { vendors, stats } = await getVendors(orgId);
 
   return (
     <div>

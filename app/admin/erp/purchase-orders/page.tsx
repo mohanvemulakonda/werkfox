@@ -1,5 +1,7 @@
 import Link from 'next/link';
 import prisma from '@/lib/prisma';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
 const statusColors: Record<string, string> = {
   DRAFT: 'bg-gray-100 text-gray-800 border-gray-300',
@@ -16,8 +18,9 @@ const paymentStatusColors: Record<string, string> = {
   PAID: 'text-green-600',
 };
 
-async function getPurchaseOrders() {
+async function getPurchaseOrders(orgId: number) {
   const orders = await prisma.purchase_orders.findMany({
+    where: { organizationId: orgId },
     orderBy: { createdAt: 'desc' },
     include: {
       vendor: { select: { name: true, code: true } },
@@ -35,7 +38,12 @@ async function getPurchaseOrders() {
 }
 
 export default async function PurchaseOrdersPage() {
-  const { orders, stats } = await getPurchaseOrders();
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
+  const { orders, stats } = await getPurchaseOrders(orgId);
 
   return (
     <div>

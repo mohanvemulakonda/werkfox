@@ -2,10 +2,11 @@ import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import ProductionOrderForm from '../../ProductionOrderForm';
+import { auth } from '@/lib/auth';
 
-async function getProductionOrder(id: number) {
-  return prisma.production_orders.findUnique({
-    where: { id },
+async function getProductionOrder(id: number, orgId: number) {
+  return prisma.production_orders.findFirst({
+    where: { id, organizationId: orgId },
     include: {
       product: { select: { id: true, name: true, sku: true } },
       items: {
@@ -22,6 +23,11 @@ export default async function EditProductionOrderPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const { id } = await params;
   const prodId = parseInt(id);
 
@@ -29,7 +35,7 @@ export default async function EditProductionOrderPage({
     notFound();
   }
 
-  const order = await getProductionOrder(prodId);
+  const order = await getProductionOrder(prodId, orgId);
 
   if (!order) {
     notFound();

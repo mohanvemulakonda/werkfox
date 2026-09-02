@@ -1,12 +1,13 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import { getCompanySettings } from '@/lib/company-settings-cache';
 import QuotationActions from './QuotationActions';
+import { auth } from '@/lib/auth';
 
-async function getQuotation(id: number) {
-  const quotation = await prisma.quotations.findUnique({
-    where: { id },
+async function getQuotation(id: number, orgId: number) {
+  const quotation = await prisma.quotations.findFirst({
+    where: { id, organizationId: orgId },
     include: {
       customer: true,
       opportunity: { select: { id: true, name: true } },
@@ -31,6 +32,11 @@ export default async function QuotationDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const { id } = await params;
   const quotationId = parseInt(id);
 
@@ -39,7 +45,7 @@ export default async function QuotationDetailPage({
   }
 
   const [quotation, company] = await Promise.all([
-    getQuotation(quotationId),
+    getQuotation(quotationId, orgId),
     getCompanySettings(),
   ]);
 

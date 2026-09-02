@@ -2,10 +2,11 @@ import { redirect } from 'next/navigation';
 import { notFound } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import QuotationForm from '../../QuotationForm';
+import { auth } from '@/lib/auth';
 
-async function getQuotation(id: number) {
-  const quotation = await prisma.quotations.findUnique({
-    where: { id },
+async function getQuotation(id: number, orgId: number) {
+  const quotation = await prisma.quotations.findFirst({
+    where: { id, organizationId: orgId },
     include: {
       customer: true,
       items: {
@@ -29,6 +30,11 @@ export default async function EditQuotationPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const { id } = await params;
   const quotationId = parseInt(id);
 
@@ -36,7 +42,7 @@ export default async function EditQuotationPage({
     notFound();
   }
 
-  const quotation = await getQuotation(quotationId);
+  const quotation = await getQuotation(quotationId, orgId);
 
   if (!quotation) {
     notFound();

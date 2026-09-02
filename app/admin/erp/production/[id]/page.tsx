@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import ProductionActions from './ProductionActions';
+import { auth } from '@/lib/auth';
 
 const prodStatusFlow = ['PLANNED', 'MATERIAL_REQUESTED', 'IN_PROGRESS', 'QC', 'COMPLETED'];
 
@@ -43,9 +44,9 @@ function getTimelineStatus(currentStatus: string, step: string): 'completed' | '
   return '';
 }
 
-async function getProductionOrder(id: number) {
-  return prisma.production_orders.findUnique({
-    where: { id },
+async function getProductionOrder(id: number, orgId: number) {
+  return prisma.production_orders.findFirst({
+    where: { id, organizationId: orgId },
     include: {
       product: { select: { id: true, name: true, sku: true } },
       items: {
@@ -65,6 +66,11 @@ export default async function ProductionOrderDetailPage({
 }: {
   params: Promise<{ id: string }>;
 }) {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const { id } = await params;
   const prodId = parseInt(id);
 
@@ -72,7 +78,7 @@ export default async function ProductionOrderDetailPage({
     notFound();
   }
 
-  const order = await getProductionOrder(prodId);
+  const order = await getProductionOrder(prodId, orgId);
 
   if (!order) {
     notFound();

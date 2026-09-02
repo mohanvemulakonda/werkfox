@@ -1,7 +1,8 @@
 import Link from 'next/link';
-import { notFound } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
 import prisma from '@/lib/prisma';
 import PaymentActions from './PaymentActions';
+import { auth } from '@/lib/auth';
 
 const statusBadgeClass: Record<string, string> = {
   DRAFT: 'admin-badge admin-badge-draft',
@@ -17,9 +18,9 @@ const typeBadge: Record<string, string> = {
   ADVANCE: 'bg-blue-100 text-blue-800',
 };
 
-async function getPayment(id: number) {
-  return prisma.payments.findUnique({
-    where: { id },
+async function getPayment(id: number, orgId: number) {
+  return prisma.payments.findFirst({
+    where: { id, organizationId: orgId },
     include: {
       customer: { select: { id: true, name: true, customerCode: true } },
       vendor: { select: { id: true, name: true, code: true } },
@@ -29,11 +30,16 @@ async function getPayment(id: number) {
 }
 
 export default async function PaymentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  const session = await auth();
+  if (!session) redirect('/sign-in');
+  if (!session.currentOrg) redirect('/admin/organizations/select');
+  const orgId = session.currentOrg.id;
+
   const { id } = await params;
   const paymentId = parseInt(id);
   if (isNaN(paymentId)) notFound();
 
-  const payment = await getPayment(paymentId);
+  const payment = await getPayment(paymentId, orgId);
   if (!payment) notFound();
 
   return (
