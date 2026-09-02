@@ -73,7 +73,7 @@ export default function FoxCutHistoryPage() {
           </p>
         </div>
         <Link
-          href="/admin/erp/foxcut"
+          href="/admin/foxcut"
           className="group relative inline-flex items-center gap-2 px-6 py-3 bg-[#E03B12] text-white overflow-hidden font-inter"
         >
           <span className="relative z-10 text-sm tracking-wide">+ New Optimization</span>
@@ -98,7 +98,7 @@ export default function FoxCutHistoryPage() {
           </svg>
           <p className="text-gray-400 font-inter mt-4 text-sm">No saved cutting plans yet</p>
           <Link
-            href="/admin/erp/foxcut"
+            href="/admin/foxcut"
             className="mt-3 text-sm text-[#E03B12] hover:underline font-inter"
           >
             Create your first optimization

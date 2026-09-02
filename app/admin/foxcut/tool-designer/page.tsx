@@ -139,7 +139,7 @@ export default function ToolDesignerPage() {
       {/* Header */}
       <div className="bg-white border-b border-gray-200 px-6 py-4">
         <div className="max-w-[1600px] mx-auto flex items-center gap-4">
-          <Link href="/admin/erp/foxcut" className="text-gray-400 hover:text-gray-600 transition-colors">
+          <Link href="/admin/foxcut" className="text-gray-400 hover:text-gray-600 transition-colors">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
             </svg>
