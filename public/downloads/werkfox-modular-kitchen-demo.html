@@ -1,0 +1,630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WerkFox ERP — Modular Kitchen Demo</title>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800;900&family=Caveat:wght@700&display=swap" rel="stylesheet">
+<style>
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  body { font-family: 'Montserrat', sans-serif; background: #f0f0f2; color: #1a1a2e; }
+  .slide {
+    width: 100vw; height: 100vh;
+    display: none; flex-direction: column;
+    justify-content: center; align-items: center;
+    padding: 60px 80px;
+    background: #FAFAFA;
+    position: relative; overflow: hidden;
+  }
+  .slide.active { display: flex; }
+  .slide-number { position: absolute; bottom: 30px; right: 40px; font-size: 13px; font-weight: 600; color: #999; }
+  .brand-tag {
+    position: absolute; top: 30px; left: 40px;
+    display: flex; align-items: center; gap: 8px;
+  }
+  .brand-tag img { height: 28px; }
+  .brand-tag span {
+    font-size: 14px; font-weight: 900; letter-spacing: 2px;
+    background: linear-gradient(135deg, #E03B12, #FD9220);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .nav-bar {
+    position: fixed; bottom: 0; left: 0; right: 0; z-index: 100;
+    display: flex; justify-content: center; align-items: center; gap: 16px;
+    padding: 14px; background: rgba(255,255,255,0.95);
+    border-top: 1px solid #e5e5e5; backdrop-filter: blur(10px);
+  }
+  .nav-btn {
+    padding: 8px 24px; border: none; border-radius: 8px;
+    font-family: 'Montserrat', sans-serif; font-weight: 600; font-size: 13px;
+    cursor: pointer; transition: all 0.2s;
+    background: linear-gradient(135deg, #E03B12, #FD9220); color: #fff;
+  }
+  .nav-btn:hover { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(224,59,18,0.3); }
+  .nav-counter { font-size: 13px; font-weight: 600; color: #666; min-width: 60px; text-align: center; }
+  h1 { font-size: 48px; font-weight: 900; line-height: 1.1; margin-bottom: 16px; }
+  h2 { font-size: 36px; font-weight: 800; line-height: 1.2; margin-bottom: 12px; }
+  h3 { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+  .subtitle { font-size: 20px; font-weight: 500; color: #555; line-height: 1.5; }
+  .gradient-text {
+    background: linear-gradient(135deg, #E03B12, #FD9220);
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+    font-family: 'Caveat', cursive; font-weight: 700;
+  }
+  .caveat { font-family: 'Caveat', cursive; font-weight: 700; }
+  .content { max-width: 1100px; width: 100%; }
+  .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+  .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 20px; }
+  .card {
+    background: #fff; border-radius: 16px; padding: 28px;
+    border: 1px solid #eee; box-shadow: 0 2px 8px rgba(0,0,0,0.04);
+  }
+  .card-accent { border-left: 4px solid #E03B12; }
+  .card h3 { font-size: 16px; margin-bottom: 8px; }
+  .card p { font-size: 14px; color: #555; line-height: 1.6; }
+  .tag {
+    display: inline-block; padding: 4px 12px; border-radius: 20px;
+    font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+  }
+  .tag-orange { background: #FFF3E8; color: #E03B12; }
+  .tag-green { background: #E8F5E9; color: #2E7D32; }
+  .tag-blue { background: #E3F2FD; color: #1565C0; }
+  .feature-list { list-style: none; padding: 0; }
+  .feature-list li {
+    padding: 10px 0; font-size: 15px; font-weight: 500; color: #333;
+    display: flex; align-items: flex-start; gap: 12px;
+    border-bottom: 1px solid #f0f0f0;
+  }
+  .feature-list li:last-child { border-bottom: none; }
+  .check { color: #E03B12; font-weight: 800; font-size: 18px; flex-shrink: 0; }
+  .flow { display: flex; align-items: center; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .flow-step {
+    padding: 10px 18px; border-radius: 10px; font-size: 13px; font-weight: 700;
+    background: #fff; border: 2px solid #eee; color: #333; white-space: nowrap;
+  }
+  .flow-step.active-step {
+    background: linear-gradient(135deg, #E03B12, #FD9220);
+    color: #fff; border-color: transparent;
+  }
+  .flow-arrow { font-size: 18px; color: #ccc; font-weight: 700; }
+  .cutmax-hero {
+    background: linear-gradient(135deg, #FFF8F5, #FFF3E8);
+    border: 2px solid #FD9220; border-radius: 20px; padding: 36px;
+    position: relative; overflow: hidden;
+  }
+  .cutmax-hero::before {
+    content: ''; position: absolute; top: -50px; right: -50px;
+    width: 200px; height: 200px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(253,146,32,0.15), transparent);
+  }
+  .cutmax-badge {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 6px 16px; border-radius: 8px; font-size: 12px; font-weight: 800;
+    background: linear-gradient(135deg, #E03B12, #FD9220); color: #fff;
+    text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 16px;
+  }
+  .sheet-visual {
+    background: #fff; border-radius: 12px; padding: 20px;
+    border: 2px dashed #ddd; text-align: center;
+  }
+  .sheet-grid {
+    display: grid; grid-template-columns: 3fr 2fr 1fr; grid-template-rows: 2fr 1fr 1fr;
+    gap: 3px; height: 160px; margin: 12px 0;
+  }
+  .sheet-piece {
+    border-radius: 4px; display: flex; align-items: center; justify-content: center;
+    font-size: 10px; font-weight: 700; color: #fff;
+  }
+  .sp1 { background: #E03B12; } .sp2 { background: #FD9220; } .sp3 { background: #FF6B35; }
+  .sp4 { background: #E03B12; opacity: 0.7; grid-column: 1/3; }
+  .sp5 { background: #FD9220; opacity: 0.8; grid-row: 2/4; }
+  .sp6 { background: #FF6B35; opacity: 0.6; }
+  .sp7 { background: #ccc; font-size: 9px; color: #666; }
+  @media print {
+    .nav-bar { display: none !important; }
+    .slide { display: flex !important; page-break-after: always; height: 100vh; }
+    body { background: #fff; }
+  }
+</style>
+</head>
+<body>
+
+<!-- SLIDE 1: Title -->
+<div class="slide active" id="slide-1">
+  <div class="brand-tag"><img src="../logo.png" alt="WerkFox"><span style="-webkit-text-fill-color:initial;background:none;font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.3px;">Werk</span><span style="font-family:'Caveat',cursive;font-size:24px;font-weight:700;">Fox</span></div>
+  <div class="content" style="text-align:center;">
+    <div style="margin-bottom: 24px;"><span class="tag tag-orange">ERP + CRM + CUT OPTIMIZER</span></div>
+    <h1 style="font-size: 52px;">WerkFox ERP for<br><span class="gradient-text">Modular Kitchens</span></h1>
+    <p class="subtitle" style="margin-top: 20px; max-width: 600px; margin-left: auto; margin-right: auto;">
+      End-to-End Business Management<br><span class="caveat" style="font-size:26px;">From Lead to Delivery</span> — with Built-in Cutting Optimization
+    </p>
+    <div style="margin-top: 48px; padding-top: 24px; border-top: 1px solid #eee;">
+      <p style="font-size: 14px; color: #888; font-weight: 500;">Prepared for <strong style="color:#333;">Mr. Ramesh</strong></p>
+      <p style="font-size: 13px; color: #aaa; margin-top: 4px;">March 2026</p>
+    </div>
+  </div>
+  <span class="slide-number">1 / 14</span>
+</div>
+
+<!-- SLIDE 2: The Problem -->
+<div class="slide" id="slide-2">
+  <div class="brand-tag"><img src="../logo.png" alt="WerkFox"><span style="-webkit-text-fill-color:initial;background:none;font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.3px;">Werk</span><span style="font-family:'Caveat',cursive;font-size:24px;font-weight:700;">Fox</span></div>
+  <div class="content">
+    <span class="tag tag-orange" style="margin-bottom: 16px;">THE CHALLENGE</span>
+    <h2>Running a modular kitchen business<br>means juggling <span class="gradient-text">too many tools</span></h2>
+    <div class="grid-3" style="margin-top: 32px;">
+      <div class="card card-accent"><h3>Scattered Leads</h3><p>Customer inquiries lost in WhatsApp, phone calls, and walk-ins with no tracking</p></div>
+      <div class="card card-accent"><h3>Manual Quotations</h3><p>Excel sheets for pricing, no revision history, inconsistent formats for clients</p></div>
+      <div class="card card-accent"><h3>Blind Inventory</h3><p>No real-time visibility on plywood, MDF, laminate, and hardware stock levels</p></div>
+      <div class="card card-accent"><h3>Production Delays</h3><p>Poor planning causes bottlenecks — cutting waits for materials, assembly waits for cutting</p></div>
+      <div class="card card-accent"><h3>Disconnected Systems</h3><p>Sales team doesn't know production status. Production doesn't know what's sold</p></div>
+      <div class="card card-accent"><h3>Paying for CutMax Separately</h3><p>Cutting optimization is a separate license, separate data entry, no connection to your ERP</p></div>
+    </div>
+    <p style="text-align: center; margin-top: 32px; font-size: 18px; font-weight: 700;">
+      <span class="gradient-text">WerkFox replaces ALL of this with one platform.</span>
+    </p>
+  </div>
+  <span class="slide-number">2 / 14</span>
+</div>
+
+<!-- SLIDE 3: Customer Journey -->
+<div class="slide" id="slide-3">
+  <div class="brand-tag"><img src="../logo.png" alt="WerkFox"><span style="-webkit-text-fill-color:initial;background:none;font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.3px;">Werk</span><span style="font-family:'Caveat',cursive;font-size:24px;font-weight:700;">Fox</span></div>
+  <div class="content" style="text-align: center;">
+    <span class="tag tag-blue" style="margin-bottom: 16px;">COMPLETE WORKFLOW</span>
+    <h2>One Platform, Entire Journey</h2>
+    <p class="subtitle" style="margin-bottom: 36px;">Every step from first contact to final payment</p>
+    <div class="flow">
+      <span class="flow-step">Lead</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Opportunity</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Quotation</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Sales Order</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Purchase</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">GRN</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step active-step">Cut Optimizer</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Production</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">QC</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Dispatch</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Invoice</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step">Payment</span>
+    </div>
+    <div class="grid-3" style="margin-top: 40px; text-align: left;">
+      <div class="card" style="border-top: 3px solid #E03B12;">
+        <h3 style="color: #E03B12;">CRM</h3>
+        <p>Leads, Opportunities, Activities, Contacts — track every customer touchpoint</p>
+      </div>
+      <div class="card" style="border-top: 3px solid #FD9220;">
+        <h3 style="color: #FD9220;">ERP</h3>
+        <p>Purchase, Inventory, Invoicing, Payments — run operations smoothly</p>
+      </div>
+      <div class="card" style="border-top: 3px solid #FF6B35;">
+        <h3 style="color: #FF6B35;">Production + Cut Optimizer</h3>
+        <p>Work Orders, Sheet Cutting Optimization, QC, Dispatch — built-in, not bolted on</p>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">3 / 14</span>
+</div>
+
+<!-- SLIDE 4: Lead Management -->
+<div class="slide" id="slide-4">
+  <div class="brand-tag"><img src="../logo.png" alt="WerkFox"><span style="-webkit-text-fill-color:initial;background:none;font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.3px;">Werk</span><span style="font-family:'Caveat',cursive;font-size:24px;font-weight:700;">Fox</span></div>
+  <div class="content">
+    <div class="grid-2" style="align-items: center;">
+      <div>
+        <span class="tag tag-orange" style="margin-bottom: 16px;">STEP 1</span>
+        <h2>Lead Management</h2>
+        <p class="subtitle" style="margin-bottom: 24px;"><span class="caveat" style="font-size:24px;">Never lose a kitchen inquiry again</span></p>
+        <ul class="feature-list">
+          <li><span class="check">&check;</span> Capture leads from website, calls, walk-ins, referrals</li>
+          <li><span class="check">&check;</span> Track stage: New &rarr; Contacted &rarr; Qualified &rarr; Proposal &rarr; Won</li>
+          <li><span class="check">&check;</span> Assign to sales team with notes & follow-up dates</li>
+          <li><span class="check">&check;</span> Lead scoring to prioritize hot prospects</li>
+          <li><span class="check">&check;</span> One-click convert to Opportunity when qualified</li>
+        </ul>
+      </div>
+      <div class="card" style="background: #f8f8fa; min-height: 300px; display: flex; align-items: center; justify-content: center;">
+        <div style="text-align: center; color: #999;">
+          <svg width="64" height="64" fill="none" viewBox="0 0 24 24" stroke="#ccc" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+          <p style="margin-top: 12px; font-size: 13px; font-weight: 600;">Live Demo</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">4 / 14</span>
+</div>
+
+<!-- SLIDE 5: Opportunity & Quotation -->
+<div class="slide" id="slide-5">
+  <div class="brand-tag"><img src="../logo.png" alt="WerkFox"><span style="-webkit-text-fill-color:initial;background:none;font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.3px;">Werk</span><span style="font-family:'Caveat',cursive;font-size:24px;font-weight:700;">Fox</span></div>
+  <div class="content">
+    <div class="grid-2" style="align-items: center;">
+      <div class="card" style="background: #f8f8fa; min-height: 300px; display: flex; align-items: center; justify-content: center;">
+        <div style="text-align: center; color: #999;">
+          <svg width="64" height="64" fill="none" viewBox="0 0 24 24" stroke="#ccc" stroke-width="1.5"><path stroke-linecap="round" stroke-linejoin="round" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg>
+          <p style="margin-top: 12px; font-size: 13px; font-weight: 600;">Live Demo</p>
+        </div>
+      </div>
+      <div>
+        <span class="tag tag-orange" style="margin-bottom: 16px;">STEP 2</span>
+        <h2>Opportunity &<br>Quotation</h2>
+        <p class="subtitle" style="margin-bottom: 24px;"><span class="caveat" style="font-size:24px;">Professional quotes in minutes</span></p>
+        <ul class="feature-list">
+          <li><span class="check">&check;</span> Itemized quotations — cabinets, countertops, hardware, fittings</li>
+          <li><span class="check">&check;</span> Auto-calculate with GST, discounts, delivery charges</li>
+          <li><span class="check">&check;</span> Send branded PDF quotes directly to customers</li>
+          <li><span class="check">&check;</span> Track all revisions — never lose a version</li>
+          <li><span class="check">&check;</span> Convert won opportunity &rarr; Sales Order instantly</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">5 / 14</span>
+</div>
+
+<!-- SLIDE 6: Material Planning -->
+<div class="slide" id="slide-6">
+  <div class="brand-tag"><img src="../logo.png" alt="WerkFox"><span style="-webkit-text-fill-color:initial;background:none;font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.3px;">Werk</span><span style="font-family:'Caveat',cursive;font-size:24px;font-weight:700;">Fox</span></div>
+  <div class="content">
+    <div class="grid-2" style="align-items: center;">
+      <div>
+        <span class="tag tag-orange" style="margin-bottom: 16px;">STEP 3</span>
+        <h2>Material Planning<br>& Purchase</h2>
+        <p class="subtitle" style="margin-bottom: 24px;"><span class="caveat" style="font-size:24px;">Right materials, right time, right cost</span></p>
+        <ul class="feature-list">
+          <li><span class="check">&check;</span> Auto Bill of Materials from each kitchen order</li>
+          <li><span class="check">&check;</span> PO generation for plywood, MDF, laminate, hardware vendors</li>
+          <li><span class="check">&check;</span> Compare vendor pricing and lead times</li>
+          <li><span class="check">&check;</span> Material Request workflow for production needs</li>
+          <li><span class="check">&check;</span> Track PO: Sent &rarr; Confirmed &rarr; Partial &rarr; Complete</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card" style="margin-bottom: 16px;">
+          <h3 style="color: #E03B12;">Materials You'll Track</h3>
+          <div style="display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;">
+            <span class="tag tag-orange">Plywood BWR 18mm</span>
+            <span class="tag tag-orange">MDF 8mm</span>
+            <span class="tag tag-blue">Laminates</span>
+            <span class="tag tag-blue">Edge Band</span>
+            <span class="tag tag-green">Hettich Hinges</span>
+            <span class="tag tag-green">Channels</span>
+            <span class="tag tag-green">Handles</span>
+            <span class="tag tag-orange">Countertop Stone</span>
+            <span class="tag tag-blue">Glass Panels</span>
+            <span class="tag tag-green">Screws & Fittings</span>
+          </div>
+        </div>
+        <div class="card" style="background: #f8f8fa;">
+          <h3>Vendor Database</h3>
+          <p>Contact details, payment terms, GST info, and supplier performance ratings</p>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">6 / 14</span>
+</div>
+
+<!-- SLIDE 7: GRN & Inventory -->
+<div class="slide" id="slide-7">
+  <div class="brand-tag"><img src="../logo.png" alt="WerkFox"><span style="-webkit-text-fill-color:initial;background:none;font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.3px;">Werk</span><span style="font-family:'Caveat',cursive;font-size:24px;font-weight:700;">Fox</span></div>
+  <div class="content">
+    <div class="grid-2" style="align-items: center;">
+      <div class="card" style="padding: 32px;">
+        <h3 style="margin-bottom: 16px; color: #E03B12;">Real-time Inventory</h3>
+        <table style="width: 100%; font-size: 13px; border-collapse: collapse;">
+          <tr style="border-bottom: 2px solid #eee; font-weight: 700; color: #666;">
+            <td style="padding: 8px 0;">Material</td><td>Stock</td><td>Reorder</td><td>Status</td>
+          </tr>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 8px 0; font-weight: 600;">Plywood 18mm BWR</td><td>45 sheets</td><td>20</td><td><span class="tag tag-green">OK</span></td>
+          </tr>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 8px 0; font-weight: 600;">MDF 8mm</td><td>8 sheets</td><td>15</td><td><span style="background:#FFF3E8;color:#E03B12;padding:2px 8px;border-radius:10px;font-size:10px;font-weight:700;">LOW</span></td>
+          </tr>
+          <tr style="border-bottom: 1px solid #f0f0f0;">
+            <td style="padding: 8px 0; font-weight: 600;">Hettich Hinges</td><td>120 pcs</td><td>50</td><td><span class="tag tag-green">OK</span></td>
+          </tr>
+          <tr>
+            <td style="padding: 8px 0; font-weight: 600;">White Laminate</td><td>32 sheets</td><td>25</td><td><span class="tag tag-green">OK</span></td>
+          </tr>
+        </table>
+      </div>
+      <div>
+        <span class="tag tag-orange" style="margin-bottom: 16px;">STEP 4</span>
+        <h2>Goods Receipt<br>& Inventory</h2>
+        <p class="subtitle" style="margin-bottom: 24px;"><span class="caveat" style="font-size:24px;">Know what you have, always</span></p>
+        <ul class="feature-list">
+          <li><span class="check">&check;</span> GRN against Purchase Orders — verify received vs ordered</li>
+          <li><span class="check">&check;</span> Quality inspection on received materials</li>
+          <li><span class="check">&check;</span> Multi-location inventory (warehouse, factory, site)</li>
+          <li><span class="check">&check;</span> Low stock alerts with auto-notifications</li>
+          <li><span class="check">&check;</span> Batch tracking for sheet materials</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">7 / 14</span>
+</div>
+
+<!-- SLIDE 8: CUT OPTIMIZER HERO -->
+<div class="slide" id="slide-8">
+  <div class="brand-tag"><img src="../logo.png" alt="WerkFox"><span style="-webkit-text-fill-color:initial;background:none;font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.3px;">Werk</span><span style="font-family:'Caveat',cursive;font-size:24px;font-weight:700;">Fox</span></div>
+  <div class="content">
+    <div class="cutmax-hero">
+      <div class="cutmax-badge">&#9733; BUILT INTO WERKFOX</div>
+      <h2 style="font-size: 38px;">WerkFox <span class="gradient-text">Cut Optimizer</span></h2>
+      <p class="subtitle" style="margin-bottom: 28px;"><span class="caveat" style="font-size:24px;">No CutMax license needed.</span> Sheet cutting optimization is built right into your ERP.</p>
+      <div class="grid-2" style="gap: 32px;">
+        <div>
+          <h3 style="margin-bottom: 16px; font-size: 18px;">How It Works</h3>
+          <ul class="feature-list">
+            <li><span class="check">1</span> <strong>Sales Order triggers Work Order</strong> — BOM auto-generates cutting list</li>
+            <li><span class="check">2</span> <strong>Define sheet specs</strong> — dimensions, grain direction, edge banding per side</li>
+            <li><span class="check">3</span> <strong>Optimizer runs</strong> — calculates best cutting layout, minimizes waste</li>
+            <li><span class="check">4</span> <strong>Print cut sheets</strong> — hand to factory floor with exact positions</li>
+            <li><span class="check">5</span> <strong>Track results</strong> — sheets used, waste %, cost per kitchen</li>
+          </ul>
+          <div style="margin-top: 20px; padding: 16px; background: #fff; border-radius: 12px; border: 1px solid #eee;">
+            <h3 style="color: #E03B12; font-size: 14px; margin-bottom: 8px;">REPLACES</h3>
+            <p style="font-size: 14px; color: #555;">CutMax, CutList Plus, or any standalone cutting software — all native in your ERP. No separate license.</p>
+          </div>
+        </div>
+        <div>
+          <div class="sheet-visual">
+            <p style="font-size: 12px; font-weight: 700; color: #999; text-transform: uppercase; letter-spacing: 1px;">Optimized Layout — Sheet 1 of 3</p>
+            <div class="sheet-grid">
+              <div class="sheet-piece sp1">Cabinet Side<br>600x720</div>
+              <div class="sheet-piece sp2">Shelf<br>560x350</div>
+              <div class="sheet-piece sp3">Back<br>200x720</div>
+              <div class="sheet-piece sp4">Base Panel 560x400</div>
+              <div class="sheet-piece sp5">Side<br>350x400</div>
+              <div class="sheet-piece sp6">Drawer 560x180</div>
+              <div class="sheet-piece sp7">Waste<br>4.2%</div>
+            </div>
+            <p style="font-size: 12px; color: #888; margin-top: 8px;">8ft x 4ft BWR Plywood &bull; Grain: Horizontal &bull; Edge Band: 2 sides</p>
+          </div>
+          <div class="grid-2" style="margin-top: 16px; gap: 12px;">
+            <div class="card" style="padding: 16px; text-align: center;">
+              <p style="font-size: 28px; font-weight: 900; color: #E03B12;">4.2%</p>
+              <p style="font-size: 11px; color: #888; font-weight: 600;">AVG WASTE</p>
+            </div>
+            <div class="card" style="padding: 16px; text-align: center;">
+              <p style="font-size: 28px; font-weight: 900; color: #2E7D32;">23%</p>
+              <p style="font-size: 11px; color: #888; font-weight: 600;">COST SAVINGS</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">8 / 14</span>
+</div>
+
+<!-- SLIDE 9: Cut Optimizer Details -->
+<div class="slide" id="slide-9">
+  <div class="brand-tag"><img src="../logo.png" alt="WerkFox"><span style="-webkit-text-fill-color:initial;background:none;font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.3px;">Werk</span><span style="font-family:'Caveat',cursive;font-size:24px;font-weight:700;">Fox</span></div>
+  <div class="content">
+    <span class="tag tag-orange" style="margin-bottom: 16px;">CUT OPTIMIZER — SPECS</span>
+    <h2>Everything CutMax Does,<br><span class="gradient-text">Plus Full ERP Integration</span></h2>
+    <div class="grid-3" style="margin-top: 32px;">
+      <div class="card card-accent"><h3>Sheet Library</h3><p>All sheet types — plywood (BWR, MR, marine), MDF, particle board, laminates — with dimensions, cost, supplier info</p></div>
+      <div class="card card-accent"><h3>Grain Direction</h3><p>Horizontal or vertical grain per piece. Optimizer respects grain constraints while minimizing waste</p></div>
+      <div class="card card-accent"><h3>Edge Banding</h3><p>Define which edges need banding — top, bottom, left, right. Track edge band material consumption</p></div>
+      <div class="card card-accent"><h3>Kerf & Trim</h3><p>Configure blade kerf width and sheet edge trim. Optimizer accounts for real-world cutting tolerances</p></div>
+      <div class="card card-accent"><h3>Multi-Sheet Nesting</h3><p>Optimizes across multiple sheets. Groups pieces by material type and thickness automatically</p></div>
+      <div class="card card-accent"><h3>Integrated Costing</h3><p>Exact material cost per kitchen — sheets used, waste generated, edge band consumed — all tracked in ERP</p></div>
+    </div>
+    <div style="margin-top: 28px; text-align: center;">
+      <div style="display: inline-flex; gap: 32px; padding: 20px 40px; background: #fff; border-radius: 16px; border: 1px solid #eee;">
+        <div><strong style="font-size: 24px; color: #E03B12;">15+</strong><br><span style="font-size: 12px; color: #888;">Material Types</span></div>
+        <div style="border-left: 1px solid #eee; padding-left: 32px;"><strong style="font-size: 24px; color: #FD9220;">4-6%</strong><br><span style="font-size: 12px; color: #888;">Avg Waste Rate</span></div>
+        <div style="border-left: 1px solid #eee; padding-left: 32px;"><strong style="font-size: 24px; color: #2E7D32;">&#8377;2-5L</strong><br><span style="font-size: 12px; color: #888;">Annual Savings</span></div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">9 / 14</span>
+</div>
+
+<!-- SLIDE 10: Production -->
+<div class="slide" id="slide-10">
+  <div class="brand-tag"><img src="../logo.png" alt="WerkFox"><span style="-webkit-text-fill-color:initial;background:none;font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.3px;">Werk</span><span style="font-family:'Caveat',cursive;font-size:24px;font-weight:700;">Fox</span></div>
+  <div class="content">
+    <span class="tag tag-orange" style="margin-bottom: 16px;">STEP 5</span>
+    <h2>Production Management</h2>
+    <p class="subtitle" style="margin-bottom: 32px;"><span class="caveat" style="font-size:24px;">Track every kitchen from cutting to installation</span></p>
+    <div class="flow" style="margin-bottom: 32px;">
+      <span class="flow-step active-step">Cutting</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step active-step">Edge Banding</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step active-step">Drilling</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step active-step">Assembly</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step active-step">Finishing</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step active-step">QC</span><span class="flow-arrow">&rarr;</span>
+      <span class="flow-step active-step">Dispatch</span>
+    </div>
+    <div class="grid-2">
+      <div>
+        <ul class="feature-list">
+          <li><span class="check">&check;</span> <strong>Work Orders</strong> auto-created from Sales Orders</li>
+          <li><span class="check">&check;</span> <strong>Production stages</strong> customizable per product</li>
+          <li><span class="check">&check;</span> <strong>Worker assignment</strong> — who's doing what, when</li>
+          <li><span class="check">&check;</span> <strong>Progress tracking</strong> — real-time per kitchen</li>
+        </ul>
+      </div>
+      <div>
+        <ul class="feature-list">
+          <li><span class="check">&check;</span> <strong>QC checkpoints</strong> at each production stage</li>
+          <li><span class="check">&check;</span> <strong>Rework tracking</strong> when QC fails</li>
+          <li><span class="check">&check;</span> <strong>Dispatch scheduling</strong> with delivery dates</li>
+          <li><span class="check">&check;</span> <strong>Installation tracking</strong> — mark complete on-site</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">10 / 14</span>
+</div>
+
+<!-- SLIDE 11: Invoicing -->
+<div class="slide" id="slide-11">
+  <div class="brand-tag"><img src="../logo.png" alt="WerkFox"><span style="-webkit-text-fill-color:initial;background:none;font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.3px;">Werk</span><span style="font-family:'Caveat',cursive;font-size:24px;font-weight:700;">Fox</span></div>
+  <div class="content">
+    <div class="grid-2" style="align-items: center;">
+      <div>
+        <span class="tag tag-orange" style="margin-bottom: 16px;">STEP 6</span>
+        <h2>Invoicing &<br>Payments</h2>
+        <p class="subtitle" style="margin-bottom: 24px;"><span class="caveat" style="font-size:24px;">Get paid faster</span></p>
+        <ul class="feature-list">
+          <li><span class="check">&check;</span> Auto-generate GST-compliant invoices from Sales Orders</li>
+          <li><span class="check">&check;</span> Milestone payments — advance, post-cutting, delivery, installation</li>
+          <li><span class="check">&check;</span> Payment tracking with outstanding balance alerts</li>
+          <li><span class="check">&check;</span> Credit notes for returns and adjustments</li>
+          <li><span class="check">&check;</span> Multi-currency for imported materials</li>
+        </ul>
+      </div>
+      <div>
+        <div class="card">
+          <h3 style="color: #E03B12;">Typical Payment Schedule</h3>
+          <div style="margin-top: 16px;">
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px;">
+              <span style="font-weight: 600;">Booking Advance</span><span class="tag tag-green">40%</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px;">
+              <span style="font-weight: 600;">After Cutting</span><span class="tag tag-blue">20%</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid #f0f0f0; font-size: 14px;">
+              <span style="font-weight: 600;">On Delivery</span><span class="tag tag-blue">30%</span>
+            </div>
+            <div style="display: flex; justify-content: space-between; padding: 10px 0; font-size: 14px;">
+              <span style="font-weight: 600;">Post Installation</span><span class="tag tag-orange">10%</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">11 / 14</span>
+</div>
+
+<!-- SLIDE 12: Dashboard -->
+<div class="slide" id="slide-12">
+  <div class="brand-tag"><img src="../logo.png" alt="WerkFox"><span style="-webkit-text-fill-color:initial;background:none;font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.3px;">Werk</span><span style="font-family:'Caveat',cursive;font-size:24px;font-weight:700;">Fox</span></div>
+  <div class="content" style="text-align: center;">
+    <span class="tag tag-blue" style="margin-bottom: 16px;">DASHBOARD</span>
+    <h2>Your Entire Business <span class="gradient-text">At a Glance</span></h2>
+    <p class="subtitle" style="margin-bottom: 36px;"><span class="caveat" style="font-size:24px;">Real-time metrics that matter</span></p>
+    <div class="grid-3" style="text-align: left;">
+      <div class="card" style="text-align: center; padding: 32px;">
+        <p style="font-size: 36px; font-weight: 900; color: #E03B12;">&#8377;24.5L</p>
+        <p style="font-size: 13px; color: #888; font-weight: 600;">Pipeline Value</p>
+        <p style="font-size: 12px; color: #aaa;">8 open opportunities</p>
+      </div>
+      <div class="card" style="text-align: center; padding: 32px;">
+        <p style="font-size: 36px; font-weight: 900; color: #2E7D32;">&#8377;18.2L</p>
+        <p style="font-size: 13px; color: #888; font-weight: 600;">Revenue This Month</p>
+        <p style="font-size: 12px; color: #aaa;">12 invoices paid</p>
+      </div>
+      <div class="card" style="text-align: center; padding: 32px;">
+        <p style="font-size: 36px; font-weight: 900; color: #FD9220;">5</p>
+        <p style="font-size: 13px; color: #888; font-weight: 600;">Kitchens in Production</p>
+        <p style="font-size: 12px; color: #aaa;">2 cutting, 3 assembly</p>
+      </div>
+      <div class="card" style="text-align: center; padding: 32px;">
+        <p style="font-size: 36px; font-weight: 900; color: #E03B12;">3</p>
+        <p style="font-size: 13px; color: #888; font-weight: 600;">Low Stock Alerts</p>
+        <p style="font-size: 12px; color: #aaa;">MDF, hinges, handles</p>
+      </div>
+      <div class="card" style="text-align: center; padding: 32px;">
+        <p style="font-size: 36px; font-weight: 900; color: #1565C0;">4.8%</p>
+        <p style="font-size: 13px; color: #888; font-weight: 600;">Avg Cutting Waste</p>
+        <p style="font-size: 12px; color: #aaa;">Down from 22% manual</p>
+      </div>
+      <div class="card" style="text-align: center; padding: 32px;">
+        <p style="font-size: 36px; font-weight: 900; color: #2E7D32;">92%</p>
+        <p style="font-size: 13px; color: #888; font-weight: 600;">On-Time Delivery</p>
+        <p style="font-size: 12px; color: #aaa;">Last 30 days</p>
+      </div>
+    </div>
+  </div>
+  <span class="slide-number">12 / 14</span>
+</div>
+
+<!-- SLIDE 13: Why WerkFox -->
+<div class="slide" id="slide-13">
+  <div class="brand-tag"><img src="../logo.png" alt="WerkFox"><span style="-webkit-text-fill-color:initial;background:none;font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.3px;">Werk</span><span style="font-family:'Caveat',cursive;font-size:24px;font-weight:700;">Fox</span></div>
+  <div class="content" style="text-align: center;">
+    <h2>Why <span class="gradient-text">WerkFox</span>?</h2>
+    <p class="subtitle" style="margin-bottom: 36px;"><span class="caveat" style="font-size:24px;">Built for Indian manufacturers who want to go digital</span></p>
+    <div class="grid-3" style="text-align: left;">
+      <div class="card card-accent"><h3>All-in-One</h3><p>CRM + ERP + Production + Cut Optimizer. No more 5 separate tools and licenses</p></div>
+      <div class="card card-accent"><h3>Built-in Cut Optimizer</h3><p>Replace CutMax entirely. Sheet optimization native in your ERP with full cost tracking</p></div>
+      <div class="card card-accent"><h3>Cloud-Based</h3><p>Access from factory, office, or site. Any device — laptop, tablet, phone</p></div>
+      <div class="card card-accent"><h3>India-Ready</h3><p>GST invoicing, INR, Indian accounting, and business workflows built in</p></div>
+      <div class="card card-accent"><h3>Multi-User</h3><p>Sales, factory manager, accountant — role-based access for everyone</p></div>
+      <div class="card card-accent"><h3>Your Workflow</h3><p>Customizable stages, approvals, and production steps that match your process</p></div>
+    </div>
+  </div>
+  <span class="slide-number">13 / 14</span>
+</div>
+
+<!-- SLIDE 14: Next Steps -->
+<div class="slide" id="slide-14">
+  <div class="brand-tag"><img src="../logo.png" alt="WerkFox"><span style="-webkit-text-fill-color:initial;background:none;font-size:15px;font-weight:600;color:#1d1d1f;letter-spacing:-0.3px;">Werk</span><span style="font-family:'Caveat',cursive;font-size:24px;font-weight:700;">Fox</span></div>
+  <div class="content" style="text-align: center;">
+    <h1 style="font-size: 44px;">Let's Get You <span class="gradient-text">Started</span></h1>
+    <p class="subtitle" style="max-width: 500px; margin: 16px auto 40px;"><span class="caveat" style="font-size:24px;">Go live in under a week. We set up everything together.</span></p>
+    <div style="max-width: 500px; margin: 0 auto; text-align: left;">
+      <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px 0; border-bottom: 1px solid #f0f0f0;">
+        <span style="background: linear-gradient(135deg, #E03B12, #FD9220); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0;">1</span>
+        <div><strong style="font-size: 15px;">Set up product catalog</strong><p style="font-size: 13px; color: #888; margin-top: 2px;">Cabinets, sheet materials, hardware, fittings</p></div>
+      </div>
+      <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px 0; border-bottom: 1px solid #f0f0f0;">
+        <span style="background: linear-gradient(135deg, #E03B12, #FD9220); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0;">2</span>
+        <div><strong style="font-size: 15px;">Import customers & vendors</strong><p style="font-size: 13px; color: #888; margin-top: 2px;">Bulk upload from Excel or manual entry</p></div>
+      </div>
+      <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px 0; border-bottom: 1px solid #f0f0f0;">
+        <span style="background: linear-gradient(135deg, #E03B12, #FD9220); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0;">3</span>
+        <div><strong style="font-size: 15px;">Configure sheet materials & cutting specs</strong><p style="font-size: 13px; color: #888; margin-top: 2px;">Load your plywood, MDF, and laminate library</p></div>
+      </div>
+      <div style="display: flex; align-items: flex-start; gap: 16px; padding: 16px 0;">
+        <span style="background: linear-gradient(135deg, #E03B12, #FD9220); color: #fff; width: 32px; height: 32px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 14px; flex-shrink: 0;">4</span>
+        <div><strong style="font-size: 15px;">Create first quotation & run Cut Optimizer</strong><p style="font-size: 13px; color: #888; margin-top: 2px;">Full cycle — quote to optimized cuts to delivery</p></div>
+      </div>
+    </div>
+    <div style="margin-top: 48px; padding: 28px 48px; background: linear-gradient(135deg, #E03B12, #FD9220); border-radius: 20px; display: inline-block;">
+      <p style="color: #fff; font-size: 20px; font-weight: 800;">werkfox.com</p>
+      <p style="color: rgba(255,255,255,0.8); font-size: 14px; margin-top: 4px;"><span class="caveat" style="font-size:20px;">Your kitchen business, fully digital.</span></p>
+    </div>
+  </div>
+  <span class="slide-number">14 / 14</span>
+</div>
+
+<!-- Navigation -->
+<div class="nav-bar">
+  <button class="nav-btn" onclick="prevSlide()">&larr; Prev</button>
+  <span class="nav-counter" id="nav-counter">1 / 14</span>
+  <button class="nav-btn" onclick="nextSlide()">Next &rarr;</button>
+</div>
+
+<script>
+  let current = 1;
+  const total = 14;
+  function showSlide(n) {
+    if (n < 1 || n > total) return;
+    document.querySelectorAll('.slide').forEach(s => s.classList.remove('active'));
+    document.getElementById('slide-' + n).classList.add('active');
+    current = n;
+    document.getElementById('nav-counter').textContent = current + ' / ' + total;
+  }
+  function nextSlide() { showSlide(current + 1); }
+  function prevSlide() { showSlide(current - 1); }
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'ArrowRight' || e.key === ' ') { e.preventDefault(); nextSlide(); }
+    if (e.key === 'ArrowLeft') { e.preventDefault(); prevSlide(); }
+    if (e.key === 'f' || e.key === 'F') {
+      if (!document.fullscreenElement) document.documentElement.requestFullscreen();
+      else document.exitFullscreen();
+    }
+  });
+</script>
+</body>
+</html>
