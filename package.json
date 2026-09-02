@@ -13,7 +13,6 @@
     "db:tenancy-backfill": "prisma db push && node scripts/backfill-organization.mjs"
   },
   "dependencies": {
-    "@clerk/nextjs": "^6.37.0",
     "@google/generative-ai": "^0.24.1",
     "@prisma/client": "^6.1.0",
     "@react-three/drei": "^10.7.7",
@@ -65,5 +64,6 @@
   },
   "prisma": {
     "seed": "npx tsx prisma/seed.ts"
-  }
+  },
+  "packageManager": "pnpm@10.18.1"
 }

@@ -1,32 +1,14 @@
-'use client';
+import { redirect } from 'next/navigation';
+import { auth } from '@/lib/auth';
 
-import { useAuth } from '@clerk/nextjs';
-import { useRouter } from 'next/navigation';
-import { useEffect } from 'react';
-
-export default function DashboardPage() {
-  const { isLoaded, isSignedIn } = useAuth();
-  const router = useRouter();
-
-  useEffect(() => {
-    if (!isLoaded) return;
-
-    // Redirect to admin panel instead (this is the new dashboard)
-    if (isSignedIn) {
-      router.push('/admin');
-    } else {
-      router.push('/sign-in');
-    }
-  }, [isLoaded, isSignedIn, router]);
-
-  if (!isLoaded) {
-    return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-spin rounded-full h-32 w-32 border-b-2 border-blue-600"></div>
-      </div>
-    );
-  }
-
-  // This is a deprecated page - redirecting to admin
-  return null;
+/**
+ * /dashboard is a signpost, not a page.
+ *
+ * It used Clerk's useAuth in the browser to decide where to send people, which meant shipping a
+ * client bundle and a redirect flash to answer a question the server already knows. It now asks
+ * the session directly and redirects before anything renders.
+ */
+export default async function DashboardPage() {
+  const session = await auth();
+  redirect(session ? '/admin' : '/login');
 }

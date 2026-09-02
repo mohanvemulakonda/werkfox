@@ -3,7 +3,6 @@
 import Image from 'next/image';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { useClerk } from '@clerk/nextjs';
 import { useState, useRef, useEffect } from 'react';
 
 interface TopBarProps {
@@ -14,7 +13,12 @@ interface TopBarProps {
 
 export default function TopBar({ user, organizations = [], currentOrg = null }: TopBarProps) {
     const pathname = usePathname();
-    const { signOut } = useClerk();
+    /* Sign-out is a POST to our own endpoint, which clears the httpOnly cookie the JWT lives in.
+       A client library cannot clear that cookie, which is the point of it being httpOnly. */
+    const signOut = async () => {
+        await fetch('/api/auth/logout', { method: 'POST' });
+        window.location.href = '/';
+    };
     const [orgDropdownOpen, setOrgDropdownOpen] = useState(false);
     const [userDropdownOpen, setUserDropdownOpen] = useState(false);
     const orgRef = useRef<HTMLDivElement>(null);
@@ -162,7 +166,7 @@ export default function TopBar({ user, organizations = [], currentOrg = null }: 
                         </Link>
                         <button
                             className="topbar-dropdown-item topbar-dropdown-danger"
-                            onClick={() => signOut({ redirectUrl: '/' })}
+                            onClick={() => signOut()}
                         >
                             Sign Out
                         </button>
