@@ -1,4 +1,10 @@
-import { SignJWT, jwtVerify } from 'jose';
+/*
+ * Imported from jose's submodules rather than its index. The index re-exports the JWE encrypt
+ * path, which pulls in DecompressionStream — a Node API the Edge Runtime does not have — and
+ * middleware runs on the edge. We only sign and verify JWS, so we take only those two.
+ */
+import { SignJWT } from 'jose/jwt/sign';
+import { jwtVerify } from 'jose/jwt/verify';
 
 const JWT_SECRET = new TextEncoder().encode(
   process.env.JWT_SECRET || 'werkfox-secret-change-in-production'

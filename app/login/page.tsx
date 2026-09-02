@@ -1,10 +1,10 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, Suspense} from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import Image from 'next/image';
 
-export default function LoginPage() {
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const redirect = searchParams.get('redirect') || '/admin';
@@ -170,5 +170,21 @@ export default function LoginPage() {
         </p>
       </div>
     </div>
+  );
+}
+
+/**
+ * useSearchParams() opts the whole page into client-side rendering, and Next refuses to
+ * prerender it without a boundary — the build fails outright rather than warning. The form is
+ * split out and wrapped so the page itself can still be statically generated.
+ *
+ * Commit 091794c fixed this same class of bug elsewhere in the app; this page was written after
+ * it and reintroduced it.
+ */
+export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
   );
 }
