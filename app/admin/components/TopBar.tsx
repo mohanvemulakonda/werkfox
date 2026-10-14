@@ -34,11 +34,10 @@ export default function TopBar({ user, organizations = [], currentOrg = null }: 
         return () => document.removeEventListener('mousedown', handleClick);
     }, []);
 
+    // FoxTrail and FoxCut are hidden until they are ready to sell (14 Oct 2026); their layouts redirect to /admin.
     const modules = [
         { name: 'CRM', href: '/admin/crm' },
         { name: 'ERP', href: '/admin/erp' },
-        { name: 'FoxTrail', href: '/admin/foxtrail' },
-        { name: 'FoxCut', href: '/admin/foxcut' },
     ];
 
     const isModuleActive = (href: string) => pathname.startsWith(href);
