@@ -58,21 +58,14 @@ export async function POST(request: Request) {
     // Set cookie
     await setAuthCookie(token);
 
-    // Update last login
-    await prisma.admin_users.update({
-      where: { id: user.id },
-      data: { lastLogin: new Date() },
-    });
-
-    // Log successful login
-    await prisma.login_attempts.create({
-      data: { email: cleanEmail, success: true, ipAddress: ip, userAgent, userId: user.id },
-    });
-
-    // Log platform event
-    await prisma.platform_events.create({
-      data: { event: 'USER_LOGIN', entityType: 'user', entityId: user.id, userId: user.id, orgId: membership?.organizationId, ipAddress: ip },
-    });
+    // Bookkeeping after a good sign-in, sent together rather than one round trip each.
+    await Promise.all([
+      prisma.admin_users.update({ where: { id: user.id }, data: { lastLogin: new Date() } }),
+      prisma.login_attempts.create({ data: { email: cleanEmail, success: true, ipAddress: ip, userAgent, userId: user.id } }),
+      prisma.platform_events.create({
+        data: { event: 'USER_LOGIN', entityType: 'user', entityId: user.id, userId: user.id, orgId: membership?.organizationId, ipAddress: ip },
+      }),
+    ]);
 
     return NextResponse.json({
       success: true,
