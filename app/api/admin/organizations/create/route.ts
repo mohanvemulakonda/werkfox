@@ -1,5 +1,5 @@
 import { NextResponse } from 'next/server';
-import { auth } from '@/lib/auth';
+import { auth, getCurrentUser } from '@/lib/auth';
 import prisma from '@/lib/prisma';
 
 export async function POST(req: Request) {
@@ -10,8 +10,13 @@ export async function POST(req: Request) {
   if (!session) {
     return NextResponse.json({ error: 'Not authenticated' }, { status: 401 });
   }
+  // Creating an organisation is a platform job (super-admin), not something any signed-in member may do.
+  const me = await getCurrentUser();
+  if (me?.role !== 'SUPER_ADMIN') {
+    return NextResponse.json({ error: 'Only a WerkFox administrator can create an organisation' }, { status: 403 });
+  }
 
-  const userId = session.user.id;
+  const userId = Number(me.userId);
 
   if (!name || !slug) {
     return NextResponse.json({ error: 'name and slug required' }, { status: 400 });
@@ -25,7 +30,9 @@ export async function POST(req: Request) {
     await prisma.organization_members.create({
       data: {
         organizationId: org.id,
-        clerkUserId: userId,
+        // userId, not clerkUserId: sign-in finds a person's organisation by userId, so a membership
+        // written to the old Clerk column left its creator with no organisation at all.
+        userId,
         role: 'OWNER',
       },
     });

@@ -164,6 +164,9 @@ export default function TopBar({ user, organizations = [], currentOrg = null }: 
                         <Link href="/admin/settings" className="topbar-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
                             Settings
                         </Link>
+                        <Link href="/admin/account" className="topbar-dropdown-item" onClick={() => setUserDropdownOpen(false)}>
+                            Change password
+                        </Link>
                         <button
                             className="topbar-dropdown-item topbar-dropdown-danger"
                             onClick={() => signOut()}
