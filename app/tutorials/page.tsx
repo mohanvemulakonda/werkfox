@@ -199,7 +199,7 @@ export default function TutorialsPage() {
             Ready to try it <span style={{ fontFamily: 'var(--font-caveat)', fontSize: '115%' }}>yourself?</span>
           </h2>
           <p className="text-white/70 mb-8">Start your free trial and experience the real thing.</p>
-          <Link href="/sign-up" className="inline-flex items-center gap-2 px-8 py-4 bg-white font-semibold rounded-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-base" style={{ color: 'var(--werkfox-primary)' }}>
+          <Link href="https://app.werkfox.com/signup" className="inline-flex items-center gap-2 px-8 py-4 bg-white font-semibold rounded-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-base" style={{ color: 'var(--werkfox-primary)' }}>
             Start free trial
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
           </Link>

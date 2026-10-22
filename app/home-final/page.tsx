@@ -264,7 +264,7 @@ export default function HomeFinal() {
           </p>
 
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center mb-6">
-            <Link href="/sign-up" className="cta-button text-base">
+            <Link href="https://app.werkfox.com/signup" className="cta-button text-base">
               Start now &mdash; It&apos;s free
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
             </Link>
@@ -477,7 +477,7 @@ export default function HomeFinal() {
               </div>
               <p className="text-sm mb-6" style={{ color: 'var(--text-secondary)' }}>Up to 5 users &middot; Billed monthly</p>
 
-              <Link href="/sign-up" className="block w-full py-3 rounded-full text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 mb-8" style={{ background: 'var(--text-primary)', color: '#fff' }}>
+              <Link href="https://app.werkfox.com/signup" className="block w-full py-3 rounded-full text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 mb-8" style={{ background: 'var(--text-primary)', color: '#fff' }}>
                 Start free trial
               </Link>
 
@@ -503,7 +503,7 @@ export default function HomeFinal() {
               </div>
               <p className="text-sm mb-6 text-white/50">Up to 10 users &middot; Billed monthly</p>
 
-              <Link href="/sign-up" className="block w-full py-3 rounded-full text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 bg-white mb-8" style={{ color: 'var(--text-primary)' }}>
+              <Link href="https://app.werkfox.com/signup" className="block w-full py-3 rounded-full text-sm font-semibold transition-all duration-300 hover:-translate-y-0.5 bg-white mb-8" style={{ color: 'var(--text-primary)' }}>
                 Start free trial
               </Link>
 
@@ -590,7 +590,7 @@ export default function HomeFinal() {
             Join hundreds of Indian manufacturers who switched to WerkFox and never looked back.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-6">
-            <Link href="/sign-up" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[var(--werkfox-primary)] font-semibold rounded-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-base">
+            <Link href="https://app.werkfox.com/signup" className="inline-flex items-center justify-center gap-2 px-8 py-4 bg-white text-[var(--werkfox-primary)] font-semibold rounded-full hover:shadow-xl hover:-translate-y-1 transition-all duration-300 text-base">
               Start now &mdash; It&apos;s free
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 8l4 4m0 0l-4 4m4-4H3" /></svg>
             </Link>

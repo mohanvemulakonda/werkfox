@@ -8,14 +8,14 @@
  *
  * Returns { ok, error } and never throws, so a failed send is never recorded as a success.
  */
-export async function sendMail(to: string, subject: string, html: string, text: string): Promise<{ ok: boolean; error?: string }> {
+export async function sendMail(to: string, subject: string, html: string, text: string, replyTo?: string): Promise<{ ok: boolean; error?: string }> {
   const apiKey = (process.env.RESEND_API_KEY || '').trim();
   if (!apiKey) return { ok: false, error: 'RESEND_API_KEY is not set' };
   try {
     const res = await fetch('https://api.resend.com/emails', {
       method: 'POST',
       headers: { Authorization: `Bearer ${apiKey}`, 'Content-Type': 'application/json' },
-      body: JSON.stringify({ from: process.env.WERKFOX_MAIL_FROM || 'WerkFox <notify@stacknex.io>', to: [to], subject, html, text }),
+      body: JSON.stringify({ from: process.env.WERKFOX_MAIL_FROM || 'WerkFox <notify@stacknex.io>', to: [to], subject, html, text, ...(replyTo ? { reply_to: replyTo } : {}) }),
     });
     if (!res.ok) return { ok: false, error: `Resend ${res.status}: ${(await res.text()).slice(0, 200)}` };
     return { ok: true };

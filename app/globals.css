@@ -2266,8 +2266,8 @@ body {
   }
 
   /* Tables: tighter padding */
-  table th,
-  table td {
+  table:not(.wfh table) th,
+  table:not(.wfh table) td {
     padding-left: 0.75rem !important;
     padding-right: 0.75rem !important;
   }
@@ -2516,8 +2516,8 @@ body {
   }
 
   /* Tables: tighter cell padding */
-  table th,
-  table td {
+  table:not(.wfh table) th,
+  table:not(.wfh table) td {
     padding: 0.5rem 0.625rem !important;
     font-size: 0.75rem !important;
   }
@@ -2625,9 +2625,217 @@ body {
   }
 
   /* Table padding even tighter */
-  table th,
-  table td {
+  table:not(.wfh table) th,
+  table:not(.wfh table) td {
     padding: 0.375rem 0.5rem !important;
     font-size: 0.6875rem !important;
+  }
+}
+/* Older marketing pages: header and top bar (22 Oct 2026, colours from the tokens above) */
+.announce-bar { background: var(--text-primary); color: var(--background); }
+.announce-link { color: var(--background); opacity: .8; transition: opacity .2s; }
+.announce-link:hover { opacity: 1; }
+.brand-word { display: inline-flex; align-items: baseline; font-size: 15px; font-weight: 600; letter-spacing: -0.01em; color: var(--text-primary); }
+.brand-fox { font-family: var(--font-caveat); font-size: 24px; font-weight: 700; line-height: 1; padding-right: 2px; background: linear-gradient(135deg, var(--werkfox-primary), var(--werkfox-accent)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+.menu-pop { background: var(--background); border: 1px solid var(--border-light); }
+.menu-item { color: var(--text-primary); }
+.menu-item:hover { background: var(--surface); }
+.menu-sub { color: var(--text-secondary); }
+.menu-line { border-color: var(--border-light); }
+
+/* =====================================================================
+   werkfox.com site (homepage v3, 22 Oct 2026): tokens for app/_site/site.css.
+   Scoped to .wfh so the older pages keep their own --background / --border / --muted.
+   Light = brand tokens above; app tokens = werkfox-app globals.css (used inside the product screens).
+   ===================================================================== */
+.wfh, body:has(> .wfh:not([data-theme="light"])) {
+  color-scheme: light;
+  --wf-1: #E03B12;
+  --wf-2: #FD9220;
+  --wf-1-dark: #c43410;
+  --grad: linear-gradient(135deg, var(--wf-1) 0%, var(--wf-2) 100%);
+  --bg: #ffffff;
+  --surface: #f5f5f7;
+  --surface-2: #fbfbfd;
+  --elev: #ffffff;
+  --ink: #1d1d1f;
+  --ink-2: #515154;
+  --ink-3: #86868b;
+  --line: #d2d2d7;
+  --line-soft: #e8e8ed;
+  --tint: #FFF1EB;
+  --tint-ink: #C2410C;
+  --tint-line: #FBD5C4;
+  --ok: #15803D;
+  --ok-bg: rgb(22 163 74 / .1);
+  --soon-bg: #f0f0f3;
+  --soon-ink: #6e6e73;
+  --glow: rgb(253 146 32 / .22);
+  --glow-2: rgb(224 59 18 / .14);
+  --frame: #e8e8ed;
+  --frame-dot: #c7c7cc;
+  --shadow-s: 0 1px 2px rgb(0 0 0 / .05), 0 1px 3px rgb(0 0 0 / .06);
+  --shadow-m: 0 8px 24px -6px rgb(0 0 0 / .12), 0 2px 6px rgb(0 0 0 / .05);
+  --shadow-l: 0 40px 80px -20px rgb(60 20 0 / .28), 0 12px 30px -12px rgb(0 0 0 / .18);
+  --band-ink: #ffffff;
+  --band-ink-2: rgb(255 255 255 / .86);
+  --wa: #25D366;
+  --wa-ink: #ffffff;
+  --band-glow: rgb(255 255 255 / .18);
+  --radius: 0.625rem;
+  --background: oklch(1 0 0);
+  --foreground: oklch(0.145 0 0);
+  --card: oklch(1 0 0);
+  --card-foreground: oklch(0.145 0 0);
+  --primary: #EA4C1E;
+  --primary-foreground: #ffffff;
+  --btn-from: #DC2626;
+  --btn-to: #F97316;
+  --btn-fg: #ffffff;
+  --muted: oklch(0.97 0 0);
+  --muted-foreground: oklch(0.556 0 0);
+  --destructive: oklch(0.577 0.245 27.325);
+  --border: oklch(0.922 0 0);
+  --input: oklch(0.922 0 0);
+  --sidebar: oklch(0.985 0 0);
+  --sidebar-foreground: oklch(0.145 0 0);
+  --sidebar-accent: #FFF1EB;
+  --sidebar-accent-foreground: #C2410C;
+  --sidebar-border: oklch(0.922 0 0);
+  --shadow: 0 1px 3px 0 rgb(0 0 0 / .1), 0 1px 2px -1px rgb(0 0 0 / .1);
+  --btn-shadow: 0 1px 2px 0 rgb(234 88 12 / .2);
+  --app-orange: #EA4C1E;
+  --app-blue: #2563EB;
+  --app-sky: #0284C7;
+  --app-violet: #7C3AED;
+  --app-teal: #0D9488;
+  --app-amber: #CA8A04;
+  --app-pink: #DB2777;
+  --app-green: #16A34A;
+  --app-slate: #475569;
+  --app-indigo: #4F46E5;
+  --app-rose: #E11D48;
+  --app-cyan: #0891B2;
+  --app-stone: #57534E;
+  --app-brown: #A16207;
+  --app-glyph: #ffffff;
+  --tone-green-bg: rgb(16 185 129 / .1);
+  --tone-green-fg: #047857;
+  --tone-amber-bg: rgb(245 158 11 / .1);
+  --tone-amber-fg: #B45309;
+  --tone-blue-bg: rgb(14 165 233 / .1);
+  --tone-blue-fg: #0369A1;
+  --tone-red-bg: color-mix(in oklch, var(--destructive) 10%, transparent);
+  --tone-red-fg: var(--destructive);
+  --paper: #ffffff;
+  --paper-ink: #333333;
+  --paper-strong: #222222;
+  --paper-muted: #777777;
+  --paper-line: #bbbbbb;
+  --paper-line-soft: #e2e2e2;
+  --paper-bar: #f3f3f3;
+  --on-brand: #ffffff;
+  --vy-1: #16324F;
+  --vy-2: #2F5D8C;
+  --vy-acc: #F59E0B;
+  --ar-1: #166534;
+  --ar-2: #22A35A;
+  --ar-acc: #FACC15;
+  --gr-1: #E8890C;
+  --gr-2: #B45309;
+  --sh-1: #9A3F1F;
+  --sh-2: #C2622D;
+  --sh-acc: #F3D9B1;
+  --mh-ink: #1F2D55;
+  --mh-gold: #A8823F;
+  --th-1: #38BDF8;
+  --th-2: #0369A1;
+  --lw-ink: var(--foreground, #1d1d1f);
+  --lw-sub: var(--muted-foreground, #6e6e73);
+  --on-grad: #ffffff;
+  --band-line: rgb(255 255 255 / .6);
+  --phone-body: #111113;
+  --tile-inset: rgb(0 0 0 / .05);
+}
+.wfh .paper {
+  --mh-ink: #1F2D55;
+  --mh-gold: #A8823F;
+  --lw-ink: #222222;
+  --lw-sub: #777777;
+}
+body:has(> .wfh:not([data-theme="light"])) { background: var(--bg); }
+
+/* Dark theme = "Forge" (warm graphite and iron, no glow). To swap the palette (Blueprint, Steel), replace only this block. */
+@media (prefers-color-scheme: dark) {
+  .wfh:not([data-theme="light"]), body:has(> .wfh:not([data-theme="light"])) {
+    color-scheme: dark;
+    --glow: transparent;
+    --glow-2: transparent;
+    --band-glow: transparent;
+    --bg: #1A1512;
+    --surface: #211B17;
+    --surface-2: #1D1814;
+    --elev: #28211C;
+    --ink: #F4ECE3;
+    --ink-2: #D2C3B4;
+    --ink-3: #A08F7F;
+    --line: rgb(255 226 200 / .15);
+    --line-soft: rgb(255 226 200 / .08);
+    --tint: rgb(234 88 12 / .16);
+    --tint-ink: #FDBA74;
+    --tint-line: rgb(234 88 12 / .38);
+    --ok: #86EFAC;
+    --ok-bg: rgb(134 239 172 / .1);
+    --soon-bg: rgb(255 226 200 / .07);
+    --soon-ink: #B3A495;
+    --frame: #2E2620;
+    --frame-dot: #54473C;
+    --shadow-s: 0 1px 2px rgb(0 0 0 / .5);
+    --shadow-m: 0 10px 28px -8px rgb(0 0 0 / .7);
+    --shadow-l: 0 40px 80px -24px rgb(0 0 0 / .85);
+    --background: oklch(0.145 0 0);
+    --foreground: oklch(0.985 0 0);
+    --card: oklch(0.205 0 0);
+    --card-foreground: oklch(0.985 0 0);
+    --primary: #F97316;
+    --primary-foreground: #1a0a08;
+    --muted: oklch(0.269 0 0);
+    --muted-foreground: oklch(0.708 0 0);
+    --destructive: oklch(0.704 0.191 22.216);
+    --border: oklch(1 0 0 / 10%);
+    --input: oklch(1 0 0 / 15%);
+    --sidebar: oklch(0.205 0 0);
+    --sidebar-foreground: oklch(0.985 0 0);
+    --sidebar-accent: oklch(0.269 0 0);
+    --sidebar-accent-foreground: oklch(0.985 0 0);
+    --sidebar-border: oklch(1 0 0 / 10%);
+    --app-orange: #F97316;
+    --app-blue: #3B82F6;
+    --app-sky: #0EA5E9;
+    --app-violet: #8B5CF6;
+    --app-teal: #14B8A6;
+    --app-amber: #D97706;
+    --app-pink: #EC4899;
+    --app-green: #22C55E;
+    --app-slate: #64748B;
+    --app-indigo: #6366F1;
+    --app-rose: #F43F5E;
+    --app-cyan: #06B6D4;
+    --app-stone: #78716C;
+    --app-brown: #B45309;
+    --tone-green-fg: #34D399;
+    --tone-amber-fg: #FBBF24;
+    --tone-blue-fg: #38BDF8;
+    --mh-ink: #C7D2F0;
+    --mh-gold: #D9B26A;
+    --background: #15110E;
+    --card: #1F1915;
+    --muted: #2C241E;
+    --sidebar: #1C1713;
+    --sidebar-accent: #2C241E;
+    --border: rgb(255 226 200 / .1);
+    --input: rgb(255 226 200 / .15);
+    --sidebar-border: rgb(255 226 200 / .1);
+    --muted-foreground: #B3A495;
   }
 }

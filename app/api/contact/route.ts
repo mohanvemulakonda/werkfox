@@ -1,173 +1,83 @@
 import { NextRequest, NextResponse } from 'next/server';
 import prisma from '@/lib/prisma';
-import { sendContactNotification } from '@/lib/email';
-import { applyRateLimit, RateLimitPresets } from '@/lib/rate-limit';
-import { ValidationSchemas } from '@/lib/validation';
+import { sendMail } from '@/lib/send-mail';
+import { applyRateLimit, getClientIp, RateLimitPresets } from '@/lib/rate-limit';
+
+/**
+ * werkfox.com contact form ("Book a demo", "Tell us what you need", questions).
+ * Stores the request in quote_requests (organizationId null, productName "Website: <topic>") and mails it
+ * at once to the WerkFox team (WERKFOX_TEAM_EMAIL, default admin@werkfox.com) through Resend (lib/send-mail.ts),
+ * with the visitor's email as reply-to. Succeeds when it was stored or mailed; fails only when both failed.
+ */
+const TOPICS: Record<string, string> = {
+  demo: 'Book a demo',
+  app: 'An app I need',
+  pricing: 'Pricing or billing',
+  other: 'Something else',
+};
+
+const clean = (v: unknown, max: number) => (typeof v === 'string' ? v.replace(/[\u0000-\u001f\u007f]+/g, ' ').trim().slice(0, max) : '');
+const cleanText = (v: unknown, max: number) => (typeof v === 'string' ? v.replace(/\r\n/g, '\n').replace(/[\u0000-\u0009\u000b-\u001f\u007f]+/g, ' ').trim().slice(0, max) : '');
+const esc = (s: string) => s.replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]!));
 
 export async function POST(request: NextRequest) {
+  const limit = await applyRateLimit(request, RateLimitPresets.LENIENT);
+  if (!limit.success) return NextResponse.json({ error: 'Too many requests. Please wait a minute and try again.' }, { status: 429, headers: limit.headers });
+
+  let body: Record<string, unknown>;
+  try { body = await request.json(); } catch { return NextResponse.json({ error: 'Bad request' }, { status: 400 }); }
+
+  // Bots: a filled hidden field gets a quiet "thank you" and nothing is kept.
+  if (clean(body.website, 200)) return NextResponse.json({ success: true });
+  if (typeof body._timingCheck === 'number' && body._timingCheck < 2000) return NextResponse.json({ error: 'Please take a moment before sending.' }, { status: 400 });
+
+  const name = clean(body.name, 100);
+  const email = clean(body.email, 200).toLowerCase();
+  const phone = clean(body.phone, 30);
+  const company = clean(body.company, 200);
+  const trade = clean(body.trade, 60);
+  const topicKey = clean(body.topic, 20);
+  const topic = TOPICS[topicKey] ?? TOPICS.other;
+  const message = cleanText(body.message, 4000);
+
+  const errors: Record<string, string> = {};
+  if (name.length < 2) errors.name = 'Please tell us your name.';
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(email)) errors.email = 'Please check your email address.';
+  if (phone && !/^[+\d][\d\s()-]{6,}$/.test(phone)) errors.phone = 'Please check your phone number.';
+  if (topicKey !== 'demo' && message.length < 5) errors.message = 'Please tell us a little more.';
+  if (Object.keys(errors).length) return NextResponse.json({ error: 'Please check the form.', errors }, { status: 400, headers: limit.headers });
+
+  const ip = getClientIp(request);
+  const agent = clean(request.headers.get('user-agent'), 300);
+
+  let stored = false;
   try {
-    // Apply rate limiting - 10 requests per minute from same IP
-    const rateLimitResult = await applyRateLimit(request, RateLimitPresets.LENIENT);
-
-    if (!rateLimitResult.success) {
-      return NextResponse.json(
-        {
-          error: 'Too many requests. Please try again later.',
-          message: 'You have exceeded the rate limit. Please wait a moment before submitting again.',
-        },
-        {
-          status: 429,
-          headers: rateLimitResult.headers,
-        }
-      );
-    }
-
-    const body = await request.json();
-    const { name, email, phone, company, message, labelFinderData, website, _timingCheck } = body;
-
-    // Server-side honeypot check
-    if (website) {
-      console.warn('Spam detected: honeypot field filled', { ip: request.headers.get('x-forwarded-for') });
-      // Return success to fool bots, but don't save
-      return NextResponse.json(
-        {
-          success: true,
-          message: 'Thank you for your message. We will get back to you soon!',
-        },
-        {
-          status: 200,
-          headers: rateLimitResult.headers,
-        }
-      );
-    }
-
-    // Server-side timing check - require at least 2 seconds
-    if (_timingCheck && _timingCheck < 2000) {
-      console.warn('Spam detected: form submitted too quickly', { time: _timingCheck });
-      return NextResponse.json(
-        { error: 'Please take your time to fill out the form' },
-        {
-          status: 400,
-          headers: rateLimitResult.headers,
-        }
-      );
-    }
-
-    // Validate input using comprehensive validation schema
-    const validationResult = ValidationSchemas.contactForm({ name, email, phone, company, message, labelFinderData });
-
-    if (!validationResult.success) {
-      return NextResponse.json(
-        {
-          error: 'Validation failed',
-          errors: validationResult.errors
-        },
-        {
-          status: 400,
-          headers: rateLimitResult.headers,
-        }
-      );
-    }
-
-    // Use sanitized data from validation
-    const sanitizedData = validationResult.data;
-
-    // Get IP address and user agent for tracking
-    const ipAddress = request.headers.get('x-forwarded-for') ||
-                      request.headers.get('x-real-ip') ||
-                      'unknown';
-    const userAgent = request.headers.get('user-agent') || 'unknown';
-
-    // Determine source
-    const source = labelFinderData ? 'label_finder' : 'contact_form';
-
-    // Save to database with sanitized data
-    const contact = await prisma.contact.create({
+    await prisma.quote_requests.create({
       data: {
-        name: sanitizedData.name,
-        email: sanitizedData.email,
-        phone: sanitizedData.phone || null,
-        company: sanitizedData.company || null,
-        message: sanitizedData.message,
-        labelFinderData: sanitizedData.labelFinderData || null,
-        source,
-        ipAddress,
-        userAgent,
-        status: 'NEW',
+        name, email, phone: phone || null, company: company || null,
+        productName: `Website: ${topic}`,
+        specifications: [trade && `Business: ${trade}`, message].filter(Boolean).join('\n\n') || null,
+        notes: `werkfox.com contact form. IP ${ip}. ${agent}`.slice(0, 1000),
+        updatedAt: new Date(),
       },
     });
-
-    console.log('Contact saved to database:', contact.id);
-
-    // Send email notification to sales team
-    sendContactNotification(contact).catch(err => {
-      // Don't block the response if email fails
-      console.error('Email notification failed:', err);
-    });
-
-    return NextResponse.json(
-      {
-        success: true,
-        message: 'Thank you for your message. We will get back to you soon!',
-        contactId: contact.id,
-      },
-      {
-        status: 200,
-        headers: rateLimitResult.headers,
-      }
-    );
-
-  } catch (error) {
-    console.error('Contact form error:', error);
-
-    // Check for database connection errors
-    if (error instanceof Error && error.message.includes('Can\'t reach database')) {
-      return NextResponse.json(
-        { error: 'Database connection error. Please try again later.' },
-        { status: 503 }
-      );
-    }
-
-    return NextResponse.json(
-      { error: 'Failed to submit form. Please try again.' },
-      { status: 500 }
-    );
+    stored = true;
+  } catch (e) {
+    console.error('contact: could not store the request', e instanceof Error ? e.message : e);
   }
-}
 
-// Optional: GET endpoint to retrieve contacts (for admin dashboard)
-export async function GET(request: NextRequest) {
-  try {
-    // Basic authentication check (replace with proper auth)
-    const authHeader = request.headers.get('authorization');
-    if (!authHeader || authHeader !== `Bearer ${process.env.ADMIN_API_KEY}`) {
-      return NextResponse.json(
-        { error: 'Unauthorized' },
-        { status: 401 }
-      );
-    }
+  const to = (process.env.WERKFOX_TEAM_EMAIL || 'admin@werkfox.com').trim();
+  const rows: [string, string][] = [['Topic', topic], ['Name', name], ['Email', email], ['Phone', phone], ['Business', company], ['Trade', trade], ['Message', message]];
+  const text = rows.filter(([, v]) => v).map(([k, v]) => `${k}: ${v}`).join('\n') + (stored ? '' : '\n\n(Not saved in the database: reply from this email.)');
+  const html = `<div style="font-family:-apple-system,Inter,Segoe UI,sans-serif;font-size:15px;line-height:1.5">
+<p><b>${esc(topic)}</b> from werkfox.com</p>
+<table cellpadding="4">${rows.filter(([, v]) => v).map(([k, v]) => `<tr><td valign="top">${esc(k)}</td><td>${esc(v).replace(/\n/g, '<br>')}</td></tr>`).join('')}</table>
+${stored ? '' : '<p>Not saved in the database: reply from this email.</p>'}</div>`;
+  const mail = await sendMail(to, `WerkFox website: ${topic} from ${name}${company ? `, ${company}` : ''}`, html, text, email);
+  if (!mail.ok) console.error('contact: mail not sent', mail.error);
 
-    const { searchParams } = new URL(request.url);
-    const limit = parseInt(searchParams.get('limit') || '50');
-    const status = searchParams.get('status') || undefined;
-
-    const contacts = await prisma.contact.findMany({
-      where: status ? { status: status as any } : undefined,
-      orderBy: { createdAt: 'desc' },
-      take: limit,
-    });
-
-    return NextResponse.json({
-      success: true,
-      data: contacts,
-      total: contacts.length,
-    });
-
-  } catch (error) {
-    console.error('Error fetching contacts:', error);
-    return NextResponse.json(
-      { error: 'Failed to fetch contacts' },
-      { status: 500 }
-    );
+  if (!stored && !mail.ok) {
+    return NextResponse.json({ error: `Sorry, we could not send this. Please email ${to}.` }, { status: 500, headers: limit.headers });
   }
+  return NextResponse.json({ success: true }, { status: 200, headers: limit.headers });
 }
