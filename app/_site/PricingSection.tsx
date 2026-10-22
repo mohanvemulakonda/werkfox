@@ -40,8 +40,12 @@ export default function PricingSection({ heading = 'h2' }: { heading?: 'h1' | 'h
               <li className="app-li"><Tile icon="boxes" tone="teal" size="sm" /><span>Inventory, stock by location</span></li>
               <li className="app-li"><Tile icon="shopping-cart" tone="amber" size="sm" /><span>Purchase: suppliers, orders, bills</span></li>
               <li className="app-li"><Tile icon="truck" tone="pink" size="sm" /><span>Dispatch and delivery challans</span></li>
+              <li className="app-li"><Tile icon="warehouse" tone="indigo" size="sm" /><span>Warehouse: bins, batches, serials</span></li>
+              <li className="app-li"><Tile icon="badge-check" tone="green" size="sm" /><span>Quality checks, holds and rejects</span></li>
+              <li className="app-li"><Tile icon="wrench" tone="slate" size="sm" /><span>Maintenance: service due, breakdowns</span></li>
               <li className="app-li"><Tile icon="user-check" tone="cyan" size="sm" /><span>People &amp; attendance</span></li>
               <li className="app-li"><Tile icon="banknote" tone="green" size="sm" /><span>Payroll: salary, PF, ESI, payslips</span></li>
+              <li className="app-li"><Tile icon="wrench" tone="rose" size="sm" /><span>Parts from stock on job cards</span></li>
             </ul>
             <a className="btn pri lg" href={SIGNUP_URL}>Try Pro free for 7 days</a>
           </div>
@@ -55,6 +59,7 @@ export default function PricingSection({ heading = 'h2' }: { heading?: 'h1' | 'h
             <ul>
               <li><I n="check" /><span><b>GST invoices,</b> payments, credit notes and statements</span></li>
               <li><I n="check" /><span><b>Leads, follow-ups and quotations</b></span></li>
+              <li><I n="check" /><span><b>Job cards</b> for repairs at your counter</span></li>
               <li><I n="check" /><span>Customers, items and GST reports</span></li>
               <li><I n="check" /><span>Send on WhatsApp or email</span></li>
               <li><I n="check" /><span>Overdue reminders and a daily summary</span></li>

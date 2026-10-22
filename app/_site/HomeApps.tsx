@@ -1,7 +1,7 @@
 import Fit from './Fit';
 import { I, Logo } from './ui';
 
-/** The five app rows, each with a recreated product screen (invented company Vayura Fabtech). */
+/** The six app rows, each with a recreated product screen (invented company Vayura Fabtech). */
 export default function HomeApps() {
   return (
     <>
@@ -11,7 +11,7 @@ export default function HomeApps() {
           <div className="sec-h">
             <span className="eyebrow">The apps</span>
             <h2>Everything from the first call to salary day</h2>
-            <p>Seven apps are live today, on top of GST invoicing, customers, items and reports that every business gets.</p>
+            <p>Eleven apps are live today, on top of GST invoicing, customers, items and reports that every business gets.</p>
           </div>
           <div className="rows">
 
@@ -213,6 +213,47 @@ export default function HomeApps() {
                           <tr><td className="b">Lakshmi Devi<span className="sub">Packing</span></td><td>₹520 / day</td><td className="r">24</td><td className="r">6</td><td className="r"></td><td className="r">₹12,870</td><td className="r">₹1,544</td><td className="r">₹97</td><td className="r">₹0</td><td className="r">₹0</td><td className="r b">₹11,229</td></tr>
                           <tr><td className="b">Imran Shaikh<span className="sub">Press operator</span></td><td>₹2.40 / piece</td><td className="r">25</td><td className="r">0</td><td className="r">6,200</td><td className="r">₹14,880</td><td className="r">₹1,786</td><td className="r">₹112</td><td className="r">₹0</td><td className="r">₹2,000</td><td className="r b">₹10,982</td></tr>
                           <tr><td className="b">Suresh Babu<span className="sub">Supervisor</span></td><td>₹32,000 / month</td><td className="r">26</td><td className="r">0</td><td className="r"></td><td className="r">₹32,000</td><td className="r">₹1,800</td><td className="r">₹0</td><td className="r">₹200</td><td className="r">₹0</td><td className="r b">₹30,000</td></tr>
+                        </tbody></table></div></div>
+                      </div>
+                    </div>
+                  </Fit>
+                </div>
+              </div>
+            </div>
+
+            {/* F. Check, store, look after, repair (live 22 Oct 2026). Generic assets, not one trade. */}
+            <div className="row flip" id="more-apps">
+              <div className="copy">
+                <div className="apptiles"><span className="tile xs tn-green"><I n="badge-check" /></span><span className="tile xs tn-indigo"><I n="warehouse" /></span><span className="tile xs tn-slate"><I n="wrench" /></span><span className="tile xs tn-rose"><I n="wrench" /></span><span className="nm">Quality, Warehouse, Maintenance, Job cards</span><span className="chip pro">New</span></div>
+                <h3>Check it, store it, keep it running.</h3>
+                <p>Four apps for what happens around the order: the goods you check, the racks you keep them in, the machines that make them and the repairs you take in.</p>
+                <ul className="ticks">
+                  <li><span className="tk"><I n="check" /></span><span><b>Quality checks</b> on goods received and on what you make. Stock on hold can&apos;t be sent or used until it is released; rejects go back on a return note.</span></li>
+                  <li><span className="tk"><I n="check" /></span><span><b>Racks and bins,</b> put-away, pick lists, batches with use-by dates and serial numbers. Scan bin labels with a barcode scanner.</span></li>
+                  <li><span className="tk"><I n="check" /></span><span><b>Service due by date or meter reading,</b> insurance and permit expiry reminders, breakdowns reported from the phone, downtime and cost per machine.</span></li>
+                  <li><span className="tk"><I n="check" /></span><span><b>Job cards for repairs:</b> take an item in, estimate, get a yes, fix it and hand it back with a slip.</span></li>
+                </ul>
+                <div className="planline"><span className="chip std">Standard</span>Job cards<span className="chip pro">Pro</span>Quality, Warehouse, Maintenance and parts from stock</div>
+              </div>
+              <div className="visual">
+                <div className="browser">
+                  <div className="bar"><i /><i /><i /><span className="url"><I n="lock" />app.werkfox.com/maintenance</span></div>
+                  <Fit w={940} m={460}>
+                    <div className="app">
+                      <div className="a-page">
+                        <div className="a-tb"><h1>Maintenance</h1><div className="a-btns"><span className="a-btn o"><I n="triangle-alert" />Report a breakdown</span><span className="a-btn p"><I n="plus" />New job</span></div></div>
+                        <div className="a-stats">
+                          <div className="a-card a-stat"><span className="k">Overdue</span><span className="v">2</span><span className="n w">1 is a lapsed document</span></div>
+                          <div className="a-card a-stat"><span className="k">Due this week</span><span className="v">3</span><span className="n">2 by date, 1 by meter reading</span></div>
+                          <div className="a-card a-stat"><span className="k">Open jobs</span><span className="v">2</span><span className="n">1 breakdown, 1 service</span></div>
+                          <div className="a-card a-stat"><span className="k">October so far</span><span className="v">₹18,640</span><span className="n">6 h stopped in 1 breakdown</span></div>
+                        </div>
+                        <div className="a-card"><div className="a-cc"><table className="a-t mx"><thead><tr><th>Asset</th><th>What is due</th><th className="xm">When</th><th>Status</th></tr></thead><tbody>
+                          <tr><td className="b">AC-01 · Air compressor<span className="sub">Every 500 hours or 3 months</span></td><td>Oil and filter change</td><td className="xm">Due at 4,500 hours · 60 hours over</td><td><span className="a-badge t-red">Overdue</span></td></tr>
+                          <tr><td className="b">VH-02 · Delivery van<span className="sub">Document</span></td><td>Insurance</td><td className="xm">Expired 19 Oct · 3 days</td><td><span className="a-badge t-red">Overdue</span></td></tr>
+                          <tr><td className="b">DG-01 · Diesel generator<span className="sub">Every 30 days</span></td><td>Monthly service</td><td className="xm">Due 24 Oct</td><td><span className="a-badge t-amber">This week</span></td></tr>
+                          <tr><td className="b">FL-01 · Forklift<span className="sub">Every 250 hours</span></td><td>Hydraulics check</td><td className="xm">40 hours left · about 5 days</td><td><span className="a-badge t-amber">This week</span></td></tr>
+                          <tr><td className="b">WM-03 · Welding machine<span className="sub">Every 6 months</span></td><td>Cable and earth check</td><td className="xm">Due 12 Nov</td><td><span className="a-badge t-grey">Next 30 days</span></td></tr>
                         </tbody></table></div></div>
                       </div>
                     </div>
