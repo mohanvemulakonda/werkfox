@@ -46,6 +46,7 @@ export default function PricingSection({ heading = 'h2' }: { heading?: 'h1' | 'h
               <li className="app-li"><Tile icon="repeat" tone="violet" size="sm" /><span>Job work: challans, ITC-04 tables</span></li>
               <li className="app-li"><Tile icon="tag" tone="rose" size="sm" /><span>Price lists &amp; schemes</span></li>
               <li className="app-li"><Tile icon="map-pin" tone="blue" size="sm" /><span>Field sales: beats, orders at the shop</span></li>
+              <li className="app-li"><Tile icon="network" tone="violet" size="sm" /><span>Distributors &amp; commissions: BV, payouts with TDS</span></li>
               <li className="app-li"><Tile icon="user-check" tone="cyan" size="sm" /><span>People &amp; attendance</span></li>
               <li className="app-li"><Tile icon="banknote" tone="green" size="sm" /><span>Payroll: salary, PF, ESI, payslips</span></li>
               <li className="app-li"><Tile icon="wrench" tone="rose" size="sm" /><span>Parts from stock on job cards</span></li>

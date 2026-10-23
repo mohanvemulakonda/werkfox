@@ -1,7 +1,8 @@
 /**
  * Facts the werkfox.com site shows. Apps and industries are copied from werkfox-app
- * src/lib/werkfox-apps.ts and werkfox-industries.ts (origin/main cb3feaa, 23 Oct 2026: Job cards and Maintenance live at 25024cc,
- * Warehouse and Quality at f741ac5, Collections, Job work, Price lists & schemes and Field sales at cb3feaa).
+ * src/lib/werkfox-apps.ts and werkfox-industries.ts (origin/main 52c93cb, 23 Oct 2026: Job cards and Maintenance live at 25024cc,
+ * Warehouse and Quality at f741ac5, Collections, Job work, Price lists & schemes and Field sales at cb3feaa,
+ * Distributors & commissions at 52c93cb).
  * When an app goes live in werkfox-app, flip `live` here too.
  */
 
@@ -19,7 +20,7 @@ export type Tone =
 
 export type AppId =
   | 'sales' | 'inventory' | 'purchase' | 'production' | 'dispatch' | 'quality' | 'maintenance' | 'jobwork'
-  | 'attendance' | 'payroll' | 'pricelist' | 'fieldsales' | 'collections' | 'trips' | 'freight' | 'fleet'
+  | 'attendance' | 'payroll' | 'pricelist' | 'fieldsales' | 'collections' | 'distributors' | 'trips' | 'freight' | 'fleet'
   | 'drivers' | 'fuel' | 'sites' | 'boq' | 'sitematerial' | 'labour' | 'subcontract' | 'equipment'
   | 'proposals' | 'projects' | 'timesheets' | 'retainers' | 'contracts' | 'tickets' | 'schedule'
   | 'techapp' | 'amc' | 'spares' | 'jobcards' | 'warehouse';
@@ -43,6 +44,7 @@ export const APPS: Record<AppId, SiteApp> = {
   pricelist: A('Price lists & schemes', 'Dealer rates, discounts and offers', 'tag', 'rose', 'pro', true),
   fieldsales: A('Field sales', 'Salesman beats and orders taken at the shop', 'map-pin', 'blue', 'pro', true),
   collections: A('Collections', 'What is owed, reminders and cheques', 'coins', 'green', 'standard', true),
+  distributors: A('Distributors & commissions', 'Distributor network, BV, monthly commission and payouts', 'network', 'violet', 'pro', true),
   trips: A('Trips & LR', 'Bookings, lorry receipts and trip sheets', 'truck', 'blue', 'pro', false),
   freight: A('Freight billing', 'Bill per trip, tonne or km, with GST', 'receipt-text', 'orange', 'pro', false),
   fleet: A('Fleet', 'Vehicles, with RC, insurance, permit and FC expiry', 'truck', 'teal', 'pro', false),
@@ -78,9 +80,9 @@ export const TRADES: Trade[] = [
     presets: ['sales', 'production', 'inventory', 'purchase', 'dispatch', 'attendance', 'payroll'],
     say: 'Ready today for factories: quote, make, stock, check quality, send material out for job work, look after your machines, dispatch, bill and pay your people.' },
   { key: 'trading', label: 'Trading & distribution', example: 'Wholesale, dealers, distributors', icon: 'boxes',
-    apps: ['sales', 'inventory', 'warehouse', 'purchase', 'dispatch', 'quality', 'pricelist', 'collections', 'fieldsales', 'jobcards', 'attendance', 'payroll'],
+    apps: ['sales', 'inventory', 'warehouse', 'purchase', 'dispatch', 'quality', 'pricelist', 'collections', 'fieldsales', 'distributors', 'jobcards', 'attendance', 'payroll'],
     presets: ['sales', 'inventory', 'purchase', 'dispatch', 'pricelist'],
-    say: 'Buy, check and stock in bins, sell on dealer price lists and schemes, take orders at the shop with field sales, deliver, bill and chase what is owed, and take in repairs at your counter.' },
+    say: 'Buy, check and stock in bins, sell on dealer price lists and schemes, take orders at the shop with field sales, deliver, bill and chase what is owed, pay distributors or salesmen their commission, and take in repairs at your counter.' },
   { key: 'transport', label: 'Transport & logistics', example: 'Lorries, tankers, movers', icon: 'truck',
     apps: ['trips', 'freight', 'fleet', 'drivers', 'fuel', 'maintenance', 'inventory', 'warehouse', 'sales', 'collections', 'attendance', 'payroll'],
     presets: ['trips', 'freight', 'fleet', 'drivers', 'fuel', 'maintenance', 'payroll'],

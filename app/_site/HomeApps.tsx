@@ -11,7 +11,7 @@ export default function HomeApps() {
           <div className="sec-h">
             <span className="eyebrow">The apps</span>
             <h2>Everything from the first call to salary day</h2>
-            <p>Fifteen apps are live today, on top of GST invoicing, customers, items and reports that every business gets.</p>
+            <p>Sixteen apps are live today, on top of GST invoicing, customers, items and reports that every business gets.</p>
           </div>
           <div className="rows">
 
@@ -263,19 +263,20 @@ export default function HomeApps() {
               </div>
             </div>
 
-            {/* G. Price, sell on the road, get paid (live 23 Oct 2026). */}
+            {/* G. Price, sell on the road, pay commission, get paid (live 23 Oct 2026; Distributors & commissions at werkfox-app 52c93cb). */}
             <div className="row" id="get-paid">
               <div className="copy">
-                <div className="apptiles"><span className="tile xs tn-green"><I n="coins" /></span><span className="tile xs tn-rose"><I n="tag" /></span><span className="tile xs tn-blue"><I n="map-pin" /></span><span className="nm">Collections, Price lists &amp; schemes, Field sales</span><span className="chip pro">New</span></div>
+                <div className="apptiles"><span className="tile xs tn-green"><I n="coins" /></span><span className="tile xs tn-rose"><I n="tag" /></span><span className="tile xs tn-blue"><I n="map-pin" /></span><span className="tile xs tn-violet"><I n="network" /></span><span className="nm">Collections, Price lists &amp; schemes, Field sales, Distributors &amp; commissions</span><span className="chip pro">New</span></div>
                 <h3>The right rate, the order at the shop, the money in the bank.</h3>
-                <p>Three apps for selling to dealers and shops and getting paid for it.</p>
+                <p>Four apps for selling to dealers and shops, paying the people who sell for you and getting paid for it.</p>
                 <ul className="ticks">
                   <li><span className="tk"><I n="check" /></span><span><b>A chase list with promises,</b> cheques counted when they are deposited, bounced cheques reversed, TDS and discount at payment, and a warning when a customer goes over the credit limit. Reminder emails go by themselves; WhatsApp reminders are a list you send from your own phone.</span></li>
                   <li><span className="tk"><I n="check" /></span><span><b>Price lists by customer group,</b> quantity slabs, special rates and schemes like buy 10 get 1 free. Quotations, orders and invoices take the right rate by themselves.</span></li>
                   <li><span className="tk"><I n="check" /></span><span><b>Beats by weekday for each salesman.</b> On the phone he checks in at the shop, takes the order from its price list and it lands as a sales order. His location is asked once, at check-in, and he can say no.</span></li>
+                  <li><span className="tk"><I n="check" /></span><span><b>A distributor network or a sales team on commission.</b> For direct selling: a team tree, BV on every invoice line (returns take it back), a monthly close you approve, then payouts with TDS, a bank upload file and statements on WhatsApp or print. Or plain commission for your salesmen, paid through payroll or as agents.</span></li>
                   <li><span className="tk"><I n="check" /></span><span><b>Salespeople never see your cost or margin.</b> Only the owner, admins and accounts do.</span></li>
                 </ul>
-                <div className="planline"><span className="chip std">Standard</span>Collections<span className="chip pro">Pro</span>Price lists &amp; schemes, Field sales</div>
+                <div className="planline"><span className="chip std">Standard</span>Collections<span className="chip pro">Pro</span>Price lists &amp; schemes, Field sales, Distributors &amp; commissions</div>
               </div>
               <div className="visual">
                 <div className="browser">
