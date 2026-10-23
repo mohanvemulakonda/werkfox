@@ -1,7 +1,7 @@
 import Fit from './Fit';
 import { I, Logo } from './ui';
 
-/** The six app rows, each with a recreated product screen (invented company Vayura Fabtech). */
+/** The seven app rows, each with a recreated product screen (invented company Vayura Fabtech). */
 export default function HomeApps() {
   return (
     <>
@@ -11,7 +11,7 @@ export default function HomeApps() {
           <div className="sec-h">
             <span className="eyebrow">The apps</span>
             <h2>Everything from the first call to salary day</h2>
-            <p>Eleven apps are live today, on top of GST invoicing, customers, items and reports that every business gets.</p>
+            <p>Fifteen apps are live today, on top of GST invoicing, customers, items and reports that every business gets.</p>
           </div>
           <div className="rows">
 
@@ -59,7 +59,7 @@ export default function HomeApps() {
             {/* B. Make */}
             <div className="row flip">
               <div className="copy">
-                <div className="apptiles"><span className="tile xs tn-violet"><I n="factory" /></span><span className="tile xs tn-teal"><I n="boxes" /></span><span className="tile xs tn-amber"><I n="shopping-cart" /></span><span className="nm">Production, Inventory, Purchase</span></div>
+                <div className="apptiles"><span className="tile xs tn-violet"><I n="factory" /></span><span className="tile xs tn-teal"><I n="boxes" /></span><span className="tile xs tn-amber"><I n="shopping-cart" /></span><span className="tile xs tn-violet"><I n="repeat" /></span><span className="nm">Production, Inventory, Purchase, Job work</span></div>
                 <h3>Know what is being made, and what it used.</h3>
                 <p>Plan the job, record output on the shop floor, and let stock keep itself up to date.</p>
                 <ul className="ticks">
@@ -67,6 +67,7 @@ export default function HomeApps() {
                   <li><span className="tk"><I n="check" /></span><span><b>Record output as it is made.</b> Finished goods go into stock and the materials come out, from the bill of materials.</span></li>
                   <li><span className="tk"><I n="check" /></span><span><b>See what is behind plan</b> before the customer calls to ask.</span></li>
                   <li><span className="tk"><I n="check" /></span><span><b>Stock by location,</b> suppliers, purchase orders, goods received and what you owe them.</span></li>
+                  <li><span className="tk"><I n="check" /></span><span><b>Send material for job work</b> on a challan in triplicate. It stays your stock until it comes back, with return-limit reminders and the ITC-04 tables ready to check.</span></li>
                 </ul>
                 <div className="planline"><span className="chip pro">Pro</span></div>
               </div>
@@ -254,6 +255,46 @@ export default function HomeApps() {
                           <tr><td className="b">DG-01 · Diesel generator<span className="sub">Every 30 days</span></td><td>Monthly service</td><td className="xm">Due 24 Oct</td><td><span className="a-badge t-amber">This week</span></td></tr>
                           <tr><td className="b">FL-01 · Forklift<span className="sub">Every 250 hours</span></td><td>Hydraulics check</td><td className="xm">40 hours left · about 5 days</td><td><span className="a-badge t-amber">This week</span></td></tr>
                           <tr><td className="b">WM-03 · Welding machine<span className="sub">Every 6 months</span></td><td>Cable and earth check</td><td className="xm">Due 12 Nov</td><td><span className="a-badge t-grey">Next 30 days</span></td></tr>
+                        </tbody></table></div></div>
+                      </div>
+                    </div>
+                  </Fit>
+                </div>
+              </div>
+            </div>
+
+            {/* G. Price, sell on the road, get paid (live 23 Oct 2026). */}
+            <div className="row" id="get-paid">
+              <div className="copy">
+                <div className="apptiles"><span className="tile xs tn-green"><I n="coins" /></span><span className="tile xs tn-rose"><I n="tag" /></span><span className="tile xs tn-blue"><I n="map-pin" /></span><span className="nm">Collections, Price lists &amp; schemes, Field sales</span><span className="chip pro">New</span></div>
+                <h3>The right rate, the order at the shop, the money in the bank.</h3>
+                <p>Three apps for selling to dealers and shops and getting paid for it.</p>
+                <ul className="ticks">
+                  <li><span className="tk"><I n="check" /></span><span><b>A chase list with promises,</b> cheques counted when they are deposited, bounced cheques reversed, TDS and discount at payment, and a warning when a customer goes over the credit limit. Reminder emails go by themselves; WhatsApp reminders are a list you send from your own phone.</span></li>
+                  <li><span className="tk"><I n="check" /></span><span><b>Price lists by customer group,</b> quantity slabs, special rates and schemes like buy 10 get 1 free. Quotations, orders and invoices take the right rate by themselves.</span></li>
+                  <li><span className="tk"><I n="check" /></span><span><b>Beats by weekday for each salesman.</b> On the phone he checks in at the shop, takes the order from its price list and it lands as a sales order. His location is asked once, at check-in, and he can say no.</span></li>
+                  <li><span className="tk"><I n="check" /></span><span><b>Salespeople never see your cost or margin.</b> Only the owner, admins and accounts do.</span></li>
+                </ul>
+                <div className="planline"><span className="chip std">Standard</span>Collections<span className="chip pro">Pro</span>Price lists &amp; schemes, Field sales</div>
+              </div>
+              <div className="visual">
+                <div className="browser">
+                  <div className="bar"><i /><i /><i /><span className="url"><I n="lock" />app.werkfox.com/collections</span></div>
+                  <Fit w={940} m={460}>
+                    <div className="app">
+                      <div className="a-page">
+                        <div className="a-tb"><h1>Collections</h1><div className="a-btns"><span className="a-btn o"><I n="map-pin" />Day&apos;s round</span><span className="a-btn p"><I n="wallet" />Receive money</span></div></div>
+                        <div className="a-stats">
+                          <div className="a-card a-stat"><span className="k">To collect</span><span className="v">₹14.62 lakh</span><span className="n">23 customers, 41 invoices</span></div>
+                          <div className="a-card a-stat"><span className="k">Overdue</span><span className="v">₹6.18 lakh</span><span className="n w">₹1.12 lakh is over 90 days late</span></div>
+                          <div className="a-card a-stat"><span className="k">Promised this week</span><span className="v">₹2.40 lakh</span><span className="n">5 promises</span></div>
+                          <div className="a-card a-stat"><span className="k">Cheques to deposit today</span><span className="v">3</span><span className="n">₹1,86,400</span></div>
+                        </div>
+                        <div className="a-card"><div className="a-cc"><table className="a-t mx"><thead><tr><th>Follow up today</th><th className="xm">Why</th><th>Status</th><th className="r">Owes</th></tr></thead><tbody>
+                          <tr><td className="b">Ravula Pumps &amp; Motors<span className="sub">Medchal, Hyderabad</span></td><td className="xm">Promised ₹85,000 on 20 Oct, not paid</td><td><span className="a-badge t-red">Broken</span></td><td className="r">₹1,47,736</td></tr>
+                          <tr><td className="b">Kondapur Agro Foods<span className="sub">Guntur</span></td><td className="xm">Will pay ₹60,000 by cheque today</td><td><span className="a-badge t-amber">Due today</span></td><td className="r">₹92,040</td></tr>
+                          <tr><td className="b">Neeladri Engineering<span className="sub">Kukatpally, Hyderabad</span></td><td className="xm">Over credit limit by ₹38,500</td><td><span className="a-badge t-blue">Call</span></td><td className="r">₹2,38,500</td></tr>
+                          <tr><td className="b">Tanvi Conveyors<span className="sub">Patancheru</span></td><td className="xm">47 days late</td><td><span className="a-badge t-blue">Call</span></td><td className="r">₹64,900</td></tr>
                         </tbody></table></div></div>
                       </div>
                     </div>

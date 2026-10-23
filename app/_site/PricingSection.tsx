@@ -43,6 +43,9 @@ export default function PricingSection({ heading = 'h2' }: { heading?: 'h1' | 'h
               <li className="app-li"><Tile icon="warehouse" tone="indigo" size="sm" /><span>Warehouse: bins, batches, serials</span></li>
               <li className="app-li"><Tile icon="badge-check" tone="green" size="sm" /><span>Quality checks, holds and rejects</span></li>
               <li className="app-li"><Tile icon="wrench" tone="slate" size="sm" /><span>Maintenance: service due, breakdowns</span></li>
+              <li className="app-li"><Tile icon="repeat" tone="violet" size="sm" /><span>Job work: challans, ITC-04 tables</span></li>
+              <li className="app-li"><Tile icon="tag" tone="rose" size="sm" /><span>Price lists &amp; schemes</span></li>
+              <li className="app-li"><Tile icon="map-pin" tone="blue" size="sm" /><span>Field sales: beats, orders at the shop</span></li>
               <li className="app-li"><Tile icon="user-check" tone="cyan" size="sm" /><span>People &amp; attendance</span></li>
               <li className="app-li"><Tile icon="banknote" tone="green" size="sm" /><span>Payroll: salary, PF, ESI, payslips</span></li>
               <li className="app-li"><Tile icon="wrench" tone="rose" size="sm" /><span>Parts from stock on job cards</span></li>
@@ -60,6 +63,7 @@ export default function PricingSection({ heading = 'h2' }: { heading?: 'h1' | 'h
               <li><I n="check" /><span><b>GST invoices,</b> payments, credit notes and statements</span></li>
               <li><I n="check" /><span><b>Leads, follow-ups and quotations</b></span></li>
               <li><I n="check" /><span><b>Job cards</b> for repairs at your counter</span></li>
+              <li><I n="check" /><span><b>Collections:</b> chase list, cheques, TDS</span></li>
               <li><I n="check" /><span>Customers, items and GST reports</span></li>
               <li><I n="check" /><span>Send on WhatsApp or email</span></li>
               <li><I n="check" /><span>Overdue reminders and a daily summary</span></li>
