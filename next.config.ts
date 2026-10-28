@@ -84,6 +84,23 @@ const nextConfig: NextConfig = {
       },
     ];
   },
+  // The old CRM/ERP on werkfox.com is retired: the app lives at app.werkfox.com
+  // (same database, same logins). Query strings (redirect, reset token) carry over.
+  // Temporary (307) for now so a rollback is not stuck in browser caches.
+  async redirects() {
+    const app = 'https://app.werkfox.com';
+    return [
+      { source: '/login', destination: `${app}/login`, permanent: false },
+      { source: '/sign-in/:path*', destination: `${app}/login`, permanent: false },
+      { source: '/sign-up/:path*', destination: `${app}/signup`, permanent: false },
+      { source: '/signup', destination: `${app}/signup`, permanent: false },
+      { source: '/forgot-password', destination: `${app}/forgot-password`, permanent: false },
+      { source: '/reset-password', destination: `${app}/reset-password`, permanent: false },
+      { source: '/admin/:path*', destination: `${app}/home`, permanent: false },
+      { source: '/dashboard/:path*', destination: `${app}/home`, permanent: false },
+      { source: '/super-admin/:path*', destination: `${app}/platform`, permanent: false },
+    ];
+  },
 };
 
 export default nextConfig;
